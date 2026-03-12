@@ -286,16 +286,71 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
 .star:hover{transform:scale(1.15);}
 
 /* ── IMAGE GEN ── */
-.img-container{position:relative;border-radius:12px;overflow:hidden;line-height:0;}
-.img-container img{width:100%;border-radius:12px;display:block;}
+/* ── IMAGE OVERLAY — sistema de design profissional ──
+   Regras aplicadas:
+   • Safe zone: 7% de margem interna (padrão editorial)
+   • Texto: máx 80% da largura → respiro lateral garantido
+   • Gradiente duplo: base escura p/ legibilidade + topo sutil p/ profundidade
+   • Eyebrow: linha de marca acima do título (hierarquia visual)
+   • Logo zone: canto superior direito com glass morphism
+   • Clamp() responsivo: tipografia nunca estoura o container
+   • Line-clamp: título ≤3 linhas, hook ≤2 linhas → sem overflow
+   • CTA: nunca maior que bloco de texto, sempre com sombra dupla
+── */
+.img-container{position:relative;border-radius:14px;overflow:hidden;line-height:0;}
+.img-container img{width:100%;height:100%;object-fit:cover;border-radius:14px;display:block;}
 .img-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.08) 55%,transparent 100%);
-  border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;
+  position:absolute;inset:0;border-radius:14px;
+  background:
+    linear-gradient(to top,  rgba(0,0,0,.86) 0%, rgba(0,0,0,.52) 35%, rgba(0,0,0,.04) 62%),
+    linear-gradient(to bottom,rgba(0,0,0,.22) 0%, transparent 24%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:clamp(16px,7%,32px);
+  box-sizing:border-box;
 }
-.img-overlay-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;color:#fff;line-height:1.2;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.6);}
-.img-overlay-hook{font-size:.83rem;color:rgba(255,255,255,.8);margin-bottom:11px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
-.img-overlay-cta{display:inline-block;padding:8px 18px;border-radius:8px;font-weight:700;font-size:.8rem;width:fit-content;box-shadow:0 4px 14px rgba(0,0,0,.4);}
+/* Bloco de texto: 80% max para garantir respiro lateral */
+.img-overlay-textblock{max-width:80%;}
+/* Eyebrow — linha de marca, hierarquia acima do título */
+.img-overlay-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.img-overlay-eyebrow-line{width:22px;height:2px;border-radius:2px;flex-shrink:0;}
+.img-overlay-eyebrow-label{font-size:.6rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.6);font-family:'Outfit',sans-serif;}
+/* Título: máx 3 linhas, nunca vai até a borda */
+.img-overlay-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(.95rem,5vw,1.45rem);
+  color:#fff;line-height:1.18;margin-bottom:8px;
+  text-shadow:0 2px 14px rgba(0,0,0,.75),0 1px 3px rgba(0,0,0,.5);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+/* Hook/subtítulo: máx 2 linhas */
+.img-overlay-hook{
+  font-family:'Outfit',sans-serif;font-size:clamp(.72rem,2.5vw,.86rem);
+  color:rgba(255,255,255,.82);font-weight:400;line-height:1.55;margin-bottom:15px;
+  text-shadow:0 1px 7px rgba(0,0,0,.65);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+/* CTA: nunca extrapola o bloco, sombra dupla para destaque */
+.img-overlay-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 22px;border-radius:8px;
+  font-family:'Outfit',sans-serif;font-weight:700;font-size:clamp(.7rem,2vw,.82rem);
+  width:fit-content;max-width:100%;
+  box-shadow:0 4px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.18);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+/* Logo zone — canto superior direito, safe zone respeitada */
+.img-overlay-logo-zone{
+  position:absolute;
+  top:clamp(12px,6%,22px);
+  right:clamp(12px,6%,22px);
+  background:rgba(255,255,255,.16);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:8px;padding:6px 11px;
+  font-size:.6rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:rgba(255,255,255,.85);font-family:'Outfit',sans-serif;
+  max-width:110px;text-align:center;line-height:1.35;
+}
 .img-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
 
 /* ── PROGRESS ── */
@@ -1724,162 +1779,300 @@ function rate(score) {
     ${tF?`<div class="pref-row"><span class="pref-lbl">✍️ Tipografia favorita</span><span class="pref-val">${tF[0]}</span></div>`:''}`;
 }
 
-// ══ IMAGE GENERATION — cadeia de 4 provedores com fallback automático ══
+// ══ IMAGE GENERATION — multi-provider com fallback automático ══
 let lastPrompt = '';
 
-// ── Helpers de UI ──
-function setProviderStatus(name, status) {
-  // status: 'trying' | 'ok' | 'fail' | 'skip'
-  const icons = { trying:'⏳', ok:'✅', fail:'❌', skip:'⏭' };
-  const el = document.getElementById('prov-' + name);
-  if (el) {
-    el.textContent = icons[status] + ' ' + el.dataset.label;
-    el.style.color = status === 'ok' ? 'var(--green)' : status === 'fail' ? 'var(--red)' : status === 'trying' ? 'var(--yellow)' : 'var(--text3)';
-  }
-}
-
-function showProgress(providerLabel) {
-  document.getElementById('img-canvas').innerHTML = `
-    <div class="img-gen-progress">
-      <div class="progress-ring"></div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text);text-align:center;">
-        Gerando imagem com IA...
-      </div>
-      <div style="font-size:.75rem;color:var(--text3);margin-top:-6px;" id="provider-current">${providerLabel}</div>
-      <div style="display:flex;flex-direction:column;gap:5px;width:100%;max-width:300px;margin-top:4px;">
-        <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:2px;">Tentativas automáticas</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-puter" data-label="Puter.js · FLUX.1-schnell">⏳ Puter.js · FLUX.1-schnell</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-poll1" data-label="Pollinations · FLUX">⏸ Pollinations · FLUX</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.76px;" id="prov-poll2" data-label="Pollinations · Turbo">⏸ Pollinations · Turbo</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-gen" data-label="gen.pollinations.ai">⏸ gen.pollinations.ai</div>
-      </div>
-    </div>`;
-}
-
-function updateCurrentProvider(label) {
-  const el = document.getElementById('provider-current');
-  if (el) el.textContent = label;
-}
-
-function renderImageResult(imgSrc, title, hook, cta, bg, ac, pr, tFont, bFont, fmt, source) {
-  S.lastImageUrl = imgSrc;
-  // Check CTA text color contrast
-  const bgLum2 = lum(hRgb(bg));
-  const ctaTextColor = bgLum2 > 0.4 ? bg : '#fff';
-  document.getElementById('img-canvas').innerHTML = `
-    <div style="padding:14px;">
-      <div class="img-container" style="background:${bg};">
-        <img src="${imgSrc}" alt="Imagem gerada pela IA" style="width:100%;border-radius:12px;display:block;" crossorigin="anonymous"
-          onerror="this.onerror=null;this.src='${imgSrc}';">
-        <div class="img-overlay">
-          <div class="img-overlay-title" style="font-family:'${tFont||'sans-serif'}',sans-serif;">${title}</div>
-          <div class="img-overlay-hook" style="font-family:'${bFont||'sans-serif'}',sans-serif;">${hook}</div>
-          <div class="img-overlay-cta" style="background:${ac};color:${ctaTextColor};font-family:'${bFont||'sans-serif'}',sans-serif;">${cta}</div>
-        </div>
-      </div>
-      <div class="img-actions">
-        <button class="btn btn-violet btn-sm" onclick="downloadImg(event,'${fmt}')">⬇️ Baixar</button>
-        <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Regenerar</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleOverlay()">👁 Toggle texto</button>
-      </div>
-      <div style="margin-top:8px;font-size:.67rem;color:var(--text3);">✦ ${source} · ${new Date().toLocaleTimeString('pt-BR')}</div>
-    </div>`;
-}
-
-// ── Carrega URL de imagem como <img> e verifica que carregou ──
-function loadImageUrl(url, timeoutMs = 45000) {
+// ── Helper: tenta carregar uma URL de imagem como <img>, sem crossOrigin ──
+function probeImageUrl(url, timeoutMs) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    const timer = setTimeout(() => {
+    const img = document.createElement('img');
+    let done = false;
+    const finish = (ok, val) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      img.onload = img.onerror = null;
       img.src = '';
-      reject(new Error('Timeout'));
-    }, timeoutMs);
-    img.onload = () => { clearTimeout(timer); resolve(url); };
-    img.onerror = () => { clearTimeout(timer); reject(new Error('Falha ao carregar imagem')); };
+      ok ? resolve(val) : reject(new Error(val));
+    };
+    const timer = setTimeout(() => finish(false, 'timeout'), timeoutMs);
+    img.onload  = () => finish(true,  url);
+    img.onerror = () => finish(false, 'load_error');
     img.src = url;
   });
 }
 
-// ── 4 provedores de geração de imagem ──
+// ── Provedores ──
+
+// 1. Puter.js — retorna HTMLImageElement; .src é uma data URL base64
 async function tryPuter(prompt) {
-  // puter.ai.txt2img returns an HTMLImageElement, NOT a Blob
-  const imgEl = await puter.ai.txt2img(prompt, false, 'flux.1-schnell');
-  if (!imgEl || !imgEl.src) throw new Error('Puter não retornou imagem válida');
-  return imgEl.src;
+  if (typeof puter === 'undefined' || !puter?.ai?.txt2img) throw new Error('Puter não disponível');
+  const imgEl = await Promise.race([
+    puter.ai.txt2img(prompt, false, 'flux.1-schnell'),
+    new Promise((_, r) => setTimeout(() => r(new Error('Puter timeout')), 90000))
+  ]);
+  if (!imgEl || !imgEl.src || imgEl.src === window.location.href) throw new Error('Puter retornou imagem inválida');
+  return imgEl.src; // data URL base64 — direto!
 }
 
+// 2. Pollinations FLUX (modelo padrão, melhor qualidade)
 async function tryPollinationsFlux(prompt, ratio) {
-  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
-  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
+  const DIMS = { '1:1': [1024,1024], '9:16': [576,1024], '16:9': [1024,576] };
+  const [w, h] = DIMS[ratio] || [1024,1024];
   const seed = Math.floor(Math.random() * 999999);
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true&enhance=true`;
-  return await loadImageUrl(url, 50000);
+  const enc  = encodeURIComponent(prompt.substring(0, 800));
+  const url  = `https://image.pollinations.ai/prompt/${enc}?model=flux&width=${w}&height=${h}&seed=${seed}&nologo=true&referrer=designmind`;
+  return await probeImageUrl(url, 90000);
 }
 
+// 3. Pollinations Turbo (mais rápido)
 async function tryPollinationsTurbo(prompt, ratio) {
-  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
-  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
+  const DIMS = { '1:1': [1024,1024], '9:16': [576,1024], '16:9': [1024,576] };
+  const [w, h] = DIMS[ratio] || [1024,1024];
   const seed = Math.floor(Math.random() * 999999);
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&seed=${seed}&model=turbo&nologo=true`;
-  return await loadImageUrl(url, 45000);
+  const enc  = encodeURIComponent(prompt.substring(0, 800));
+  const url  = `https://image.pollinations.ai/prompt/${enc}?model=turbo&width=${w}&height=${h}&seed=${seed}&nologo=true&referrer=designmind`;
+  return await probeImageUrl(url, 70000);
 }
 
-async function tryGenPollinations(prompt, ratio) {
-  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
-  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
-  const url = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&model=flux&nologo=1&seed=${Date.now()}`;
-  return await loadImageUrl(url, 45000);
+// 4. Pollinations flux-realism
+async function tryPollinationsRealism(prompt, ratio) {
+  const DIMS = { '1:1': [1024,1024], '9:16': [576,1024], '16:9': [1024,576] };
+  const [w, h] = DIMS[ratio] || [1024,1024];
+  const seed = Math.floor(Math.random() * 999999);
+  const enc  = encodeURIComponent(prompt.substring(0, 800));
+  const url  = `https://image.pollinations.ai/prompt/${enc}?model=flux-realism&width=${w}&height=${h}&seed=${seed}&nologo=true&referrer=designmind`;
+  return await probeImageUrl(url, 70000);
 }
 
-// ── Função principal com fallback automático ──
+// 5. Pollinations — prompt curto, seed diferente (última chance)
+async function tryPollinationsFallback(prompt, ratio) {
+  const DIMS = { '1:1': [1024,1024], '9:16': [576,1024], '16:9': [1024,576] };
+  const [w, h] = DIMS[ratio] || [1024,1024];
+  // Prompt mais curto para reduzir chance de erro
+  const shortPrompt = prompt.split(',').slice(0,4).join(',').substring(0, 400);
+  const seed = Math.floor(Math.random() * 9999);
+  const enc  = encodeURIComponent(shortPrompt);
+  const url  = `https://image.pollinations.ai/prompt/${enc}?model=flux&width=${w}&height=${h}&seed=${seed}&referrer=designmind`;
+  return await probeImageUrl(url, 70000);
+}
+
+// ── Render resultado final ──
+function renderImageResult(imgSrc, title, hook, cta, bg, ac, pr, tFont, bFont, fmt, source) {
+  S.lastImageUrl = imgSrc;
+
+  // ── Cálculo de cor do CTA baseado no accent ──
+  const acLum = lum(hRgb(ac));
+  const ctaTextColor = acLum > 0.45 ? '#0a0a0a' : '#ffffff';
+
+  // ── Determina classe de aspect ratio ──
+  const ratioClass = fmt === 'stories' ? 'ratio-916' : fmt === 'banner' || fmt === 'youtube' ? 'ratio-169' : '';
+
+  // ── Contexto do conteúdo para eyebrow ──
+  const ctxLabel = S.ctx && S.ctx !== 'Qualquer' ? S.ctx.toUpperCase() : 'DESIGN STUDIO';
+  const chLabels = {feed:'FEED',stories:'STORIES',carrossel:'CARROSSEL',reels:'REELS',youtube:'YOUTUBE',banner:'LINKEDIN'};
+  const chLabel = chLabels[S.channel] || 'SOCIAL MEDIA';
+
+  // ── Nome da marca (do greeting ou fallback) ──
+  const brandName = (localStorage.getItem('dm_user_name') || '').toUpperCase() || 'BRAND';
+
+  document.getElementById('img-canvas').innerHTML = `
+    <div style="padding:14px 14px 0;">
+
+      <!-- Container da imagem com safe zone aplicada no overlay -->
+      <div class="img-container ${ratioClass}" style="background:${bg};">
+        <img src="${imgSrc}" alt="Imagem gerada por IA" style="width:100%;height:100%;object-fit:cover;border-radius:14px;display:block;">
+
+        <!-- OVERLAY COMPLETO com sistema de design profissional -->
+        <div class="img-overlay" id="img-overlay-el">
+
+          <!-- LOGO ZONE — canto superior direito (safe zone 7%) -->
+          <div class="img-overlay-logo-zone">${brandName}</div>
+
+          <!-- BLOCO DE TEXTO — bottom-left, respiro lateral de 20% -->
+          <div class="img-overlay-textblock">
+
+            <!-- EYEBROW — linha de marca + label do canal -->
+            <div class="img-overlay-eyebrow">
+              <div class="img-overlay-eyebrow-line" style="background:${ac};"></div>
+              <span class="img-overlay-eyebrow-label">${chLabel} · ${ctxLabel}</span>
+            </div>
+
+            <!-- TÍTULO — máx 3 linhas, line-clamp ativo -->
+            <div class="img-overlay-title" style="font-family:'${tFont||'Syne'}',sans-serif;">${title}</div>
+
+            <!-- HOOK — máx 2 linhas, semi-transparente -->
+            <div class="img-overlay-hook" style="font-family:'${bFont||'Outfit'}',sans-serif;">${hook}</div>
+
+            <!-- CTA — tamanho proporcional, nunca extrapola -->
+            <div class="img-overlay-cta" style="background:${ac};color:${ctaTextColor};font-family:'${bFont||'Outfit'}',sans-serif;">
+              ${cta}
+            </div>
+
+          </div><!-- /textblock -->
+        </div><!-- /overlay -->
+      </div><!-- /img-container -->
+
+      <!-- AÇÕES -->
+      <div class="img-actions" style="padding:10px 0 14px;">
+        <button class="btn btn-violet btn-sm" onclick="downloadImg(event,'${fmt}')">⬇️ Baixar</button>
+        <button class="btn btn-out btn-sm"    onclick="gerarImagemAI()">🔄 Regenerar</button>
+        <button class="btn btn-ghost btn-sm"  onclick="toggleOverlay()">👁 Toggle texto</button>
+      </div>
+
+      <!-- Meta info -->
+      <div style="font-size:.66rem;color:var(--text3);padding-bottom:14px;">
+        ✦ ${source} · ${new Date().toLocaleTimeString('pt-BR')}
+        <span style="margin-left:8px;color:var(--text3);">· Safe zone 7% · Hierarquia editorial aplicada</span>
+      </div>
+    </div>`;
+}
+
+// ── UI de progresso ──
+function showProgressUI(providers) {
+  const rows = providers.map(p =>
+    `<div style="display:flex;align-items:center;gap:8px;font-size:.75rem;" id="prov-${p.id}" data-label="${p.label}">
+      <span id="prov-icon-${p.id}" style="font-size:.8rem;">⏸</span>
+      <span id="prov-lbl-${p.id}" style="color:var(--text3);">${p.label}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('img-canvas').innerHTML = `
+    <div class="img-gen-progress">
+      <div class="progress-ring"></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text);text-align:center;">Gerando imagem com IA...</div>
+      <div id="provider-status-msg" style="font-size:.74rem;color:var(--text3);text-align:center;min-height:18px;"></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:100%;max-width:320px;">
+        <div style="font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);margin-bottom:8px;">Tentativas automáticas</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">${rows}</div>
+      </div>
+    </div>`;
+}
+
+function updateProviderUI(id, status, label) {
+  const icons  = { waiting:'⏸', trying:'⏳', ok:'✅', fail:'❌', skip:'⏭' };
+  const colors = { waiting:'var(--text3)', trying:'var(--yellow)', ok:'var(--green)', fail:'var(--red)', skip:'var(--text3)' };
+  const iconEl = document.getElementById('prov-icon-' + id);
+  const lblEl  = document.getElementById('prov-lbl-'  + id);
+  if (iconEl) iconEl.textContent = icons[status] || '⏸';
+  if (lblEl)  { lblEl.style.color = colors[status] || 'var(--text3)'; if (label) lblEl.textContent = label; }
+  const msg = document.getElementById('provider-status-msg');
+  if (msg && status === 'trying') msg.textContent = `Tentando: ${lblEl?.textContent || id}...`;
+  if (msg && status === 'ok')     msg.textContent = `✅ Sucesso!`;
+}
+
+// ── Função principal ──
 async function gerarImagemAI() {
-  const p = S.palette, f = S.fonts, c = S.selectedContent || S.content?.[0], fmt = S.format;
-  const bg = p[3] || '#F5F5F5', pr = p[0] || '#1A1A2E', ac = p[1] || '#7C5CF6';
-  const title  = c?.titulo || 'Design estratégico criativo';
-  const hook   = c?.hook   || 'Conteúdo visual impactante';
-  const body   = (c?.corpo || '').substring(0, 100);
-  const ctx     = S.ctx || 'geral';
-  const channel = S.channel || 'feed';
-  const refVisual = c?.referencia_visual || '';
-  const tom = document.getElementById('sm-tom')?.value || 'profissional';
-  const pub = document.getElementById('sm-pub')?.value || '';
-  const tFont = f.h || '', bFont = f.b || '';
+  const p   = S.palette, f = S.fonts;
+  const c   = S.selectedContent || S.content?.[0];
+  const fmt = S.format;
+  const bg  = p[3] || '#F5F5F5';
+  const pr  = p[0] || '#1A1A2E';
+  const ac  = p[1] || '#7C5CF6';
+  const title    = c?.titulo         || 'Design estratégico criativo';
+  const hook     = c?.hook           || 'Conteúdo visual impactante';
+  const body     = (c?.corpo || '').substring(0, 100);
+  const ctx      = S.ctx             || 'geral';
+  const channel  = S.channel         || 'feed';
+  const refVisual= c?.referencia_visual || '';
+  const tom      = document.getElementById('sm-tom')?.value || 'profissional';
+  const pub      = document.getElementById('sm-pub')?.value || '';
+  const tFont    = f.h || '';
+  const bFont    = f.b || '';
+  const ctaText  = c?.cta || 'Saiba Mais →';
   const FMT_RATIO = { feed:'1:1', stories:'9:16', banner:'16:9', youtube:'16:9' };
-  const ratio = FMT_RATIO[fmt] || '1:1';
-  const ctaText = c?.cta || 'Saiba Mais →';
+  const ratio    = FMT_RATIO[fmt] || '1:1';
 
-  showProgress('Iniciando...');
+  const providers = [
+    { id:'puter',   label:'Puter.js · FLUX.1-schnell',     fn: () => tryPuter(cleanPrompt) },
+    { id:'poll1',   label:'Pollinations · FLUX',            fn: () => tryPollinationsFlux(cleanPrompt, ratio) },
+    { id:'poll2',   label:'Pollinations · Turbo',           fn: () => tryPollinationsTurbo(cleanPrompt, ratio) },
+    { id:'poll3',   label:'Pollinations · Flux-Realism',    fn: () => tryPollinationsRealism(cleanPrompt, ratio) },
+    { id:'poll4',   label:'Pollinations · FLUX (fallback)', fn: () => tryPollinationsFallback(cleanPrompt, ratio) },
+  ];
+
+  showProgressUI(providers);
   document.getElementById('img-gen-status').textContent = 'Gerando...';
   document.getElementById('btn-gerar-img').disabled = true;
 
-  // ── PASSO 1: Groq cria o prompt criativo ──
-  updateCurrentProvider('⚡ Groq: criando prompt visual...');
-  await new Promise(r => setTimeout(r, 200));
+  // ── Step 1: Groq gera o prompt ──
+  const msg = document.getElementById('provider-status-msg');
+  if (msg) msg.textContent = '⚡ Groq criando prompt visual...';
 
-  const groqPrompt = `Você é um diretor criativo especialista em design e social media. Crie um prompt DETALHADO em inglês para gerar uma imagem que seja perfeita para este contexto:
+  // ── REGRAS PROFISSIONAIS DE COMPOSIÇÃO ──
+  // Baseadas nos princípios: UNINTA ad style (clean, breathing room, subject placement)
+  const COMPOSITION_RULES = {
+    feed: {
+      ratio: '1:1 square',
+      subject: 'Place main subject at right side or center, rule of thirds, leave LEFT bottom area clear for text overlay',
+      depth: 'strong foreground bokeh, sharp midground subject, soft background',
+      margins: '10% safe zone from all edges — no important elements at the very edge',
+      lighting: 'soft diffused light from upper-left, natural shadows',
+      mood: 'clean, professional, editorial',
+    },
+    stories: {
+      ratio: '9:16 vertical portrait',
+      subject: 'Place subject at upper-center or right side, leave BOTTOM 45% clean/simple for text overlay',
+      depth: 'portrait composition, hero element centered-top',
+      margins: '8% safe zone sides, 10% top and bottom',
+      lighting: 'dramatic top-down or side lighting',
+      mood: 'bold, engaging, scroll-stopping',
+    },
+    banner: {
+      ratio: '16:9 horizontal wide',
+      subject: 'Subject on RIGHT side, 40% of frame, clear plain area on LEFT for text',
+      depth: 'wide establishing shot, negative space on left',
+      margins: '8% safe zone all edges',
+      lighting: 'bright, corporate, professional',
+      mood: 'trustworthy, professional, expansive',
+    },
+    youtube: {
+      ratio: '16:9 horizontal wide',
+      subject: 'Subject takes 55% of RIGHT side, intense expression or action, clear area on LEFT',
+      depth: 'close crop portrait or action shot on right half',
+      margins: '8% safe zone all edges',
+      lighting: 'dramatic side lighting, high contrast',
+      mood: 'energetic, exciting, click-worthy',
+    },
+  };
 
-BRIEFING:
-- Título: ${title}
-- Mensagem/hook: ${hook}
-- Contexto/setor: ${ctx}
-- Canal: ${channel} (proporção ${ratio})
-- Tom: ${tom} | Público: ${pub||'geral'}
-- Referência visual: ${refVisual||'não especificada'}
-- Cores: primária ${pr}, destaque ${ac}, fundo ${bg}
-- Tipografia: ${tFont||'moderna'}
+  const compRule = COMPOSITION_RULES[fmt] || COMPOSITION_RULES.feed;
 
-REGRAS:
-1. Descreva apenas a CENA visual (sem texto)
-2. Mencione as cores EXATAS: "color ${pr}, accent ${ac}"
-3. Estilo: "professional brand photography, editorial, cinematic lighting"
-4. Inclua composição, iluminação, mood
-5. Máximo 100 palavras
-6. Responda SOMENTE o prompt em inglês`;
+  const groqInstr = `You are a world-class art director specializing in social media visual design. Create a precise image generation prompt for FLUX AI.
 
-  const promptGerado = await callAI(groqPrompt, 'You are a creative art director. Reply ONLY with the image prompt in English. No explanation, no markdown.');
+BRIEF:
+- Title: "${title}"
+- Hook: "${hook}"  
+- Sector: ${ctx} | Channel: ${channel} | Tone: ${tom} | Audience: ${pub||'general'}
+- Visual reference: ${refVisual||'not specified'}
+- Brand palette: primary ${pr} | accent ${ac} | background ${bg}
+
+MANDATORY COMPOSITION RULES (follow precisely):
+1. FORMAT: ${compRule.ratio} — ${compRule.subject}
+2. SAFE ZONE: ${compRule.margins}
+3. DEPTH: ${compRule.depth}
+4. LIGHTING: ${compRule.lighting}
+5. MOOD: ${compRule.mood}
+
+COLOR INTEGRATION (mandatory):
+- The background/environment must echo the palette: tones of "${bg}" in the scene
+- Accent highlights of "${ac}" visible in lighting, reflections or key elements
+- Overall image should feel cohesive with a "${pr}" dominant color brand
+
+VISUAL QUALITY RULES:
+- NO text, NO words, NO letters, NO logos in the image
+- Keep the lower-left quadrant SIMPLE and DARK for text overlay legibility
+- Professional photography or 3D render quality
+- Avoid busy/cluttered compositions
+- Use selective focus (bokeh) to separate subject from background
+- Include generous negative space for breathing room
+- Style: "award-winning editorial photography, high-end commercial brand campaign, ultra HD, sharp focus"
+
+Respond ONLY with the prompt in English, max 110 words, no explanation, no markdown.`;
+
+  const promptGerado = await callAI(groqInstr, 'Reply ONLY with the image generation prompt in English. No explanation, no markdown, no quotes.');
   lastPrompt = promptGerado;
 
-  // Mostra prompt gerado
   const pc = document.getElementById('prompt-card');
   if (pc) pc.style.display = 'block';
   const pd = document.getElementById('prompt-display');
@@ -1889,7 +2082,7 @@ REGRAS:
     document.getElementById('img-canvas').innerHTML = `
       <div class="empty" style="min-height:280px;">
         <div class="ico">❌</div>
-        <p style="color:var(--red);font-weight:700;">Groq não gerou um prompt válido</p>
+        <p style="color:var(--red);font-weight:700;">Groq não gerou prompt válido</p>
         <p style="font-size:.74rem;max-width:300px;text-align:center;">${promptGerado}</p>
         <button class="btn btn-out btn-sm" style="margin-top:12px;" onclick="gerarImagemAI()">Tentar novamente</button>
       </div>`;
@@ -1898,81 +2091,64 @@ REGRAS:
     return;
   }
 
-  const cleanPrompt = promptGerado
+  // Limpa o prompt
+  var cleanPrompt = promptGerado
     .replace(/```[\s\S]*?```/g, '')
-    .replace(/^(here'?s?|the prompt|prompt:|image prompt:)[:\s]*/i, '')
+    .replace(/^["']|["']$/g, '')
+    .replace(/^(here'?s?( a| the)?|the prompt|prompt:|image prompt:|result:)[:\s]*/i, '')
     .trim()
-    .substring(0, 1500);
+    .substring(0, 900);
 
-  // ── PASSO 2: Tentativas em cadeia ──
-  const providers = [
-    {
-      id: 'puter', label: 'Puter.js · FLUX.1-schnell',
-      fn: () => tryPuter(cleanPrompt)
-    },
-    {
-      id: 'poll1', label: 'Pollinations.ai · FLUX',
-      fn: () => tryPollinationsFlux(cleanPrompt, ratio)
-    },
-    {
-      id: 'poll2', label: 'Pollinations.ai · Turbo',
-      fn: () => tryPollinationsTurbo(cleanPrompt, ratio)
-    },
-    {
-      id: 'gen', label: 'gen.pollinations.ai · FLUX',
-      fn: () => tryGenPollinations(cleanPrompt, ratio)
-    }
-  ];
-
-  let successUrl = null;
+  // ── Step 2: tenta cada provedor ──
+  let successUrl    = null;
   let successSource = '';
 
-  for (const prov of providers) {
-    setProviderStatus(prov.id, 'trying');
-    updateCurrentProvider(`🔄 Tentando: ${prov.label}`);
+  for (let i = 0; i < providers.length; i++) {
+    const prov = providers[i];
+    updateProviderUI(prov.id, 'trying');
     try {
       const url = await prov.fn();
-      if (url) {
-        successUrl = url;
+      if (url && url.length > 50) {
+        successUrl    = url;
         successSource = prov.label;
-        setProviderStatus(prov.id, 'ok');
-        // mark remaining as skip
-        let found = false;
-        for (const p2 of providers) {
-          if (found) setProviderStatus(p2.id, 'skip');
-          if (p2.id === prov.id) found = true;
-        }
+        updateProviderUI(prov.id, 'ok');
+        // marcar restantes como skip
+        for (let j = i + 1; j < providers.length; j++) updateProviderUI(providers[j].id, 'skip');
         break;
       }
+      throw new Error('URL inválida');
     } catch (err) {
-      console.warn(`[${prov.label}] falhou:`, err.message);
-      setProviderStatus(prov.id, 'fail');
-      await new Promise(r => setTimeout(r, 300)); // pequena pausa entre tentativas
+      console.warn(`[${prov.label}]`, err.message);
+      updateProviderUI(prov.id, 'fail');
+      if (i < providers.length - 1) await new Promise(r => setTimeout(r, 500));
     }
   }
 
   if (successUrl) {
     renderImageResult(successUrl, title, hook, ctaText, bg, ac, pr, tFont, bFont, fmt, successSource);
-    document.getElementById('img-gen-status').textContent = `✅ Gerado via ${successSource}`;
+    document.getElementById('img-gen-status').textContent = `✅ ${successSource}`;
   } else {
     document.getElementById('img-canvas').innerHTML = `
       <div class="empty" style="min-height:280px;">
-        <div class="ico">❌</div>
+        <div class="ico">😔</div>
         <p style="color:var(--red);font-weight:700;">Todos os provedores falharam</p>
         <p style="font-size:.74rem;max-width:300px;text-align:center;color:var(--text3);">
-          Pode ser instabilidade temporária nos servidores gratuitos.<br>Aguarde alguns segundos e tente novamente.
+          Os servidores gratuitos podem estar sobrecarregados.<br>
+          Aguarde 15 segundos e tente novamente.
         </p>
         <button class="btn btn-violet btn-sm" style="margin-top:14px;" onclick="gerarImagemAI()">🔄 Tentar novamente</button>
       </div>`;
-    document.getElementById('img-gen-status').textContent = '❌ Todos os provedores falharam';
+    document.getElementById('img-gen-status').textContent = '❌ Falhou — tente novamente';
   }
 
   document.getElementById('btn-gerar-img').disabled = false;
 }
 
 function toggleOverlay() {
-  const ov = document.querySelector('.img-overlay');
-  if (ov) ov.style.display = ov.style.display === 'none' ? 'flex' : 'none';
+  const ov = document.getElementById('img-overlay-el') || document.querySelector('.img-overlay');
+  if (!ov) return;
+  ov.style.opacity = ov.style.opacity === '0' ? '1' : '0';
+  ov.style.transition = 'opacity .3s ease';
 }
 
 function copyPrompt() {
@@ -1982,9 +2158,9 @@ function copyPrompt() {
 function downloadImg(e, fmt) {
   if (e) e.preventDefault();
   if (!S.lastImageUrl) { alert('Nenhuma imagem gerada ainda.'); return; }
-  const a = document.createElement('a');
-  a.href = S.lastImageUrl;
-  a.download = 'designmind-flux-' + fmt + '.jpg';
+  const a    = document.createElement('a');
+  a.href     = S.lastImageUrl;
+  a.download = 'designmind-' + fmt + '-' + Date.now() + '.jpg';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
