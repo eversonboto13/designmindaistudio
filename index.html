@@ -4,415 +4,472 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DesignMind AI Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://js.puter.com/v2/"></script>
 <style>
 :root {
-  --bg: #eef2f7;
-  --surface: #ffffff;
-  --surface2: #f7fafc;
-  --border: #e2e8f0;
-  --border2: #cbd5e0;
-  --cyan: #22d4e0;
-  --cyan-light: #e0fafb;
-  --cyan-mid: #b2f0f4;
-  --cyan-dark: #0ba8b5;
-  --black: #0a0a0a;
-  --text: #1a202c;
-  --text2: #4a5568;
-  --text3: #718096;
-  --green: #38d680;
-  --green-bg: #e6faf0;
-  --red: #fc5a5a;
-  --red-bg: #fff0f0;
-  --yellow: #f6c54d;
-  --yellow-bg: #fffbeb;
-  --radius: 20px;
-  --radius-sm: 10px;
-  --shadow: 0 2px 14px rgba(0,0,0,.07);
-  --shadow-md: 0 6px 28px rgba(0,0,0,.10);
+  --bg:       #070A10;
+  --surface:  #0D1120;
+  --surface2: #131929;
+  --surface3: #1A2235;
+  --border:   #1E2840;
+  --border2:  #2A3A55;
+  --violet:   #7C5CF6;
+  --violet-l: rgba(124,92,246,.15);
+  --violet-m: rgba(124,92,246,.3);
+  --cyan:     #22D3EE;
+  --cyan-l:   rgba(34,211,238,.12);
+  --cyan-m:   rgba(34,211,238,.25);
+  --green:    #34D399;
+  --green-l:  rgba(52,211,153,.12);
+  --red:      #F87171;
+  --red-l:    rgba(248,113,113,.12);
+  --yellow:   #FBBF24;
+  --yellow-l: rgba(251,191,36,.12);
+  --text:     #F1F5F9;
+  --text2:    #94A3B8;
+  --text3:    #475569;
+  --radius:   16px;
+  --radius-sm:10px;
+  --shadow:   0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.6);
+  --glow-v:   0 0 24px rgba(124,92,246,.2);
+  --glow-c:   0 0 24px rgba(34,211,238,.2);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:14px;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;font-size:14px;line-height:1.5;}
 
-/* HEADER */
-header{background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 1px 10px rgba(0,0,0,.06);}
-.logo-wrap{display:flex;align-items:center;gap:10px;}
-.logo-icon{width:36px;height:36px;background:var(--black);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:var(--cyan);letter-spacing:-1px;}
-.logo-text{font-size:1rem;font-weight:800;color:var(--text);letter-spacing:-.4px;}
-.logo-text em{color:var(--cyan-dark);font-style:normal;}
-.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.key-wrap{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:6px 12px;}
-.key-wrap label{font-size:.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
-.key-input{border:none;background:transparent;outline:none;font-family:'Inter',sans-serif;font-size:.83rem;color:var(--text);width:190px;}
-.key-input::placeholder{color:var(--text3);}
-.status-pill{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
-.s-ok{background:var(--green-bg);color:#1a9f52;border:1.5px solid #a7f3c8;}
-.s-err{background:var(--red-bg);color:var(--red);border:1.5px solid #ffd0d0;}
-.get-key{font-size:.72rem;color:var(--cyan-dark);text-decoration:none;font-weight:600;white-space:nowrap;}
-.get-key:hover{text-decoration:underline;}
-
-/* TABS */
-nav.tabs{background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 32px;display:flex;overflow-x:auto;}
-nav.tabs button{padding:16px 22px;background:none;border:none;border-bottom:2.5px solid transparent;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;white-space:nowrap;}
-nav.tabs button.active{color:var(--text);border-bottom-color:var(--cyan-dark);}
-nav.tabs button:hover:not(.active){color:var(--text2);}
-.tdot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .15s;}
-nav.tabs button.active .tdot{background:var(--cyan);}
-
-/* LAYOUT */
-.tab-content{display:none;padding:28px 32px;max-width:1380px;margin:0 auto;}
-.tab-content.active{display:block;}
-.page-title{font-size:1.6rem;font-weight:900;letter-spacing:-.5px;margin-bottom:4px;}
-.page-sub{font-size:.82rem;color:var(--text3);margin-bottom:24px;}
-
-/* GRID */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-
-/* CARDS */
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px;}
-.card:last-child{margin-bottom:0;}
-.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);display:flex;align-items:center;gap:7px;}
-.cticon{width:26px;height:26px;border-radius:7px;background:var(--cyan-light);display:flex;align-items:center;justify-content:center;font-size:.85rem;}
-
-/* SECTION LABELS */
-.sec-label{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);display:flex;align-items:center;gap:6px;margin-bottom:9px;}
-.sec-label::before{content:'';display:block;width:14px;height:1.5px;background:var(--border2);}
-
-/* INPUTS */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;font-family:'Inter',sans-serif;font-size:.83rem;color:var(--text);outline:none;transition:border .15s,box-shadow .15s;appearance:none;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-light);}
-.field textarea{min-height:78px;resize:vertical;}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23718096' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;cursor:pointer;}
-
-/* BUTTONS */
-.btn{padding:9px 18px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
-.btn-black{background:var(--black);color:#fff;}
-.btn-black:hover{background:#222;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.18);}
-.btn-cyan{background:var(--cyan);color:var(--black);}
-.btn-cyan:hover{background:var(--cyan-dark);color:#fff;transform:translateY(-1px);}
-.btn-out{background:transparent;color:var(--text2);border:1.5px solid var(--border2);}
-.btn-out:hover{border-color:var(--cyan);color:var(--cyan-dark);background:var(--cyan-light);}
-.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border);}
-.btn-ghost:hover{border-color:var(--border2);}
-.btn-sm{padding:7px 14px;font-size:.75rem;border-radius:8px;}
-.btn-xs{padding:5px 11px;font-size:.72rem;border-radius:7px;}
-.btn-row{display:flex;gap:7px;flex-wrap:wrap;}
-
-/* PILLS / BADGES */
-.pill{padding:4px 11px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.2px;display:inline-flex;align-items:center;cursor:default;}
-.pill-cyan{background:var(--cyan-light);color:var(--cyan-dark);border:1.5px solid var(--cyan-mid);}
-.pill-green{background:var(--green-bg);color:#1a9f52;border:1.5px solid #a7f3c8;}
-.pill-red{background:var(--red-bg);color:var(--red);border:1.5px solid #ffd0d0;}
-.pill-yellow{background:var(--yellow-bg);color:#8a6200;border:1.5px solid #fde68a;}
-.pill-out{background:transparent;border:1.5px solid var(--border2);color:var(--text2);cursor:pointer;transition:all .15s;}
-.pill-out:hover,.pill-out.on{background:var(--black);color:#fff;border-color:var(--black);}
-
-/* CONTEXT ROW */
-.ctx-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
-
-/* SWATCHES */
-.swatches-row{display:flex;gap:11px;flex-wrap:wrap;margin-bottom:6px;}
-.sw-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.swatch{width:62px;height:74px;border-radius:14px;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;border:2.5px solid transparent;box-shadow:var(--shadow);}
-.swatch:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
-.swatch.locked{border-color:var(--black)!important;}
-.sw-meta{width:62px;}
-.sw-hex{font-size:.65rem;font-weight:700;color:var(--text3);text-align:center;font-family:monospace;letter-spacing:-.2px;}
-.sw-name{font-size:.7rem;font-weight:700;color:var(--text);text-align:center;}
-.sw-ratio{font-size:.63rem;font-weight:800;color:var(--cyan-dark);display:flex;align-items:center;justify-content:center;gap:2px;margin-top:1px;}
-.lock-ic{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:.65rem;opacity:0;transition:opacity .15s;border:none;cursor:pointer;color:#fff;}
-.swatch:hover .lock-ic,.swatch.locked .lock-ic{opacity:1;}
-.add-sw{width:62px;height:74px;border-radius:14px;border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:1.3rem;transition:all .15s;background:var(--surface2);}
-.add-sw:hover{border-color:var(--cyan);color:var(--cyan-dark);background:var(--cyan-light);}
-.add-sw span.lbl{font-size:.58rem;margin-top:2px;}
-
-/* PAR ANALISADO */
-.par-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;}
-.par-cols{display:flex;align-items:center;gap:10px;}
-.par-card{flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:11px;display:flex;align-items:center;gap:9px;}
-.par-sw{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);flex-shrink:0;}
-.par-hex{font-size:.7rem;font-weight:700;color:var(--text3);font-family:monospace;}
-.par-name{font-size:.8rem;font-weight:700;color:var(--text);}
-.par-arrow{color:var(--text3);font-size:.95rem;}
-
-/* RATIO BIG */
-.ratio-big{text-align:center;padding:18px 0 12px;}
-.ratio-num{font-size:3.6rem;font-weight:900;letter-spacing:-2px;line-height:1;}
-.ratio-num sup{font-size:2rem;}
-.ratio-sub{font-size:.8rem;color:var(--text3);margin-top:3px;font-weight:500;}
-
-/* WCAG ROWS */
-.wcag-list{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
-.wcag-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;}
-.wcag-row .lbl{font-size:.8rem;font-weight:600;color:var(--text2);}
-.wcag-note{font-size:.65rem;color:var(--text3);margin-top:9px;display:flex;align-items:center;gap:5px;}
-.wcag-note::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
-
-/* MATRIX */
-.mx-wrap{overflow-x:auto;}
-.mx-table{width:100%;border-collapse:separate;border-spacing:4px;}
-.mx-table th{font-size:.65rem;font-weight:700;color:var(--text3);padding:4px 6px;text-align:center;}
-.mx-cell{border-radius:8px;padding:8px 10px;text-align:center;font-weight:800;font-size:.78rem;cursor:pointer;transition:opacity .15s;}
-.mx-cell:hover{opacity:.85;}
-.aaa{background:#e6f9f0;color:#1a8a50;}
-.aa{background:var(--cyan-light);color:var(--cyan-dark);}
-.wn{background:var(--yellow-bg);color:#8a6200;}
-.fl{background:var(--red-bg);color:var(--red);}
-.em{color:var(--text3);background:transparent;}
-
-/* FONT CARDS */
-.font-card{background:var(--surface2);border:2px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .15s;margin-bottom:10px;position:relative;}
-.font-card:hover{border-color:var(--cyan-mid);}
-.font-card.locked{border-color:var(--black);}
-.fc-badge{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);display:flex;justify-content:space-between;margin-bottom:8px;}
-.fc-big{font-size:2.1rem;font-weight:800;line-height:1.1;color:var(--text);margin-bottom:3px;}
-.fc-small{font-size:.68rem;color:var(--cyan-dark);font-weight:700;}
-.fc-lock{position:absolute;top:12px;right:12px;font-size:.75rem;}
-
-/* TYPO PREVIEW */
-.typo-prev{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:26px;box-shadow:var(--shadow);}
-
-/* CHANNEL */
-.ch-wrap{display:flex;flex-wrap:wrap;gap:7px;}
-.ch-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;display:flex;align-items:center;gap:5px;}
-.ch-btn.on{background:var(--black);color:#fff;border-color:var(--black);}
-.ch-btn:hover:not(.on){border-color:var(--cyan);color:var(--cyan-dark);background:var(--cyan-light);}
-
-/* CONTENT CARDS */
-.c-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:20px;margin-bottom:13px;cursor:pointer;transition:all .15s;position:relative;}
-.c-card:hover{border-color:var(--cyan-mid);box-shadow:var(--shadow-md);}
-.c-card.sel{border-color:var(--black);}
-.c-num{position:absolute;top:15px;right:15px;width:27px;height:27px;background:var(--surface2);border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--text2);}
-.c-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--cyan-dark);margin-bottom:9px;}
-.c-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:5px;line-height:1.3;}
-.c-hook{font-size:.8rem;color:var(--cyan-dark);font-weight:500;font-style:italic;margin-bottom:7px;}
-.c-body{font-size:.78rem;color:var(--text3);line-height:1.65;margin-bottom:11px;}
-.c-cta{font-size:.76rem;font-weight:700;color:var(--text2);margin-bottom:9px;}
-.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
-.tag{padding:3px 8px;border-radius:6px;font-size:.68rem;font-weight:600;background:var(--surface2);border:1.5px solid var(--border);color:var(--text3);}
-.tag.h{background:var(--cyan-light);border-color:var(--cyan-mid);color:var(--cyan-dark);}
-.ref-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;font-size:.73rem;color:var(--text2);margin-bottom:9px;}
-.ref-box strong{color:var(--text);}
-.dtip{font-size:.71rem;color:var(--cyan-dark);font-weight:600;margin-bottom:9px;}
-
-/* FORMAT BTNS */
-.fmt-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
-.fmt-btn{padding:7px 15px;border-radius:20px;background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;}
-.fmt-btn.on{background:var(--black);color:#fff;border-color:var(--black);}
-.fmt-btn:hover:not(.on){border-color:var(--cyan);color:var(--cyan-dark);}
-
-/* PREVIEW OUTER */
-.prev-outer{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);min-height:440px;}
-.prev-bar{background:var(--surface2);border-bottom:1.5px solid var(--border);padding:10px 15px;display:flex;align-items:center;gap:6px;}
-.prev-dot{width:11px;height:11px;border-radius:50%;}
-.prev-inner{padding:22px;}
-
-/* STARS */
-.stars{display:flex;gap:3px;}
-.star{font-size:1.35rem;cursor:pointer;opacity:.28;transition:opacity .13s,transform .13s;}
-.star.lit{opacity:1;}
-.star:hover{transform:scale(1.15);}
-
-/* AI OUTPUT */
-.ai-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:15px 17px;font-size:.8rem;line-height:1.8;color:var(--text2);white-space:pre-wrap;}
-.ai-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--cyan-dark);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
-.ai-label::before{content:'';width:12px;height:2px;background:var(--cyan);border-radius:2px;}
-
-/* LOADING */
-.loading{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:.8rem;padding:10px 0;}
-.dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--cyan-dark);margin:0 2px;animation:bd .8s infinite;}
-.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
-@keyframes bd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 16px;color:var(--text3);gap:7px;}
-.empty .ico{font-size:2.2rem;opacity:.45;}
-.empty p{font-size:.8rem;text-align:center;}
-
-.divider{height:1px;background:var(--border);margin:14px 0;}
-
-/* PREF LIST */
-.pref-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.76rem;}
-.pref-row:last-child{border-bottom:none;}
-.pref-lbl{color:var(--text2);font-weight:500;}
-.pref-val{color:var(--cyan-dark);font-weight:700;}
-
-/* IMAGE GEN */
-.img-container{position:relative;border-radius:12px;overflow:hidden;line-height:0;}
-.img-container img{width:100%;border-radius:12px;display:block;}
-.img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.1) 50%,transparent 100%);border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;}
-.img-overlay-title{font-weight:800;font-size:1.3rem;color:#fff;line-height:1.2;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.5);}
-.img-overlay-hook{font-size:.85rem;color:rgba(255,255,255,.82);margin-bottom:12px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
-.img-overlay-cta{display:inline-block;padding:9px 20px;border-radius:8px;font-weight:700;font-size:.82rem;width:fit-content;box-shadow:0 4px 14px rgba(0,0,0,.3);}
-.img-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.img-gen-progress{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:50px 20px;}
-.progress-ring{width:56px;height:56px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--cyan);animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.progress-steps{display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;}
-.progress-step{display:flex;align-items:center;gap:9px;font-size:.78rem;}
-.step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s;}
-.step-dot.done{background:var(--green);}
-.step-dot.active{background:var(--cyan);animation:pulse .8s infinite;}
-.step-dot.wait{background:var(--border2);}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.step-lbl{color:var(--text2);}
-.step-lbl.done{color:var(--text);font-weight:600;}
-.step-lbl.active{color:var(--cyan-dark);font-weight:700;}
-.step-lbl.wait{color:var(--text3);}
-
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
 
+/* ── HEADER ── */
+header{
+  background:rgba(13,17,32,.9);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-icon{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--violet),var(--cyan));
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:.72rem;font-weight:800;color:#fff;letter-spacing:-1px;
+}
+.logo-text{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.logo-text em{background:linear-gradient(90deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal;}
+.hdr-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.hdr-badge{padding:4px 10px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:5px;border:1px solid;}
+.hdr-badge.green{color:var(--green);border-color:rgba(52,211,153,.3);background:var(--green-l);}
+.hdr-badge.violet{color:var(--violet);border-color:var(--violet-m);background:var(--violet-l);}
+.hdr-greeting{font-size:.78rem;font-weight:500;color:var(--text2);}
+.hdr-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 11px;font-size:.7rem;color:var(--text3);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.hdr-btn:hover{border-color:var(--border2);color:var(--text2);}
+
+/* ── TABS ── */
+nav.tabs{
+  background:rgba(13,17,32,.8);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;display:flex;overflow-x:auto;gap:0;
+  position:sticky;top:60px;z-index:190;
+}
+nav.tabs button{
+  padding:0 22px;height:52px;
+  background:none;border:none;border-bottom:2px solid transparent;
+  font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
+  color:var(--text3);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;
+}
+nav.tabs button.active{color:var(--text);border-bottom-color:var(--violet);}
+nav.tabs button:hover:not(.active){color:var(--text2);}
+.tab-icon{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s;flex-shrink:0;}
+nav.tabs button.active .tab-icon{background:var(--violet);}
+
+/* ── LAYOUT ── */
+.tab-content{display:none;padding:28px 28px;max-width:1360px;margin:0 auto;}
+.tab-content.active{display:block;}
+.page-hdr{margin-bottom:24px;}
+.page-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:.8rem;color:var(--text3);font-weight:400;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;
+  box-shadow:0 2px 16px rgba(0,0,0,.3);margin-bottom:14px;
+}
+.card:last-child{margin-bottom:0;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.card-title{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);display:flex;align-items:center;gap:7px;}
+.cticon{width:24px;height:24px;border-radius:6px;background:var(--violet-l);border:1px solid var(--violet-m);display:flex;align-items:center;justify-content:center;font-size:.8rem;}
+
+/* ── SECTION LABELS ── */
+.sec-label{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--text3);display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.sec-label::before{content:'';display:block;width:12px;height:1px;background:var(--border2);}
+
+/* ── INPUTS ── */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:.67rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px 13px;
+  font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--text);
+  outline:none;transition:border .15s,box-shadow .15s;appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-l);}
+.field textarea{min-height:78px;resize:vertical;}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23475569' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;cursor:pointer;
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3);}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;transition:all .18s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-violet{background:var(--violet);color:#fff;}
+.btn-violet:hover{background:#6948e8;transform:translateY(-1px);box-shadow:var(--glow-v);}
+.btn-cyan{background:var(--cyan);color:#070A10;}
+.btn-cyan:hover{background:#19b8d4;transform:translateY(-1px);box-shadow:var(--glow-c);}
+.btn-out{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-out:hover{border-color:var(--violet);color:var(--violet);background:var(--violet-l);}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn-sm{padding:7px 13px;font-size:.76rem;border-radius:8px;}
+.btn-xs{padding:5px 10px;font-size:.72rem;border-radius:7px;}
+.btn-row{display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ── PILLS / BADGES ── */
+.pill{padding:4px 11px;border-radius:20px;font-size:.69rem;font-weight:600;letter-spacing:.2px;display:inline-flex;align-items:center;cursor:default;border:1px solid;}
+.pill-violet{background:var(--violet-l);color:var(--violet);border-color:var(--violet-m);}
+.pill-cyan{background:var(--cyan-l);color:var(--cyan);border-color:var(--cyan-m);}
+.pill-green{background:var(--green-l);color:var(--green);border-color:rgba(52,211,153,.25);}
+.pill-red{background:var(--red-l);color:var(--red);border-color:rgba(248,113,113,.25);}
+.pill-yellow{background:var(--yellow-l);color:var(--yellow);border-color:rgba(251,191,36,.25);}
+.pill-out{background:transparent;border:1px solid var(--border2);color:var(--text2);cursor:pointer;transition:all .15s;}
+.pill-out:hover,.pill-out.on{background:var(--violet);color:#fff;border-color:var(--violet);}
+
+/* ── CONTEXT ROW ── */
+.ctx-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+
+/* ── SWATCHES ── */
+.swatches-row{display:flex;gap:11px;flex-wrap:wrap;margin-bottom:6px;}
+.sw-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.swatch{width:60px;height:70px;border-radius:13px;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;border:2px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.swatch:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.swatch.locked{border-color:var(--violet)!important;box-shadow:var(--glow-v);}
+.sw-meta{width:60px;}
+.sw-hex{font-size:.63rem;font-weight:700;color:var(--text3);text-align:center;font-family:monospace;letter-spacing:-.2px;}
+.sw-name{font-size:.68rem;font-weight:600;color:var(--text2);text-align:center;}
+.sw-ratio{font-size:.62rem;font-weight:700;color:var(--cyan);display:flex;align-items:center;justify-content:center;gap:2px;margin-top:1px;}
+.lock-ic{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:.6rem;opacity:0;transition:opacity .15s;border:none;cursor:pointer;color:#fff;}
+.swatch:hover .lock-ic,.swatch.locked .lock-ic{opacity:1;}
+.add-sw{width:60px;height:70px;border-radius:13px;border:1.5px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:1.2rem;transition:all .15s;background:var(--surface2);}
+.add-sw:hover{border-color:var(--violet);color:var(--violet);background:var(--violet-l);}
+.add-sw span.lbl{font-size:.58rem;margin-top:2px;}
+
+/* ── PAR ANALISADO ── */
+.par-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:14px;}
+.par-cols{display:flex;align-items:center;gap:9px;}
+.par-card{flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:9px;padding:10px;display:flex;align-items:center;gap:8px;}
+.par-sw{width:32px;height:32px;border-radius:7px;border:1px solid var(--border2);flex-shrink:0;}
+.par-hex{font-size:.68rem;font-weight:700;color:var(--text3);font-family:monospace;}
+.par-name{font-size:.78rem;font-weight:600;color:var(--text);}
+.par-arrow{color:var(--text3);font-size:.9rem;}
+
+/* ── RATIO ── */
+.ratio-big{text-align:center;padding:16px 0 10px;}
+.ratio-num{font-size:3.4rem;font-weight:800;letter-spacing:-2px;line-height:1;font-family:'Syne',sans-serif;}
+.ratio-num sup{font-size:1.8rem;}
+.ratio-sub{font-size:.78rem;color:var(--text3);margin-top:3px;font-weight:400;}
+
+/* ── WCAG ── */
+.wcag-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.wcag-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;}
+.wcag-row .lbl{font-size:.78rem;font-weight:500;color:var(--text2);}
+.wcag-note{font-size:.64rem;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:5px;}
+.wcag-note::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+
+/* ── MATRIX ── */
+.mx-wrap{overflow-x:auto;}
+.mx-table{width:100%;border-collapse:separate;border-spacing:3px;}
+.mx-table th{font-size:.63rem;font-weight:600;color:var(--text3);padding:3px 5px;text-align:center;}
+.mx-cell{border-radius:7px;padding:7px 9px;text-align:center;font-weight:700;font-size:.75rem;cursor:pointer;transition:opacity .15s;}
+.mx-cell:hover{opacity:.8;}
+.aaa{background:rgba(52,211,153,.15);color:var(--green);}
+.aa{background:var(--cyan-l);color:var(--cyan);}
+.wn{background:var(--yellow-l);color:var(--yellow);}
+.fl{background:var(--red-l);color:var(--red);}
+.em{color:var(--text3);background:transparent;}
+
+/* ── FONT CARDS ── */
+.font-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:13px;padding:16px 18px;cursor:pointer;transition:all .15s;margin-bottom:10px;position:relative;}
+.font-card:hover{border-color:var(--violet-m);}
+.font-card.locked{border-color:var(--violet);box-shadow:var(--glow-v);}
+.fc-badge{font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);display:flex;justify-content:space-between;margin-bottom:8px;}
+.fc-big{font-size:2rem;font-weight:800;line-height:1.1;color:var(--text);margin-bottom:3px;}
+.fc-small{font-size:.67rem;color:var(--violet);font-weight:600;}
+.fc-lock{position:absolute;top:11px;right:11px;font-size:.75rem;}
+
+/* ── CHANNEL BTNS ── */
+.ch-wrap{display:flex;flex-wrap:wrap;gap:7px;}
+.ch-btn{padding:7px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:.76rem;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.ch-btn.on{background:var(--violet);color:#fff;border-color:var(--violet);}
+.ch-btn:hover:not(.on){border-color:var(--violet);color:var(--violet);background:var(--violet-l);}
+
+/* ── FORMAT BTNS ── */
+.fmt-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
+.fmt-btn{padding:7px 14px;border-radius:20px;background:var(--surface);border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-size:.76rem;font-weight:500;transition:all .15s;}
+.fmt-btn.on{background:var(--violet);color:#fff;border-color:var(--violet);}
+.fmt-btn:hover:not(.on){border-color:var(--violet);color:var(--violet);}
+
+/* ── CONTENT CARDS ── */
+.c-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all .15s;position:relative;}
+.c-card:hover{border-color:var(--violet-m);box-shadow:var(--glow-v);}
+.c-card.sel{border-color:var(--violet);}
+.c-num{position:absolute;top:14px;right:14px;width:26px;height:26px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text2);}
+.c-tag{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--violet);margin-bottom:8px;}
+.c-title{font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3;}
+.c-hook{font-size:.8rem;color:var(--cyan);font-weight:500;font-style:italic;margin-bottom:7px;}
+.c-body{font-size:.78rem;color:var(--text3);line-height:1.65;margin-bottom:10px;}
+.c-cta{font-size:.76rem;font-weight:600;color:var(--text2);margin-bottom:8px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.tag{padding:3px 8px;border-radius:6px;font-size:.67rem;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--text3);}
+.tag.h{background:var(--violet-l);border-color:var(--violet-m);color:var(--violet);}
+.ref-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:.73rem;color:var(--text2);margin-bottom:8px;}
+.ref-box strong{color:var(--text);}
+.dtip{font-size:.7rem;color:var(--cyan);font-weight:600;margin-bottom:8px;}
+
+/* ── PREV OUTER ── */
+.prev-outer{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);min-height:420px;}
+.prev-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:6px;}
+.prev-dot{width:10px;height:10px;border-radius:50%;}
+.prev-inner{padding:20px;}
+
+/* ── AI OUTPUT ── */
+.ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:14px 16px;font-size:.81rem;line-height:1.8;color:var(--text2);white-space:pre-wrap;}
+.ai-label{font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--violet);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.ai-label::before{content:'';width:10px;height:2px;background:var(--violet);border-radius:2px;}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:.8rem;padding:10px 0;}
+.dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--violet);margin:0 2px;animation:bd .8s infinite;}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes bd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;color:var(--text3);gap:7px;}
+.empty .ico{font-size:2rem;opacity:.4;}
+.empty p{font-size:.8rem;text-align:center;}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* ── PREF LIST ── */
+.pref-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.75rem;}
+.pref-row:last-child{border-bottom:none;}
+.pref-lbl{color:var(--text2);font-weight:400;}
+.pref-val{color:var(--violet);font-weight:600;}
+
+/* ── STARS ── */
+.stars{display:flex;gap:3px;}
+.star{font-size:1.3rem;cursor:pointer;opacity:.3;transition:opacity .13s,transform .13s;}
+.star.lit{opacity:1;}
+.star:hover{transform:scale(1.15);}
+
+/* ── IMAGE GEN ── */
+.img-container{position:relative;border-radius:12px;overflow:hidden;line-height:0;}
+.img-container img{width:100%;border-radius:12px;display:block;}
+.img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.08) 55%,transparent 100%);
+  border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;
+}
+.img-overlay-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;color:#fff;line-height:1.2;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.6);}
+.img-overlay-hook{font-size:.83rem;color:rgba(255,255,255,.8);margin-bottom:11px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
+.img-overlay-cta{display:inline-block;padding:8px 18px;border-radius:8px;font-weight:700;font-size:.8rem;width:fit-content;box-shadow:0 4px 14px rgba(0,0,0,.4);}
+.img-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+
+/* ── PROGRESS ── */
+.img-gen-progress{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:48px 20px;}
+.progress-ring{width:52px;height:52px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--violet);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress-steps{display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;}
+.progress-step{display:flex;align-items:center;gap:9px;font-size:.77rem;}
+.step-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s;}
+.step-dot.done{background:var(--green);}
+.step-dot.active{background:var(--violet);animation:pulse .8s infinite;}
+.step-dot.wait{background:var(--border2);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.step-lbl{color:var(--text2);}
+.step-lbl.done{color:var(--text);font-weight:500;}
+.step-lbl.active{color:var(--violet);font-weight:600;}
+.step-lbl.wait{color:var(--text3);}
+
+/* ── TYPOGRAPHY MODAL ── */
+.cat-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:.74rem;font-weight:500;transition:all .15s;font-family:'Outfit',sans-serif;}
+.cat-btn.on{background:var(--violet);color:#fff;border-color:var(--violet);}
+.cat-btn:hover:not(.on){border-color:var(--violet);color:var(--violet);}
+.font-tile{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:5px;min-height:90px;}
+.font-tile:hover{border-color:var(--violet-m);box-shadow:var(--glow-v);transform:translateY(-1px);}
+.font-tile.selected{border-color:var(--violet);background:var(--violet-l);}
+.font-tile-cat{font-size:.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);}
+.font-tile-preview{font-size:1.4rem;font-weight:700;color:var(--text);line-height:1.1;}
+.font-tile-name{font-size:.69rem;color:var(--violet);font-weight:600;}
+.layer-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;gap:10px;}
+.layer-meta{display:flex;align-items:center;gap:10px;}
+.layer-tag{padding:3px 8px;border-radius:6px;font-size:.67rem;font-weight:700;background:var(--violet-l);color:var(--violet);border:1px solid var(--violet-m);letter-spacing:.5px;}
+.layer-label{font-size:.7rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+.layer-font-name{font-size:.84rem;font-weight:600;color:var(--text);margin-top:1px;}
+.lock-layer-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.82rem;transition:all .15s;}
+.lock-layer-btn.locked{background:var(--violet);border-color:var(--violet);}
+.spec-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.77rem;}
+.spec-row:last-child{border-bottom:none;}
+.spec-label{color:var(--text3);font-weight:400;}
+.spec-val{color:var(--text);font-weight:600;}
+
+/* ── COLOR MOCKUP PREVIEW ── */
+.color-mockup{border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);transition:all .4s;}
+.cm-header{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;}
+.cm-body{padding:18px 22px;}
+.cm-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;line-height:1.2;margin-bottom:5px;}
+.cm-sub{font-size:.82rem;opacity:.75;margin-bottom:14px;}
+.cm-cta{display:inline-block;padding:9px 20px;border-radius:9px;font-size:.8rem;font-weight:700;}
+
+/* ── RESPONSIVE ── */
 @media(max-width:860px){
   .tab-content{padding:14px 14px}
   header{padding:0 14px}
   nav.tabs{padding:0 14px}
   .g2,.g3{grid-template-columns:1fr}
-  .key-input{width:120px}
 }
-
-/* ── FONT MODAL / TYPOGRAPHY ── */
-.cat-btn{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:.75rem;font-weight:600;transition:all .15s;font-family:Inter,sans-serif;}
-.cat-btn.on{background:var(--black);color:#fff;border-color:var(--black);}
-.cat-btn:hover:not(.on){border-color:var(--cyan);color:var(--cyan-dark);}
-
-.font-tile{background:var(--surface2);border:2px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px;min-height:96px;}
-.font-tile:hover{border-color:var(--cyan-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);}
-.font-tile.selected{border-color:var(--black);background:#fafafa;}
-.font-tile-cat{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);}
-.font-tile-preview{font-size:1.45rem;font-weight:700;color:var(--text);line-height:1.1;}
-.font-tile-name{font-size:.7rem;color:var(--cyan-dark);font-weight:700;}
-
-.layer-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;gap:10px;}
-.layer-meta{display:flex;align-items:center;gap:10px;}
-.layer-tag{padding:3px 9px;border-radius:7px;font-size:.68rem;font-weight:800;background:var(--cyan-light);color:var(--cyan-dark);letter-spacing:.5px;}
-.layer-label{font-size:.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
-.layer-font-name{font-size:.85rem;font-weight:700;color:var(--text);margin-top:1px;}
-.layer-preview{padding:10px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);margin-bottom:4px;transition:font-family .3s;}
-.lock-layer-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.85rem;transition:all .15s;}
-.lock-layer-btn.locked{background:var(--black);border-color:var(--black);}
-
-.spec-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.78rem;}
-.spec-row:last-child{border-bottom:none;}
-.spec-label{color:var(--text3);font-weight:500;}
-.spec-val{color:var(--text);font-weight:700;}
 </style>
-  <script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
 
-<!-- ══ ONBOARDING SCREEN ══ -->
+<!-- ══ ONBOARDING ══ -->
 <div id="onboarding" style="
-  position:fixed;inset:0;background:#0a0a0a;z-index:9999;
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Inter',sans-serif;
+  font-family:'Outfit',sans-serif;
 ">
+  <!-- Background decoration -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
+    <div style="position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(124,92,246,.12) 0%,transparent 70%);"></div>
+    <div style="position:absolute;bottom:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(34,211,238,.08) 0%,transparent 70%);"></div>
+  </div>
+
   <div style="
-    background:#111;border:1.5px solid #222;border-radius:24px;
-    padding:48px 44px;width:min(480px,94vw);box-shadow:0 32px 80px rgba(0,0,0,.6);
+    background:var(--surface);border:1px solid var(--border);border-radius:22px;
+    padding:42px 40px;width:min(460px,94vw);box-shadow:var(--shadow-lg);position:relative;
   ">
     <!-- Logo -->
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
-      <div style="width:44px;height:44px;background:#22d4e0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#0a0a0a;">DM</div>
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:28px;">
+      <div style="width:42px;height:42px;background:linear-gradient(135deg,var(--violet),var(--cyan));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff;font-family:'Syne',sans-serif;">DM</div>
       <div>
-        <div style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.4px;">DesignMind <span style="color:#22d4e0;">AI</span> Studio</div>
-        <div style="font-size:.72rem;color:#555;margin-top:1px;">Paleta · Tipografia · Social Media · Imagens</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text);letter-spacing:-.3px;">DesignMind <span style="background:linear-gradient(90deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">AI</span> Studio</div>
+        <div style="font-size:.72rem;color:var(--text3);margin-top:1px;">Paleta · Tipografia · Social Media · FLUX.1</div>
       </div>
     </div>
 
     <!-- Name -->
-    <div style="margin-bottom:18px;">
-      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">Seu nome</label>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Seu nome</label>
       <input id="ob-name" type="text" placeholder="Como posso te chamar?" style="
-        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
-        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.9rem;outline:none;
-        transition:border .15s;
-      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
+        width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);
+        border-radius:10px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;transition:border .15s;
+      " onfocus="this.style.borderColor='var(--violet)'" onblur="this.style.borderColor='var(--border)'">
     </div>
 
     <!-- Groq Key -->
-    <div style="margin-bottom:18px;">
-      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">
-        Groq API Key <span style="color:#333;font-weight:400;text-transform:none;">(análises e conteúdo)</span>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">
+        Groq API Key <span style="font-weight:400;text-transform:none;color:var(--text3);">(análises e conteúdo com IA)</span>
       </label>
       <input id="ob-groq" type="password" placeholder="gsk_..." style="
-        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
-        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.85rem;outline:none;
-        transition:border .15s;
-      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
-      <div style="margin-top:6px;font-size:.7rem;color:#444;">
-        Grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:#22d4e0;text-decoration:none;">console.groq.com/keys</a>
+        width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);
+        border-radius:10px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.85rem;outline:none;transition:border .15s;
+      " onfocus="this.style.borderColor='var(--violet)'" onblur="this.style.borderColor='var(--border)'">
+      <div style="margin-top:5px;font-size:.69rem;color:var(--text3);">
+        Grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--violet);text-decoration:none;font-weight:600;">console.groq.com/keys ↗</a>
       </div>
     </div>
 
     <!-- Image gen info -->
-    <div style="margin-bottom:28px;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;padding:14px 16px;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#555;margin-bottom:6px;">🖼 Geração de Imagens</div>
-      <div style="font-size:.82rem;color:#aaa;line-height:1.6;">
-        Powered by <strong style="color:#22d4e0;">Puter.js</strong> — 100% gratuito, sem key, sem cadastro. Usa o modelo <strong style="color:#fff;">FLUX.1-schnell</strong> (Black Forest Labs). Fallback automático para <strong style="color:#fff;">Pollinations.ai</strong>.
+    <div style="margin-bottom:24px;background:var(--surface2);border:1px solid var(--violet-m);border-radius:11px;padding:13px 15px;">
+      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--violet);margin-bottom:5px;">✦ Geração de Imagens</div>
+      <div style="font-size:.81rem;color:var(--text2);line-height:1.6;">
+        Powered by <strong style="color:var(--violet);">Puter.js</strong> — 100% gratuito, sem key, sem cadastro.<br>
+        Modelo <strong style="color:var(--text);">FLUX.1-schnell</strong> (Black Forest Labs) com fallback <strong style="color:var(--text);">Pollinations.ai</strong>.
       </div>
     </div>
 
-    <!-- Error msg -->
-    <div id="ob-err" style="display:none;background:#2a1010;border:1.5px solid #5a2020;border-radius:8px;padding:10px 14px;color:#fc5a5a;font-size:.78rem;margin-bottom:16px;"></div>
+    <!-- Error -->
+    <div id="ob-err" style="display:none;background:var(--red-l);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:10px 13px;color:var(--red);font-size:.78rem;margin-bottom:14px;"></div>
 
     <!-- Enter button -->
     <button onclick="obEnter()" style="
-      width:100%;padding:14px;background:#22d4e0;color:#0a0a0a;border:none;
-      border-radius:12px;font-family:Inter,sans-serif;font-size:.9rem;font-weight:800;
-      cursor:pointer;transition:all .15s;letter-spacing:-.2px;
-    " onmouseover="this.style.background='#0ba8b5';this.style.color='#fff'"
-       onmouseout="this.style.background='#22d4e0';this.style.color='#0a0a0a'">
+      width:100%;padding:13px;background:linear-gradient(135deg,var(--violet),#5B4CF6);color:#fff;border:none;
+      border-radius:11px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;
+      cursor:pointer;transition:all .18s;letter-spacing:-.2px;
+    " onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='var(--glow-v)'"
+       onmouseout="this.style.transform='none';this.style.boxShadow='none'">
       Entrar no Studio →
     </button>
 
-    <div style="text-align:center;margin-top:16px;font-size:.7rem;color:#333;">
-      As chaves ficam salvas localmente no seu navegador · nunca enviadas a terceiros
+    <div style="text-align:center;margin-top:14px;font-size:.68rem;color:var(--text3);">
+      Chaves salvas localmente · nunca enviadas a terceiros
     </div>
   </div>
 </div>
 
-<!-- HEADER -->
+<!-- ══ HEADER ══ -->
 <header>
   <div class="logo-wrap">
     <div class="logo-icon">DM</div>
     <span class="logo-text">Design<em>Mind</em> AI</span>
   </div>
   <div class="hdr-right">
-    <span id="user-greeting" style="font-size:.78rem;font-weight:700;color:var(--text2);"></span>
-    <span class="status-pill s-ok" style="background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);">⚡ Groq AI</span>
-    <span class="status-pill s-ok" style="background:var(--green-bg);color:#1a9f52;border-color:#a7f3c8;">🖼 FLUX via Puter</span>
-    <button onclick="localStorage.clear();location.reload()" style="background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 11px;font-size:.7rem;color:var(--text3);cursor:pointer;font-family:Inter,sans-serif;" title="Trocar chaves">⚙ Reconfigurar</button>
+    <span class="hdr-greeting" id="user-greeting"></span>
+    <span class="hdr-badge violet">⚡ Groq AI</span>
+    <span class="hdr-badge green">✦ FLUX via Puter</span>
+    <button class="hdr-btn" onclick="localStorage.clear();location.reload()" title="Reconfigurar">⚙ Reconfigurar</button>
   </div>
 </header>
 
-<!-- TABS -->
+<!-- ══ TABS ══ -->
 <nav class="tabs">
-  <button class="active" onclick="showTab('cores',this)"><div class="tdot"></div>Paleta de Cores</button>
-  <button onclick="showTab('tipografia',this)"><div class="tdot"></div>Tipografia</button>
-  <button onclick="showTab('social',this)"><div class="tdot"></div>Social Media</button>
-  <button onclick="showTab('preview',this)"><div class="tdot"></div>Preview Final</button>
+  <button class="active" onclick="showTab('cores',this)"><div class="tab-icon"></div>🎨 Paleta de Cores</button>
+  <button onclick="showTab('tipografia',this)"><div class="tab-icon"></div>✍️ Tipografia</button>
+  <button onclick="showTab('social',this)"><div class="tab-icon"></div>📱 Social Media</button>
+  <button onclick="showTab('preview',this)"><div class="tab-icon"></div>🖼 Preview & Imagem</button>
 </nav>
 
 <!-- ══ ABA CORES ══ -->
 <div class="tab-content active" id="tab-cores">
-  <p class="page-title">Paleta de cores</p>
-  <p class="page-sub">IA analisa contraste WCAG em tempo real · Sistema lock + regenerate · Análise estratégica</p>
+  <div class="page-hdr">
+    <p class="page-title">Paleta de Cores</p>
+    <p class="page-sub">IA analisa contraste WCAG em tempo real · Lock + regenerate · Preview ao vivo com a cor de fundo</p>
+  </div>
   <div class="g2">
     <!-- ESQUERDA -->
     <div>
       <div class="card">
         <div class="card-hdr">
-          <span class="card-title"><span class="cticon">⚙️</span>Configurar</span>
-          <button class="btn btn-cyan btn-sm" onclick="gerarCores()">+ Sugerir paleta</button>
+          <span class="card-title"><span class="cticon">⚙️</span>Configurar Paleta</span>
+          <button class="btn btn-violet btn-sm" onclick="gerarCores()">✦ Sugerir com IA</button>
         </div>
 
-        <div class="sec-label">Contexto</div>
+        <div class="sec-label">Contexto da marca</div>
         <div class="ctx-row" id="ctx-btns">
           <span class="pill pill-out on" onclick="setCtx(this,'Qualquer')">Qualquer</span>
           <span class="pill pill-out" onclick="setCtx(this,'Editorial')">Editorial</span>
@@ -429,12 +486,12 @@ nav.tabs button.active .tdot{background:var(--cyan);}
           <span class="pill pill-out on" id="ct1" onclick="setCT(4.5,this)">AA ≥4.5:1</span>
           <span class="pill pill-out" id="ct2" onclick="setCT(7,this)">AAA ≥7:1</span>
           <div style="display:flex;align-items:center;gap:7px;">
-            <input type="range" id="ct-slider" min="1" max="21" step=".1" value="4.5" style="width:80px;accent-color:var(--black);" oninput="updateSlider()">
-            <span id="ct-val" style="font-size:.75rem;font-weight:700;color:var(--text3);min-width:36px;">4.5:1</span>
+            <input type="range" id="ct-slider" min="1" max="21" step=".1" value="4.5" style="width:80px;accent-color:var(--violet);" oninput="updateSlider()">
+            <span id="ct-val" style="font-size:.74rem;font-weight:600;color:var(--text3);min-width:36px;">4.5:1</span>
           </div>
         </div>
 
-        <div class="sec-label">Harmonia</div>
+        <div class="sec-label">Harmonia cromática</div>
         <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;">
           <button class="btn btn-ghost btn-sm" onclick="gerarCoresH('Análoga')">⊕ Análoga</button>
           <button class="btn btn-ghost btn-sm" onclick="gerarCoresH('Opostos')">↔ Opostos</button>
@@ -442,65 +499,90 @@ nav.tabs button.active .tdot{background:var(--cyan);}
           <button class="btn btn-ghost btn-sm" onclick="gerarCoresH('Split')">✂ Split</button>
         </div>
 
-        <div class="sec-label">Escolha suas Cores</div>
+        <div class="sec-label">Escolha manual de cores</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
           <div style="display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor Principal</label>
-            <div style="display:flex;align-items:center;gap:7px;">
-              <input type="color" id="cp0" value="#0a0a0a" oninput="applyManualColor(0,this.value)" style="width:40px;height:36px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;padding:2px;background:none;">
-              <input type="text" id="cp0t" value="#0a0a0a" oninput="applyManualColorHex(0,this.value)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);font-family:monospace;font-size:.8rem;outline:none;color:var(--text);">
+            <label style="font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor Principal</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="color" id="cp0" value="#0a0a0a" oninput="applyManualColor(0,this.value)" style="width:38px;height:34px;border-radius:7px;border:1px solid var(--border);cursor:pointer;padding:2px;background:none;">
+              <input type="text" id="cp0t" value="#0a0a0a" oninput="applyManualColorHex(0,this.value)" style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);font-family:monospace;font-size:.79rem;outline:none;color:var(--text);">
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor de Destaque</label>
-            <div style="display:flex;align-items:center;gap:7px;">
-              <input type="color" id="cp1" value="#22d4e0" oninput="applyManualColor(1,this.value)" style="width:40px;height:36px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;padding:2px;background:none;">
-              <input type="text" id="cp1t" value="#22d4e0" oninput="applyManualColorHex(1,this.value)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);font-family:monospace;font-size:.8rem;outline:none;color:var(--text);">
+            <label style="font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Destaque / Accent</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="color" id="cp1" value="#7C5CF6" oninput="applyManualColor(1,this.value)" style="width:38px;height:34px;border-radius:7px;border:1px solid var(--border);cursor:pointer;padding:2px;background:none;">
+              <input type="text" id="cp1t" value="#7C5CF6" oninput="applyManualColorHex(1,this.value)" style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);font-family:monospace;font-size:.79rem;outline:none;color:var(--text);">
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor de Fundo</label>
-            <div style="display:flex;align-items:center;gap:7px;">
-              <input type="color" id="cp2" value="#f5f5f5" oninput="applyManualColor(3,this.value)" style="width:40px;height:36px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;padding:2px;background:none;">
-              <input type="text" id="cp2t" value="#f5f5f5" oninput="applyManualColorHex(3,this.value)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);font-family:monospace;font-size:.8rem;outline:none;color:var(--text);">
+            <label style="font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor de Fundo 🎯</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="color" id="cp2" value="#f5f5f5" oninput="applyManualColor(3,this.value)" style="width:38px;height:34px;border-radius:7px;border:1px solid var(--border);cursor:pointer;padding:2px;background:none;">
+              <input type="text" id="cp2t" value="#f5f5f5" oninput="applyManualColorHex(3,this.value)" style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);font-family:monospace;font-size:.79rem;outline:none;color:var(--text);">
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:5px;">
-            <label style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Cor Complementar</label>
-            <div style="display:flex;align-items:center;gap:7px;">
-              <input type="color" id="cp3" value="#3a3a3a" oninput="applyManualColor(4,this.value)" style="width:40px;height:36px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;padding:2px;background:none;">
-              <input type="text" id="cp3t" value="#3a3a3a" oninput="applyManualColorHex(4,this.value)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);font-family:monospace;font-size:.8rem;outline:none;color:var(--text);">
+            <label style="font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);">Complementar</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="color" id="cp3" value="#3a3a3a" oninput="applyManualColor(4,this.value)" style="width:38px;height:34px;border-radius:7px;border:1px solid var(--border);cursor:pointer;padding:2px;background:none;">
+              <input type="text" id="cp3t" value="#3a3a3a" oninput="applyManualColorHex(4,this.value)" style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);font-family:monospace;font-size:.79rem;outline:none;color:var(--text);">
             </div>
           </div>
         </div>
-        <button class="btn btn-black btn-sm" onclick="aplicarCoresManual()" style="width:100%;margin-bottom:16px;justify-content:center;">✓ Aplicar cores manuais</button>
-        <div class="sec-label">Paleta Gerada / Ativa</div>
+        <button class="btn btn-cyan btn-sm" onclick="aplicarCoresManual()" style="width:100%;margin-bottom:14px;justify-content:center;">✓ Aplicar e ver no modelo</button>
+
+        <div class="sec-label">Paleta gerada / ativa</div>
         <div id="palette-display">
-          <div class="empty"><div class="ico">🎨</div><p>Clique em "Sugerir paleta" ou aplique suas cores</p></div>
+          <div class="empty"><div class="ico">🎨</div><p>Clique em "Sugerir com IA" ou aplique suas cores</p></div>
         </div>
-        <div style="margin-top:13px;"><button class="btn btn-out btn-sm" onclick="regenerarSoltas()">🔄 Regenerar soltas</button></div>
+        <div style="margin-top:11px;"><button class="btn btn-out btn-sm" onclick="regenerarSoltas()">🔄 Regenerar soltas</button></div>
       </div>
 
       <div class="card">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Análise da IA</span></div>
-        <div id="cor-ai-output"><div class="empty" style="padding:12px 0;"><p>A IA explicará a estratégia cromática após gerar</p></div></div>
+        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Análise estratégica da IA</span></div>
+        <div id="cor-ai-output"><div class="empty" style="padding:10px 0;"><p>A IA explicará a estratégia cromática após gerar</p></div></div>
       </div>
     </div>
 
     <!-- DIREITA -->
     <div>
+      <!-- Live Mockup -->
       <div class="card">
-        <div class="sec-label" style="margin-bottom:11px;">Par analisado</div>
+        <div class="card-hdr"><span class="card-title"><span class="cticon">👁</span>Mockup ao vivo</span><span style="font-size:.66rem;color:var(--text3);">A cor de fundo é aplicada aqui</span></div>
+        <div id="color-mockup-wrap">
+          <div class="color-mockup" id="live-mockup" style="background:#f5f5f5;">
+            <div class="cm-header" style="background:linear-gradient(135deg,#0a0a0a,#7C5CF6);">
+              <div>
+                <div class="cm-title" style="color:#fff;" id="mock-title">Sua Marca Aqui</div>
+                <div class="cm-sub" style="color:#fff;" id="mock-sub">A cor de fundo aparece no corpo</div>
+              </div>
+              <div style="width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;">✦</div>
+            </div>
+            <div class="cm-body" id="mock-body" style="background:#f5f5f5;">
+              <div id="mock-body-text" style="font-size:.82rem;line-height:1.7;color:#0a0a0a;opacity:.8;margin-bottom:14px;">Texto de exemplo usando as cores da paleta. A cor de fundo é aplicada aqui no card do modelo, exatamente como aparecerá no seu design final.</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div id="mock-hashtags" style="font-size:.68rem;color:#7C5CF6;">#design #marca</div>
+                <div class="cm-cta" id="mock-cta" style="background:#0a0a0a;color:#fff;">Ver mais →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contraste -->
+      <div class="card">
+        <div class="sec-label" style="margin-bottom:10px;">Par de cores analisado</div>
         <div class="par-box">
           <div class="par-cols">
             <div class="par-card">
               <div class="par-sw" id="par-a-sw" style="background:#0a0a0a;"></div>
-              <div><div class="par-hex" id="par-a-hex">#0a0a0a</div><div class="par-name" id="par-a-nm">Fundo</div></div>
+              <div><div class="par-hex" id="par-a-hex">#0a0a0a</div><div class="par-name" id="par-a-nm">Principal</div></div>
             </div>
             <div class="par-arrow">⇄</div>
             <div class="par-card">
-              <div class="par-sw" id="par-b-sw" style="background:#22d4e0;"></div>
-              <div><div class="par-hex" id="par-b-hex">#22d4e0</div><div class="par-name" id="par-b-nm">Texto primário</div></div>
+              <div class="par-sw" id="par-b-sw" style="background:#7C5CF6;"></div>
+              <div><div class="par-hex" id="par-b-hex">#7C5CF6</div><div class="par-name" id="par-b-nm">Destaque</div></div>
             </div>
           </div>
         </div>
@@ -511,19 +593,19 @@ nav.tabs button.active .tdot{background:var(--cyan);}
         </div>
 
         <div class="divider"></div>
-        <div style="font-size:.76rem;font-weight:700;color:var(--text);margin-bottom:9px;">Padrões de acessibilidade</div>
+        <div style="font-size:.75rem;font-weight:600;color:var(--text);margin-bottom:8px;">Padrões de acessibilidade WCAG 2.2</div>
         <div class="wcag-list" id="wcag-list">
           <div class="wcag-row"><span class="lbl">Texto normal AA</span><span class="pill pill-out">—</span></div>
           <div class="wcag-row"><span class="lbl">Texto normal AAA</span><span class="pill pill-out">—</span></div>
           <div class="wcag-row"><span class="lbl">Texto grande AA</span><span class="pill pill-out">—</span></div>
           <div class="wcag-row"><span class="lbl">Texto grande AAA</span><span class="pill pill-out">—</span></div>
         </div>
-        <div class="wcag-note">AI · análise em tempo real · WCAG 2.2</div>
+        <div class="wcag-note">Análise em tempo real · WCAG 2.2</div>
       </div>
 
       <div class="card">
         <div class="card-hdr"><span class="card-title"><span class="cticon">📐</span>Matriz de Contraste</span></div>
-        <div id="wcag-display"><div class="empty" style="padding:14px 0;"><p>Gere uma paleta para ver a matriz</p></div></div>
+        <div id="wcag-display"><div class="empty" style="padding:12px 0;"><p>Gere uma paleta para ver a matriz</p></div></div>
       </div>
     </div>
   </div>
@@ -531,28 +613,28 @@ nav.tabs button.active .tdot{background:var(--cyan);}
 
 <!-- ══ ABA TIPOGRAFIA ══ -->
 <div class="tab-content" id="tab-tipografia">
-  <p class="page-title">Combinação Tipográfica</p>
-  <p class="page-sub">50 fontes Google com preview ao vivo · Upload do computador · Link externo · Camadas H1 / H2 / Corpo · Lock + Regenerate</p>
+  <div class="page-hdr">
+    <p class="page-title">Combinação Tipográfica</p>
+    <p class="page-sub">50 fontes Google · Upload · Link externo · H1 / H2 / Corpo · Lock + Regenerate · Preview com suas cores</p>
+  </div>
 
-  <!-- FONTE MODAL OVERLAY -->
-  <div id="font-modal" style="display:none;position:fixed;inset:0;background:rgba(10,10,20,.55);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;">
-    <div style="background:var(--surface);border-radius:24px;width:min(820px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.22);overflow:hidden;">
-      <!-- Modal Header -->
-      <div style="padding:20px 24px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:12px;">
+  <!-- Font Modal -->
+  <div id="font-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:22px;width:min(820px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden;">
+      <div style="padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
         <div style="flex:1;">
-          <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:2px;" id="modal-layer-title">Escolher fonte — Título (H1)</div>
-          <div style="font-size:.75rem;color:var(--text3);">Clique numa fonte para pré-visualizar · Duplo clique ou "Usar esta fonte" para confirmar</div>
+          <div style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:2px;" id="modal-layer-title">Escolher fonte</div>
+          <div style="font-size:.73rem;color:var(--text3);">Clique para preview · Duplo clique ou botão para confirmar</div>
         </div>
-        <button onclick="closeModal()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;padding:7px 14px;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--text2);">✕ Fechar</button>
+        <button onclick="closeModal()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:.77rem;font-weight:600;color:var(--text2);font-family:'Outfit',sans-serif;">✕ Fechar</button>
       </div>
-      <!-- Search + Filters -->
-      <div style="padding:14px 24px;border-bottom:1.5px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <div style="flex:1;min-width:180px;position:relative;">
-          <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.9rem;">🔍</span>
+      <div style="padding:12px 22px;border-bottom:1px solid var(--border);display:flex;gap:9px;flex-wrap:wrap;align-items:center;">
+        <div style="flex:1;min-width:160px;position:relative;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.88rem;">🔍</span>
           <input type="text" id="font-search" placeholder="Buscar fonte..." oninput="filterFonts()"
-            style="width:100%;padding:9px 12px 9px 32px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);font-family:Inter,sans-serif;font-size:.83rem;outline:none;">
+            style="width:100%;padding:8px 12px 8px 30px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);font-family:'Outfit',sans-serif;font-size:.82rem;outline:none;color:var(--text);">
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="cat-filters">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;" id="cat-filters">
           <button class="cat-btn on" onclick="setCat(this,'all')">Todas</button>
           <button class="cat-btn" onclick="setCat(this,'serif')">Serif</button>
           <button class="cat-btn" onclick="setCat(this,'sans-serif')">Sans-Serif</button>
@@ -561,31 +643,26 @@ nav.tabs button.active .tdot{background:var(--cyan);}
           <button class="cat-btn" onclick="setCat(this,'handwriting')">Script</button>
         </div>
       </div>
-      <!-- Font Grid -->
-      <div id="font-grid" style="overflow-y:auto;padding:16px 24px;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
-      </div>
-      <!-- Preview bar + actions -->
-      <div style="padding:16px 24px;border-top:1.5px solid var(--border);background:var(--surface2);">
-        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:8px;">Preview ao vivo</div>
-        <div id="modal-preview-text" style="font-size:2rem;font-weight:700;color:var(--text);line-height:1.2;min-height:52px;transition:font-family .2s;">Aa — Design que Converte</div>
-        <div style="margin-top:12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
-          <button class="btn btn-black btn-sm" onclick="confirmFont()" id="btn-confirm-font">✓ Usar esta fonte</button>
-          <span id="modal-selected-name" style="font-size:.8rem;color:var(--text3);">Nenhuma fonte selecionada</span>
+      <div id="font-grid" style="overflow-y:auto;padding:14px 22px;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px;"></div>
+      <div style="padding:14px 22px;border-top:1px solid var(--border);background:var(--surface2);">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:7px;">Preview ao vivo</div>
+        <div id="modal-preview-text" style="font-size:1.9rem;font-weight:700;color:var(--text);line-height:1.2;min-height:50px;transition:font-family .2s;">Aa — Design que Converte</div>
+        <div style="margin-top:11px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-violet btn-sm" onclick="confirmFont()" id="btn-confirm-font">✓ Usar esta fonte</button>
+          <span id="modal-selected-name" style="font-size:.79rem;color:var(--text3);">Nenhuma selecionada</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
-    <!-- COLUNA ESQUERDA -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;">
     <div>
-      <!-- Configurar + Camadas -->
       <div class="card">
         <div class="card-hdr">
           <span class="card-title"><span class="cticon">⚙️</span>Configurar</span>
           <div style="display:flex;gap:7px;">
-            <button class="btn btn-cyan btn-sm" onclick="gerarFontes()">⚡ Auto-combinar</button>
-            <button class="btn btn-out btn-sm" onclick="regenerarFontesSoltas()">🔄 Regenerar soltas</button>
+            <button class="btn btn-violet btn-sm" onclick="gerarFontes()">⚡ Auto-combinar</button>
+            <button class="btn btn-out btn-sm" onclick="regenerarFontesSoltas()">🔄 Regenerar</button>
           </div>
         </div>
         <div class="field">
@@ -600,110 +677,99 @@ nav.tabs button.active .tdot{background:var(--cyan);}
         </div>
         <div class="field">
           <label>Contexto de uso</label>
-          <input type="text" id="typo-ctx" placeholder="Ex: Instagram, site, apresentação...">
+          <select id="typo-ctx">
+            <option value="">Geral</option>
+            <option>Instagram Feed</option><option>Stories</option>
+            <option>LinkedIn</option><option>Site/Blog</option>
+            <option>Apresentação</option><option>Email Marketing</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+        <div style="font-size:.74rem;font-weight:600;color:var(--text2);margin-bottom:10px;">Camadas tipográficas</div>
+
+        <!-- Layer rows -->
+        <div style="display:flex;flex-direction:column;">
+          <div class="layer-row" style="border-bottom:1px solid var(--border);">
+            <div class="layer-meta">
+              <div><div class="layer-tag">H1</div></div>
+              <div>
+                <div class="layer-label">Título</div>
+                <div class="layer-font-name" id="fname-h">Não definida</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:7px;align-items:center;">
+              <div id="lprev-h" style="font-size:1.1rem;font-weight:700;color:var(--text);transition:font-family .3s;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Aa</div>
+              <button class="lock-layer-btn" id="lock-h" onclick="toggleFL('h')" title="Lock">🔓</button>
+              <button class="btn btn-violet btn-xs" onclick="openModal('h')">Escolher</button>
+            </div>
+          </div>
+          <div class="layer-row" style="border-bottom:1px solid var(--border);">
+            <div class="layer-meta">
+              <div><div class="layer-tag">H2</div></div>
+              <div>
+                <div class="layer-label">Subtítulo</div>
+                <div class="layer-font-name" id="fname-s">Não definida</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:7px;align-items:center;">
+              <div id="lprev-s" style="font-size:1rem;font-weight:600;color:var(--text);transition:font-family .3s;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Aa</div>
+              <button class="lock-layer-btn" id="lock-s" onclick="toggleFL('s')" title="Lock">🔓</button>
+              <button class="btn btn-out btn-xs" onclick="openModal('s')">Escolher</button>
+            </div>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div><div class="layer-tag" style="background:var(--cyan-l);color:var(--cyan);border-color:var(--cyan-m);">Body</div></div>
+              <div>
+                <div class="layer-label">Corpo</div>
+                <div class="layer-font-name" id="fname-b">Não definida</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:7px;align-items:center;">
+              <div id="lprev-b" style="font-size:.9rem;color:var(--text2);transition:font-family .3s;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Aa</div>
+              <button class="lock-layer-btn" id="lock-b" onclick="toggleFL('b')" title="Lock">🔓</button>
+              <button class="btn btn-ghost btn-xs" onclick="openModal('b')">Escolher</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Camadas de Fonte -->
+      <!-- Upload / External -->
       <div class="card">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">✍️</span>Camadas de Fonte</span></div>
-
-        <!-- H1 -->
-        <div class="layer-row" id="layer-h">
-          <div class="layer-meta">
-            <span class="layer-tag">H1</span>
-            <div>
-              <div class="layer-label">Título</div>
-              <div class="layer-font-name" id="fname-h">Não definida</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="lock-layer-btn" id="lock-h" onclick="toggleFL('h')">🔓</button>
-            <button class="btn btn-black btn-xs" onclick="openModal('h')">Escolher</button>
-          </div>
-        </div>
-        <div class="layer-preview" id="lprev-h" style="font-size:1.9rem;font-weight:800;">Título — Design</div>
-
-        <div class="divider"></div>
-
-        <!-- H2 -->
-        <div class="layer-row" id="layer-s">
-          <div class="layer-meta">
-            <span class="layer-tag" style="background:#f0f4ff;color:#5a67d8;">H2</span>
-            <div>
-              <div class="layer-label">Subtítulo</div>
-              <div class="layer-font-name" id="fname-s">Não definida</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="lock-layer-btn" id="lock-s" onclick="toggleFL('s')">🔓</button>
-            <button class="btn btn-black btn-xs" onclick="openModal('s')">Escolher</button>
-          </div>
-        </div>
-        <div class="layer-preview" id="lprev-s" style="font-size:1.1rem;font-weight:500;">Subtítulo — A estratégia por trás de cada escolha</div>
-
-        <div class="divider"></div>
-
-        <!-- Body -->
-        <div class="layer-row" id="layer-b">
-          <div class="layer-meta">
-            <span class="layer-tag" style="background:#f0fff4;color:#38a169;">P</span>
-            <div>
-              <div class="layer-label">Corpo</div>
-              <div class="layer-font-name" id="fname-b">Não definida</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="lock-layer-btn" id="lock-b" onclick="toggleFL('b')">🔓</button>
-            <button class="btn btn-black btn-xs" onclick="openModal('b')">Escolher</button>
-          </div>
-        </div>
-        <div class="layer-preview" id="lprev-b" style="font-size:.83rem;line-height:1.75;">Corpo — Cada detalhe tipográfico comunica antes mesmo do conteúdo ser lido.</div>
-      </div>
-
-      <!-- Fontes Externas -->
-      <div class="card">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">🔗</span>Fontes Externas</span></div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <!-- Upload -->
+        <div class="card-hdr"><span class="card-title"><span class="cticon">📁</span>Importar fonte</span></div>
+        <div style="display:flex;flex-direction:column;gap:11px;">
           <div>
-            <div class="field" style="margin-bottom:6px;"><label>📁 Upload do computador (.ttf, .otf, .woff, .woff2)</label></div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-              <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
-                📁 Escolher arquivo
-                <input type="file" id="font-upload" accept=".ttf,.otf,.woff,.woff2" onchange="loadUploadedFont()" style="display:none;">
-              </label>
-              <span id="upload-status" style="font-size:.75rem;color:var(--text3);">Nenhum arquivo</span>
-            </div>
-            <div id="upload-font-row" style="display:none;margin-top:10px;"></div>
+            <div class="sec-label">Upload do computador</div>
+            <input type="file" id="font-upload" accept=".ttf,.otf,.woff,.woff2" onchange="loadUploadedFont()" style="font-size:.78rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;width:100%;">
+            <div id="upload-status" style="font-size:.72rem;color:var(--text3);margin-top:5px;"></div>
+            <div id="upload-font-row" style="display:none;margin-top:8px;"></div>
           </div>
           <div class="divider"></div>
-          <!-- URL externa -->
           <div>
-            <div class="field" style="margin-bottom:6px;"><label>🌐 Link de fonte externa (CSS @font-face URL)</label></div>
-            <div style="display:flex;gap:7px;">
-              <input type="text" id="ext-font-url" placeholder="https://fonts.googleapis.com/css2?family=..." style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);font-size:.8rem;outline:none;font-family:Inter,sans-serif;">
-              <input type="text" id="ext-font-name" placeholder="Nome" style="width:110px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);font-size:.8rem;outline:none;font-family:Inter,sans-serif;">
-              <button class="btn btn-out btn-sm" onclick="loadExternalFont()">Carregar</button>
+            <div class="sec-label">Link Google Fonts / externo</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <input type="text" id="ext-font-url" placeholder="https://fonts.googleapis.com/css2?family=..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:.8rem;color:var(--text);outline:none;font-family:'Outfit',sans-serif;">
+              <input type="text" id="ext-font-name" placeholder="Nome da fonte (opcional)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:.8rem;color:var(--text);outline:none;font-family:'Outfit',sans-serif;">
+              <button class="btn btn-cyan btn-sm" onclick="loadExternalFont()">↗ Carregar</button>
             </div>
-            <div id="ext-font-row" style="display:none;margin-top:10px;"></div>
+            <div id="ext-font-row" style="display:none;margin-top:8px;"></div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Análise da IA</span></div>
-        <div id="typo-ai"><div class="empty" style="padding:12px 0;"><p>A IA explicará a lógica da combinação</p></div></div>
+        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Análise tipográfica da IA</span></div>
+        <div id="typo-ai"><div class="empty" style="padding:10px 0;"><p>A IA explicará a combinação após gerar</p></div></div>
       </div>
     </div>
 
-    <!-- COLUNA DIREITA -->
+    <!-- DIREITA -->
     <div>
       <div class="card">
         <div class="card-hdr"><span class="card-title"><span class="cticon">👁</span>Preview Tipográfico</span></div>
-        <div id="typo-prev"><div class="empty"><div class="ico">🖊</div><p>Escolha fontes para ver o preview</p></div></div>
+        <div id="typo-prev"><div class="empty"><div class="ico">🖊</div><p>Escolha fontes para ver o preview com suas cores</p></div></div>
       </div>
-      <!-- Spec Card -->
       <div class="card" id="typo-spec-card" style="display:none;">
         <div class="card-hdr"><span class="card-title"><span class="cticon">📐</span>Especificações</span></div>
         <div id="typo-spec"></div>
@@ -714,16 +780,16 @@ nav.tabs button.active .tdot{background:var(--cyan);}
 
 <!-- ══ ABA SOCIAL ══ -->
 <div class="tab-content" id="tab-social">
-  <p class="page-title">Social Media Intelligence</p>
-  <p class="page-sub">Pensa como Designer + Social Media · Conteúdo estratégico · Referências visuais brasileiras</p>
-
-
+  <div class="page-hdr">
+    <p class="page-title">Social Media Intelligence</p>
+    <p class="page-sub">Pensa como Designer + Social Media · Conteúdo estratégico · Referências visuais brasileiras</p>
+  </div>
   <div class="g2">
     <div>
       <div class="card">
         <div class="card-hdr">
-          <span class="card-title"><span class="cticon">📋</span>Brief</span>
-          <button class="btn btn-cyan btn-sm" onclick="gerarConteudo()">⚡ Gerar 2 sugestões</button>
+          <span class="card-title"><span class="cticon">📋</span>Brief do conteúdo</span>
+          <button class="btn btn-violet btn-sm" onclick="gerarConteudo()">⚡ Gerar 2 sugestões</button>
         </div>
         <div class="field">
           <label>Tema / Assunto</label>
@@ -731,7 +797,7 @@ nav.tabs button.active .tdot{background:var(--cyan);}
         </div>
         <div class="field">
           <label>Público-alvo</label>
-          <input type="text" id="sm-pub" placeholder="Ex: Empreendedoras 30-45, estudantes...">
+          <input type="text" id="sm-pub" placeholder="Ex: Empreendedoras 30-45, estudantes de design...">
         </div>
         <div class="field">
           <label>Tom de voz</label>
@@ -761,12 +827,12 @@ nav.tabs button.active .tdot{background:var(--cyan);}
       </div>
 
       <div class="card" id="reform-sec" style="display:none;">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">🔁</span>Reformular Ideia</span></div>
+        <div class="card-hdr"><span class="card-title"><span class="cticon">🔁</span>Reformular ideia</span></div>
         <div class="field">
-          <label>Direção baseada na sugestão 1 ou 2</label>
-          <textarea id="reform-in" placeholder="Ex: Gostei da ideia 1 mas quero tom mais bem-humorado e emojis..."></textarea>
+          <label>Direção com base na sugestão 1 ou 2</label>
+          <textarea id="reform-in" placeholder="Ex: Gostei da ideia 1 mas quero tom mais bem-humorado e com emojis..."></textarea>
         </div>
-        <button class="btn btn-black btn-sm" onclick="reformular()">🔁 Reformular com IA</button>
+        <button class="btn btn-violet btn-sm" onclick="reformular()">🔁 Reformular com IA</button>
       </div>
     </div>
     <div>
@@ -778,80 +844,98 @@ nav.tabs button.active .tdot{background:var(--cyan);}
   </div>
 </div>
 
-<!-- ══ ABA PREVIEW ══ -->
+<!-- ══ ABA PREVIEW & IMAGEM ══ -->
 <div class="tab-content" id="tab-preview">
-  <p class="page-title">Preview Final</p>
-  <p class="page-sub">Groq analisa o contexto → monta prompt criativo → Stability AI gera a imagem estratégica</p>
-
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;">
-    <div class="fmt-wrap" style="margin-bottom:0;">
-      <button class="fmt-btn on" onclick="setFmt(this,'feed')">📸 Feed 1:1</button>
-      <button class="fmt-btn" onclick="setFmt(this,'stories')">⭕ Stories 9:16</button>
-      <button class="fmt-btn" onclick="setFmt(this,'banner')">💼 Banner LinkedIn</button>
-      <button class="fmt-btn" onclick="setFmt(this,'youtube')">▶️ Capa YouTube</button>
-    </div>
+  <div class="page-hdr">
+    <p class="page-title">Preview Final & Geração de Imagem</p>
+    <p class="page-sub">Groq cria prompt criativo → Puter.js FLUX.1-schnell gera a imagem · A cor de fundo é aplicada automaticamente no modelo</p>
   </div>
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;">
-    <button class="btn btn-black" onclick="gerarPreview()">⚡ Preview HTML</button>
-    <button class="btn btn-cyan" onclick="gerarImagemAI()" id="btn-gerar-img">🎨 Gerar Imagem com IA</button>
-    <span id="img-gen-status" style="font-size:.76rem;color:var(--text3);"></span>
+  <!-- Formato e ações -->
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;">
+    <div class="fmt-wrap" style="margin-bottom:0;flex:1;">
+      <button class="fmt-btn on" onclick="setFmt(this,'feed')">📸 Feed 1:1</button>
+      <button class="fmt-btn" onclick="setFmt(this,'stories')">⭕ Stories 9:16</button>
+      <button class="fmt-btn" onclick="setFmt(this,'banner')">💼 LinkedIn Banner</button>
+      <button class="fmt-btn" onclick="setFmt(this,'youtube')">▶️ Capa YouTube</button>
+    </div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="gerarPreview()">👁 Preview HTML</button>
+      <button class="btn btn-violet" onclick="gerarImagemAI()" id="btn-gerar-img">✦ Gerar com FLUX</button>
+      <span id="img-gen-status" style="font-size:.74rem;color:var(--text3);"></span>
+    </div>
   </div>
 
   <div class="g2">
     <div>
-      <!-- HTML PREVIEW -->
-      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--border2);display:inline-block;"></span>Preview HTML</div>
-      <div class="prev-outer" style="margin-bottom:16px;">
+      <!-- HTML Preview -->
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;"></span>Preview HTML
+      </div>
+      <div class="prev-outer" style="margin-bottom:14px;">
         <div class="prev-bar">
-          <div class="prev-dot" style="background:#fc5c5c;"></div>
-          <div class="prev-dot" style="background:#fdbc2c;"></div>
-          <div class="prev-dot" style="background:#27c840;"></div>
+          <div class="prev-dot" style="background:#F87171;"></div>
+          <div class="prev-dot" style="background:#FBBF24;"></div>
+          <div class="prev-dot" style="background:#34D399;"></div>
         </div>
         <div class="prev-inner" id="prev-canvas">
-          <div class="empty" style="min-height:320px;"><div class="ico">🖼</div><p>Configure as outras abas e clique em "Preview HTML"</p></div>
+          <div class="empty" style="min-height:300px;"><div class="ico">🖼</div><p>Configure as abas anteriores e clique em "Preview HTML"</p></div>
         </div>
       </div>
 
-      <!-- AI IMAGE -->
-      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>Imagem Gerada pela IA</div>
-      <div class="prev-outer" id="img-outer" style="min-height:340px;position:relative;">
+      <!-- AI Image -->
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--violet);display:inline-block;animation:pulse 2s infinite;"></span>Imagem gerada com FLUX.1-schnell
+      </div>
+      <div class="prev-outer" id="img-outer" style="min-height:320px;">
         <div class="prev-bar">
-          <div class="prev-dot" style="background:#fc5c5c;"></div>
-          <div class="prev-dot" style="background:#fdbc2c;"></div>
-          <div class="prev-dot" style="background:#27c840;"></div>
-          <span style="margin-left:8px;font-size:.7rem;color:var(--text3);">Stability AI · Stable Image Core</span>
+          <div class="prev-dot" style="background:#F87171;"></div>
+          <div class="prev-dot" style="background:#FBBF24;"></div>
+          <div class="prev-dot" style="background:#34D399;"></div>
+          <span style="margin-left:8px;font-size:.68rem;color:var(--text3);">Puter.js · FLUX.1-schnell · Black Forest Labs</span>
         </div>
-        <div id="img-canvas" style="min-height:300px;display:flex;align-items:center;justify-content:center;">
-          <div class="empty" style="min-height:280px;"><div class="ico">✨</div><p>Clique em "Gerar Imagem com IA" para criar</p><p style="font-size:.72rem;margin-top:4px;color:var(--text3);">Requer Stability AI key no topo</p></div>
+        <div id="img-canvas" style="min-height:280px;display:flex;align-items:center;justify-content:center;">
+          <div class="empty" style="min-height:260px;">
+            <div class="ico">✦</div>
+            <p>Clique em "Gerar com FLUX" para criar sua imagem</p>
+            <p style="font-size:.72rem;margin-top:4px;color:var(--text3);">100% gratuito via Puter.js — sem API key de imagem</p>
+          </div>
         </div>
       </div>
 
-      <!-- PROMPT DISPLAY -->
-      <div class="card" style="margin-top:12px;" id="prompt-card" style="display:none;">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">📝</span>Prompt Gerado pelo Groq</span>
+      <!-- Prompt card -->
+      <div class="card" style="margin-top:11px;display:none;" id="prompt-card">
+        <div class="card-hdr">
+          <span class="card-title"><span class="cticon">📝</span>Prompt gerado pelo Groq</span>
           <button class="btn btn-ghost btn-xs" onclick="copyPrompt()">📋 Copiar</button>
         </div>
-        <div id="prompt-display" style="font-size:.75rem;color:var(--text2);line-height:1.7;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:13px;font-family:monospace;white-space:pre-wrap;"></div>
+        <div id="prompt-display" style="font-size:.74rem;color:var(--text2);line-height:1.75;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;font-family:monospace;white-space:pre-wrap;"></div>
       </div>
     </div>
+
+    <!-- DIREITA -->
     <div>
       <div class="card">
-        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Decisões de Design da IA</span></div>
-        <div id="prev-ai"><div class="empty" style="padding:14px 0;"><p>A IA explicará cada decisão visual após gerar</p></div></div>
+        <div class="card-hdr"><span class="card-title"><span class="cticon">🧠</span>Decisões de design da IA</span></div>
+        <div id="prev-ai"><div class="empty" style="padding:12px 0;"><p>A IA explicará cada decisão visual após gerar</p></div></div>
       </div>
+
       <div class="card">
         <div class="card-hdr"><span class="card-title"><span class="cticon">⭐</span>Avalie esta combinação</span></div>
-        <p style="font-size:.76rem;color:var(--text3);margin-bottom:11px;">Quanto mais você avalia, mais o sistema aprende seu gosto.</p>
+        <p style="font-size:.75rem;color:var(--text3);margin-bottom:10px;">Quanto mais você avalia, mais o sistema aprende seu gosto.</p>
         <div class="stars" id="stars-row">
-          <span class="star" onclick="rate(1)">⭐</span><span class="star" onclick="rate(2)">⭐</span>
-          <span class="star" onclick="rate(3)">⭐</span><span class="star" onclick="rate(4)">⭐</span>
+          <span class="star" onclick="rate(1)">⭐</span>
+          <span class="star" onclick="rate(2)">⭐</span>
+          <span class="star" onclick="rate(3)">⭐</span>
+          <span class="star" onclick="rate(4)">⭐</span>
           <span class="star" onclick="rate(5)">⭐</span>
         </div>
-        <div id="rating-fb" style="margin-top:9px;font-size:.76rem;color:var(--text3);"></div>
-        <div class="divider"></div>
-        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:7px;">Preferências aprendidas</div>
-        <div id="learned"><div class="empty" style="padding:8px 0;"><p>Nenhuma avaliação ainda</p></div></div>
+        <div id="rating-wrap" style="display:none;">
+          <div id="rating-fb" style="margin-top:8px;font-size:.75rem;color:var(--text3);"></div>
+          <div class="divider"></div>
+          <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Preferências aprendidas</div>
+          <div id="learned"><div class="empty" style="padding:6px 0;"><p>Nenhuma avaliação ainda</p></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -859,61 +943,53 @@ nav.tabs button.active .tdot{background:var(--cyan);}
 
 <script>
 // ══ STATE ══
-const S={
-  palette:[],locked:new Set(),
-  fonts:{h:null,s:null,b:null},fLocked:new Set(),
-  content:[],selected:null,
-  channel:'feed',format:'feed',
-  ratings:[],prefs:{ctx:{},font:{}},
-  ctx:'Qualquer',ct:4.5
+const S = {
+  palette: [], locked: new Set(),
+  fonts: { h: null, s: null, b: null }, fLocked: new Set(),
+  content: [], selected: null, selectedContent: null,
+  channel: 'feed', format: 'feed',
+  ratings: [], prefs: { ctx: {}, font: {} },
+  ctx: 'Qualquer', ct: 4.5,
+  lastImageUrl: null
 };
 
-// ══ UTILS ══
-function showTab(n,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+n).classList.add('active');
+// ══ INIT / ONBOARDING ══
+function showTab(n, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + n).classList.add('active');
   btn.classList.add('active');
 }
-function setLoad(id,msg='Analisando com IA'){
-  document.getElementById(id).innerHTML=`<div class="loading"><div class="dots"><span></span><span></span><span></span></div>${msg}...</div>`;
+
+function setLoad(id, msg = 'Analisando com IA') {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = `<div class="loading"><div class="dots"><span></span><span></span><span></span></div>${msg}...</div>`;
 }
-function hRgb(h){return{r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)};}
-function lum({r,g,b}){return[r,g,b].map(c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);}).reduce((a,c,i)=>a+c*[.2126,.7152,.0722][i],0);}
-function cr(h1,h2){const l1=lum(hRgb(h1)),l2=lum(hRgb(h2));return+((Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)).toFixed(2);}
 
-// ══ API KEY ══
-// ══ API KEYS (localStorage) ══
-function getGroqKey()      { return localStorage.getItem('dm_groq_key') || ''; }
-function getStabilityKey() { return localStorage.getItem('dm_stab_key') || ''; }
-function getUserName()     { return localStorage.getItem('dm_user_name') || 'Designer'; }
+function hRgb(h) { return { r: parseInt(h.slice(1,3),16), g: parseInt(h.slice(3,5),16), b: parseInt(h.slice(5,7),16) }; }
+function lum({ r, g, b }) { return [r,g,b].map(c => { c/=255; return c<=.03928 ? c/12.92 : Math.pow((c+.055)/1.055,2.4); }).reduce((a,c,i) => a+c*[.2126,.7152,.0722][i], 0); }
+function cr(h1, h2) { const l1=lum(hRgb(h1)), l2=lum(hRgb(h2)); return +((Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)).toFixed(2); }
 
-// ══ ONBOARDING ══
+function getGroqKey()  { return localStorage.getItem('dm_groq_key') || ''; }
+function getUserName() { return localStorage.getItem('dm_user_name') || 'Designer'; }
+
 function obEnter() {
   const name = document.getElementById('ob-name').value.trim();
-  const groq = document.getElementById('ob-groq').value.trim();
-  const err  = document.getElementById('ob-err');
-
+  const groq  = document.getElementById('ob-groq').value.trim();
+  const err   = document.getElementById('ob-err');
   if (!groq || !groq.startsWith('gsk_')) {
-    err.style.display='block';
-    err.textContent='⚠️ Cole uma Groq API Key válida (começa com gsk_)';
+    err.style.display = 'block';
+    err.textContent = '⚠️ Cole uma Groq API Key válida (começa com gsk_)';
     return;
   }
-
   err.style.display = 'none';
   localStorage.setItem('dm_user_name', name || 'Designer');
-  localStorage.setItem('dm_groq_key',  groq);
-  // Pollinations não precisa de key
-
-  // Update greeting
+  localStorage.setItem('dm_groq_key', groq);
   const greet = document.getElementById('user-greeting');
   if (greet) greet.textContent = 'Olá, ' + (name || 'Designer') + ' 👋';
-
-  // Hide onboarding, show app
   document.getElementById('onboarding').style.display = 'none';
 }
 
-// Check on load — skip onboarding if keys already saved
 window.addEventListener('DOMContentLoaded', () => {
   const groq = getGroqKey();
   if (groq && groq.startsWith('gsk_')) {
@@ -921,110 +997,98 @@ window.addEventListener('DOMContentLoaded', () => {
     const greet = document.getElementById('user-greeting');
     if (greet) greet.textContent = 'Olá, ' + getUserName() + ' 👋';
   }
-  // Allow Enter key on onboarding inputs
-  ['ob-name','ob-groq'].forEach(id => {
+  ['ob-name', 'ob-groq'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', e => { if(e.key==='Enter') obEnter(); });
+    if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') obEnter(); });
   });
+  updatePar(0, 0);
 });
-
-function checkApiKey(){}
-function checkStabilityKey(){}
 
 // ══ GROQ API ══
 async function callAI(prompt, sys = '') {
   const key = getGroqKey();
   if (!key) return '❌ Configure sua Groq API Key.';
-
   const systemPrompt = sys || 'Você é designer estratégico e Social Media expert brasileiro. Respostas concisas e práticas.';
   let res, d;
   try {
     res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + key
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        max_tokens: 1400,
-        temperature: 0.75,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user',   content: prompt }
-        ]
+        max_tokens: 1400, temperature: 0.75,
+        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }]
       })
     });
-  } catch (err) {
-    console.error('Groq error:', err);
-    return '❌ Erro de rede. Verifique sua conexão.';
-  }
-
-  try { d = await res.json(); } catch {
-    return '❌ Resposta inválida (status ' + res.status + ')';
-  }
-
+  } catch (err) { return '❌ Erro de rede. Verifique sua conexão.'; }
+  try { d = await res.json(); } catch { return '❌ Resposta inválida (status ' + res.status + ')'; }
   if (!res.ok) {
-    const msg = d?.error?.message || ('HTTP ' + res.status);
     if (res.status === 401) return '❌ Groq Key inválida ou expirada.';
     if (res.status === 429) return '❌ Rate limit atingido. Aguarde alguns segundos.';
-    return '❌ Groq ' + res.status + ': ' + msg;
+    return '❌ Groq ' + res.status + ': ' + (d?.error?.message || 'Erro');
   }
-
   return d.choices?.[0]?.message?.content?.trim() || '⚠️ Resposta vazia.';
 }
 
 // ══ CONTEXT / CONTRAST ══
-function setCtx(el,ctx){
-  document.querySelectorAll('#ctx-btns .pill-out').forEach(p=>{p.classList.remove('on');p.style.cssText='';});
-  el.classList.add('on');el.style.background='var(--black)';el.style.color='#fff';el.style.borderColor='var(--black)';
-  S.ctx=ctx;
+function setCtx(el, ctx) {
+  document.querySelectorAll('#ctx-btns .pill-out').forEach(p => { p.classList.remove('on'); });
+  el.classList.add('on');
+  S.ctx = ctx;
 }
-function setCT(v,el){
-  S.ct=v;
-  ['ct0','ct1','ct2'].forEach(id=>{const e=document.getElementById(id);e.classList.remove('on');e.style.cssText='';});
-  el.classList.add('on');el.style.background='var(--black)';el.style.color='#fff';el.style.borderColor='var(--black)';
-  document.getElementById('ct-slider').value=v;
-  document.getElementById('ct-val').textContent=v+':1';
-}
-function updateSlider(){
-  const v=document.getElementById('ct-slider').value;
-  document.getElementById('ct-val').textContent=parseFloat(v).toFixed(1)+':1';
-  S.ct=parseFloat(v);
-}
-function gerarCoresH(h){gerarCores(h);}
 
-// ══ PALETTES ══
-const PAL={
-  'Qualquer':['#0a0a0a','#22d4e0','#d4d4d4','#f5f5f5','#3a3a3a'],
-  'Editorial':['#1B1B2F','#E94560','#F5F5F5','#A8A8B3','#0F3460'],
-  'E-commerce':['#FF6B35','#004E89','#F7F7F7','#FFC914','#1A1A2E'],
-  'Saúde':['#2A9D8F','#E9C46A','#F4F1DE','#264653','#E76F51'],
-  'Tech':['#0a0a0a','#22d4e0','#F0F4F8','#5A67D8','#2D3748'],
-  'Luxo':['#1C1C1E','#C9A84C','#F5F0E8','#8B7355','#3D3D3D'],
-  'Infantil':['#FF6B9D','#FFC300','#00D9C0','#FFFFFF','#FF8C42'],
-  'default':['#0a0a0a','#22d4e0','#d4d4d4','#f5f5f5','#3a3a3a']
+function setCT(v, el) {
+  S.ct = v;
+  ['ct0','ct1','ct2'].forEach(id => { document.getElementById(id).classList.remove('on'); });
+  el.classList.add('on');
+  document.getElementById('ct-slider').value = v;
+  document.getElementById('ct-val').textContent = v + ':1';
+}
+
+function updateSlider() {
+  const v = document.getElementById('ct-slider').value;
+  document.getElementById('ct-val').textContent = parseFloat(v).toFixed(1) + ':1';
+  S.ct = parseFloat(v);
+}
+
+function gerarCoresH(h) { gerarCores(h); }
+
+// ══ PALETTE PRESETS ══
+const PAL = {
+  'Qualquer':   ['#0a0a0a','#7C5CF6','#d4d4d4','#f5f5f5','#3a3a3a'],
+  'Editorial':  ['#1B1B2F','#E94560','#F5F5F5','#A8A8B3','#0F3460'],
+  'E-commerce': ['#FF6B35','#004E89','#F7F7F7','#FFC914','#1A1A2E'],
+  'Saúde':      ['#2A9D8F','#E9C46A','#F4F1DE','#264653','#E76F51'],
+  'Tech':       ['#0a0a0a','#22D3EE','#F0F4F8','#5A67D8','#2D3748'],
+  'Luxo':       ['#1C1C1E','#C9A84C','#F5F0E8','#8B7355','#3D3D3D'],
+  'Infantil':   ['#FF6B9D','#FFC300','#00D9C0','#FFFFFF','#FF8C42'],
+  'default':    ['#0a0a0a','#7C5CF6','#d4d4d4','#f5f5f5','#3a3a3a']
 };
-const NAMES=['Fundo','Principal','Neutro','Neutro 2','Escuro'];
+const NAMES = ['Fundo', 'Principal', 'Neutro', 'Neutro 2', 'Escuro'];
 
-async function gerarCores(harm){
-  setLoad('palette-display','Criando paleta');setLoad('cor-ai-output','Analisando semântica cromática');
-  const base=PAL[S.ctx]||PAL['default'];
-  const np=base.map((c,i)=>S.locked.has(i)?S.palette[i]||c:c);
-  S.palette=np;
-  renderPal();updatePar(0,1);syncPickersFromPalette();
-  const prompt=`Como designer estratégico, analise esta paleta para o contexto "${S.ctx}" (harmonia ${harm||'análoga'}):\nCores: ${np.join(', ')}\nEm 3-4 frases curtas: por que estas cores funcionam, psicologia das escolhas, como usar. Português brasileiro, prático.`;
-  const r=await callAI(prompt,'Designer especialista em psicologia das cores. Português brasileiro, direto e prático.');
-  document.getElementById('cor-ai-output').innerHTML=`<div class="ai-label">Análise estratégica</div><div class="ai-box">${r}</div>`;
+async function gerarCores(harm) {
+  setLoad('palette-display', 'Criando paleta');
+  setLoad('cor-ai-output', 'Analisando semântica cromática');
+  const base = PAL[S.ctx] || PAL['default'];
+  const np = base.map((c, i) => S.locked.has(i) ? (S.palette[i] || c) : c);
+  S.palette = np;
+  renderPal();
+  updatePar(0, 1);
+  syncPickersFromPalette();
+  updateLiveMockup();
+  const prompt = `Como designer estratégico, analise esta paleta para o contexto "${S.ctx}" (harmonia ${harm||'análoga'}):\nCores: ${np.join(', ')}\nEm 3-4 frases curtas: por que estas cores funcionam, psicologia das escolhas, como usar. Português brasileiro, prático.`;
+  const r = await callAI(prompt, 'Designer especialista em psicologia das cores. Português brasileiro, direto e prático.');
+  document.getElementById('cor-ai-output').innerHTML = `<div class="ai-label">Análise estratégica</div><div class="ai-box">${r}</div>`;
 }
 
-function renderPal(){
-  const p=S.palette;if(!p.length)return;
-  let h='<div class="swatches-row">';
-  p.forEach((c,i)=>{
-    const lk=S.locked.has(i);
-    const ratio=i>0?cr(p[0],c):'—';
-    h+=`<div class="sw-wrap">
+function renderPal() {
+  const p = S.palette;
+  if (!p.length) return;
+  let h = '<div class="swatches-row">';
+  p.forEach((c, i) => {
+    const lk = S.locked.has(i);
+    const ratio = i > 0 ? cr(p[0], c) : '—';
+    h += `<div class="sw-wrap">
       <div class="swatch ${lk?'locked':''}" style="background:${c}" onclick="onSw(${i})">
         <button class="lock-ic">${lk?'🔒':'🔓'}</button>
       </div>
@@ -1035,97 +1099,125 @@ function renderPal(){
       </div>
     </div>`;
   });
-  h+=`<div class="add-sw"><span>+</span><span class="lbl">Adicionar</span></div></div>`;
-  document.getElementById('palette-display').innerHTML=h;
+  h += `<div class="add-sw"><span>+</span><span class="lbl">Adicionar</span></div></div>`;
+  document.getElementById('palette-display').innerHTML = h;
   renderMatrix();
 }
 
-function onSw(i){toggleLock(i);if(S.palette[i]&&S.palette[0])updatePar(0,i);}
-function toggleLock(i){if(S.locked.has(i))S.locked.delete(i);else S.locked.add(i);renderPal();}
+function onSw(i) { toggleLock(i); if (S.palette[i] && S.palette[0]) updatePar(0, i); }
+function toggleLock(i) { if (S.locked.has(i)) S.locked.delete(i); else S.locked.add(i); renderPal(); }
 
-function updatePar(a,b){
-  const p=S.palette;if(!p[a]||!p[b])return;
-  document.getElementById('par-a-sw').style.background=p[a];
-  document.getElementById('par-a-hex').textContent=p[a];
-  document.getElementById('par-a-nm').textContent=NAMES[a]||'Cor'+(a+1);
-  document.getElementById('par-b-sw').style.background=p[b];
-  document.getElementById('par-b-hex').textContent=p[b];
-  document.getElementById('par-b-nm').textContent=NAMES[b]||'Cor'+(b+1);
-  const ratio=cr(p[a],p[b]);
-  const el=document.getElementById('ratio-num');
-  el.innerHTML=`${ratio}<sup>:1</sup>`;
-  el.style.color=ratio>=7?'var(--green)':ratio>=4.5?'var(--cyan)':ratio>=3?'var(--yellow)':'var(--red)';
-  const checks=[
-    {l:'Texto normal AA',p:ratio>=4.5},
-    {l:'Texto normal AAA',p:ratio>=7},
-    {l:'Texto grande AA',p:ratio>=3},
-    {l:'Texto grande AAA',p:ratio>=4.5}
+function updatePar(a, b) {
+  const p = S.palette;
+  if (!p[a] || !p[b]) return;
+  document.getElementById('par-a-sw').style.background = p[a];
+  document.getElementById('par-a-hex').textContent = p[a];
+  document.getElementById('par-a-nm').textContent = NAMES[a] || ('Cor' + (a+1));
+  document.getElementById('par-b-sw').style.background = p[b];
+  document.getElementById('par-b-hex').textContent = p[b];
+  document.getElementById('par-b-nm').textContent = NAMES[b] || ('Cor' + (b+1));
+  const ratio = cr(p[a], p[b]);
+  const el = document.getElementById('ratio-num');
+  el.innerHTML = `${ratio}<sup>:1</sup>`;
+  el.style.color = ratio >= 7 ? 'var(--green)' : ratio >= 4.5 ? 'var(--cyan)' : ratio >= 3 ? 'var(--yellow)' : 'var(--red)';
+  const checks = [
+    { l: 'Texto normal AA', p: ratio >= 4.5 },
+    { l: 'Texto normal AAA', p: ratio >= 7 },
+    { l: 'Texto grande AA', p: ratio >= 3 },
+    { l: 'Texto grande AAA', p: ratio >= 4.5 }
   ];
-  document.getElementById('wcag-list').innerHTML=checks.map(c=>`<div class="wcag-row"><span class="lbl">${c.l}</span><span class="pill ${c.p?'pill-green':'pill-red'}">${c.p?'Aprovado':'Reprovado'}</span></div>`).join('');
+  document.getElementById('wcag-list').innerHTML = checks.map(c =>
+    `<div class="wcag-row"><span class="lbl">${c.l}</span><span class="pill ${c.p?'pill-green':'pill-red'}">${c.p?'✓ Aprovado':'✗ Reprovado'}</span></div>`
+  ).join('');
 }
 
-function renderMatrix(){
-  const p=S.palette;if(p.length<2)return;
-  let h='<div class="mx-wrap"><table class="mx-table"><thead><tr><th></th>';
-  p.forEach((_,i)=>h+=`<th><div style="width:24px;height:24px;background:${p[i]};border-radius:5px;border:1.5px solid var(--border);margin:0 auto;"></div><div style="font-size:.6rem;color:var(--text3);margin-top:2px;text-align:center;">${NAMES[i]||'C'+(i+1)}</div></th>`);
-  h+='</tr></thead><tbody>';
-  p.forEach((c,i)=>{
-    h+=`<tr><td><div style="width:24px;height:24px;background:${c};border-radius:5px;border:1.5px solid var(--border);"></div><div style="font-size:.6rem;color:var(--text3);margin-top:2px;">${NAMES[i]||'C'+(i+1)}</div></td>`;
-    p.forEach((c2,j)=>{
-      if(i===j){h+=`<td><div class="mx-cell em">—</div></td>`;return;}
-      const r=cr(c,c2);
-      const cls=r>=7?'aaa':r>=4.5?'aa':r>=3?'wn':'fl';
-      const lbl=r>=7?'AAA':r>=4.5?'AA':r>=3?'AA+':'FAIL';
-      h+=`<td><div class="mx-cell ${cls}" onclick="updatePar(${i},${j})" title="Clique p/ analisar">${r}:1<br><span style="font-size:.6rem;">${lbl}</span></div></td>`;
+function renderMatrix() {
+  const p = S.palette;
+  if (p.length < 2) return;
+  let h = '<div class="mx-wrap"><table class="mx-table"><thead><tr><th></th>';
+  p.forEach((_, i) => h += `<th><div style="width:22px;height:22px;background:${p[i]};border-radius:5px;border:1px solid var(--border2);margin:0 auto;"></div><div style="font-size:.59rem;color:var(--text3);margin-top:2px;text-align:center;">${NAMES[i]||'C'+(i+1)}</div></th>`);
+  h += '</tr></thead><tbody>';
+  p.forEach((c, i) => {
+    h += `<tr><td><div style="width:22px;height:22px;background:${c};border-radius:5px;border:1px solid var(--border2);"></div><div style="font-size:.59rem;color:var(--text3);margin-top:2px;">${NAMES[i]||'C'+(i+1)}</div></td>`;
+    p.forEach((c2, j) => {
+      if (i === j) { h += `<td><div class="mx-cell em">—</div></td>`; return; }
+      const r = cr(c, c2);
+      const cls = r>=7?'aaa':r>=4.5?'aa':r>=3?'wn':'fl';
+      const lbl = r>=7?'AAA':r>=4.5?'AA':r>=3?'AA+':'FAIL';
+      h += `<td><div class="mx-cell ${cls}" onclick="updatePar(${i},${j})" title="Clique p/ analisar">${r}:1<br><span style="font-size:.6rem;">${lbl}</span></div></td>`;
     });
-    h+='</tr>';
+    h += '</tr>';
   });
-  h+='</tbody></table></div>';
-  document.getElementById('wcag-display').innerHTML=h;
+  h += '</tbody></table></div>';
+  document.getElementById('wcag-display').innerHTML = h;
 }
 
-async function regenerarSoltas(){
-  if(!S.palette.length){await gerarCores();return;}
-  const base=PAL[S.ctx]||PAL['default'];
-  S.palette=S.palette.map((c,i)=>S.locked.has(i)?c:base[i]||c);
-  renderPal();if(S.palette[0]&&S.palette[1])updatePar(0,1);
+async function regenerarSoltas() {
+  if (!S.palette.length) { await gerarCores(); return; }
+  const base = PAL[S.ctx] || PAL['default'];
+  S.palette = S.palette.map((c, i) => S.locked.has(i) ? c : (base[i] || c));
+  renderPal();
+  if (S.palette[0] && S.palette[1]) updatePar(0, 1);
+  updateLiveMockup();
 }
 
-// ══ COLOR PICKERS MANUAL ══
+// ══ LIVE MOCKUP UPDATE ══
+function updateLiveMockup() {
+  if (!S.palette.length) return;
+  const bg = S.palette[3] || '#f5f5f5';
+  const pr = S.palette[0] || '#0a0a0a';
+  const ac = S.palette[1] || '#7C5CF6';
+  const mockup = document.getElementById('live-mockup');
+  const mockBody = document.getElementById('mock-body');
+  const mockText = document.getElementById('mock-body-text');
+  const mockCta = document.getElementById('mock-cta');
+  const mockHash = document.getElementById('mock-hashtags');
+  const mockTitle = document.getElementById('mock-title');
+  const mockSub = document.getElementById('mock-sub');
+  if (mockup) mockup.style.background = bg;
+  if (mockBody) mockBody.style.background = bg;
+  // Detect if bg is light or dark
+  const bgLum = lum(hRgb(bg));
+  const textOnBg = bgLum > 0.5 ? pr : (lum(hRgb(pr)) > 0.5 ? '#fff' : pr);
+  if (mockText) mockText.style.color = textOnBg;
+  if (mockCta) { mockCta.style.background = pr; mockCta.style.color = bgLum > 0.5 ? bg : '#fff'; }
+  if (mockHash) mockHash.style.color = ac;
+  const headerEl = mockup?.querySelector('.cm-header');
+  if (headerEl) headerEl.style.background = `linear-gradient(135deg,${pr},${ac})`;
+}
+
+// ══ COLOR PICKERS ══
 function applyManualColor(idx, hex) {
-  // Sync text input
-  const map = {0:'cp0t', 1:'cp1t', 3:'cp2t', 4:'cp3t'};
+  const map = { 0: 'cp0t', 1: 'cp1t', 3: 'cp2t', 4: 'cp3t' };
   const tid = map[idx];
-  if (tid) { const t = document.getElementById(tid); if(t) t.value = hex; }
-  // Apply immediately if palette exists, else init
-  if (!S.palette.length) S.palette = [...(PAL['Qualquer'])];
+  if (tid) { const t = document.getElementById(tid); if (t) t.value = hex; }
+  if (!S.palette.length) S.palette = [...(PAL['default'])];
   S.palette[idx] = hex;
   renderPal();
   if (S.palette[0] && S.palette[1]) updatePar(0, 1);
+  updateLiveMockup();
 }
 
 function applyManualColorHex(idx, hex) {
   hex = hex.trim();
   if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
-  // Sync color input
-  const map = {0:'cp0', 1:'cp1', 3:'cp2', 4:'cp3'};
+  const map = { 0: 'cp0', 1: 'cp1', 3: 'cp2', 4: 'cp3' };
   const cid = map[idx];
-  if (cid) { const c = document.getElementById(cid); if(c) c.value = hex; }
+  if (cid) { const c = document.getElementById(cid); if (c) c.value = hex; }
   applyManualColor(idx, hex);
 }
 
 function aplicarCoresManual() {
   const c0 = document.getElementById('cp0')?.value || '#0a0a0a';
-  const c1 = document.getElementById('cp1')?.value || '#22d4e0';
+  const c1 = document.getElementById('cp1')?.value || '#7C5CF6';
   const c2 = document.getElementById('cp2')?.value || '#f5f5f5';
   const c3 = document.getElementById('cp3')?.value || '#3a3a3a';
-  // Build palette: [principal, destaque, neutro, fundo, complementar]
   S.palette = [c0, c1, '#d4d4d4', c2, c3];
-  S.locked = new Set(); // reset locks
+  S.locked = new Set();
   renderPal();
   updatePar(0, 1);
-  // AI analysis of manual palette
-  const prompt = `Como designer estratégico, analise esta paleta escolhida manualmente:\nCores: ${S.palette.join(', ')}\nEm 3-4 frases: psicologia das cores, harmonia entre elas, como usar. Português brasileiro, prático.`;
+  updateLiveMockup();
+  const prompt = `Como designer estratégico, analise esta paleta escolhida manualmente:\nCores: ${S.palette.join(', ')}\nEm 3-4 frases: psicologia das cores, harmonia, como usar. Português brasileiro, prático.`;
   setLoad('cor-ai-output', 'Analisando sua paleta');
   callAI(prompt, 'Designer especialista em psicologia das cores. Português brasileiro.').then(r => {
     document.getElementById('cor-ai-output').innerHTML = `<div class="ai-label">Análise da sua paleta</div><div class="ai-box">${r}</div>`;
@@ -1134,85 +1226,81 @@ function aplicarCoresManual() {
 
 function syncPickersFromPalette() {
   if (!S.palette.length) return;
-  const map = [[0,'cp0','cp0t'],[1,'cp1','cp1t'],[3,'cp2','cp2t'],[4,'cp3','cp3t']];
-  map.forEach(([pi,cid,tid])=>{
+  [[0,'cp0','cp0t'], [1,'cp1','cp1t'], [3,'cp2','cp2t'], [4,'cp3','cp3t']].forEach(([pi, cid, tid]) => {
     const v = S.palette[pi];
-    if(!v) return;
-    const ce = document.getElementById(cid); if(ce) ce.value = v;
-    const te = document.getElementById(tid); if(te) te.value = v;
+    if (!v) return;
+    const ce = document.getElementById(cid); if (ce) ce.value = v;
+    const te = document.getElementById(tid); if (te) te.value = v;
   });
 }
 
 // ══ TIPOGRAFIA ══
-
-// 50 Google Fonts catalog
 const GFONTS = [
-  {name:'Playfair Display', cat:'serif', weights:'700'},
-  {name:'Cormorant Garamond', cat:'serif', weights:'300;400;600;700'},
-  {name:'Libre Baskerville', cat:'serif', weights:'400;700'},
-  {name:'Merriweather', cat:'serif', weights:'300;400;700'},
-  {name:'Lora', cat:'serif', weights:'400;600;700'},
-  {name:'EB Garamond', cat:'serif', weights:'400;500;700'},
-  {name:'PT Serif', cat:'serif', weights:'400;700'},
-  {name:'Crimson Text', cat:'serif', weights:'400;600;700'},
-  {name:'Spectral', cat:'serif', weights:'300;400;600;700'},
-  {name:'Zilla Slab', cat:'serif', weights:'300;400;500;700'},
-  {name:'Cinzel', cat:'serif', weights:'400;700;900'},
-  {name:'Cardo', cat:'serif', weights:'400;700'},
-  {name:'Inter', cat:'sans-serif', weights:'300;400;500;600;700;800;900'},
-  {name:'Poppins', cat:'sans-serif', weights:'300;400;500;600;700;800'},
-  {name:'Montserrat', cat:'sans-serif', weights:'300;400;500;600;700;800;900'},
-  {name:'DM Sans', cat:'sans-serif', weights:'300;400;500;700'},
-  {name:'Nunito', cat:'sans-serif', weights:'300;400;600;700;800'},
-  {name:'Raleway', cat:'sans-serif', weights:'300;400;500;600;700;800'},
-  {name:'Josefin Sans', cat:'sans-serif', weights:'300;400;600;700'},
-  {name:'Work Sans', cat:'sans-serif', weights:'300;400;500;600;700;800'},
-  {name:'Rubik', cat:'sans-serif', weights:'300;400;500;600;700;800'},
-  {name:'Barlow', cat:'sans-serif', weights:'300;400;500;600;700'},
-  {name:'Source Sans Pro', cat:'sans-serif', weights:'300;400;600;700'},
-  {name:'Lato', cat:'sans-serif', weights:'300;400;700;900'},
-  {name:'Open Sans', cat:'sans-serif', weights:'300;400;600;700;800'},
-  {name:'Hind', cat:'sans-serif', weights:'300;400;500;600;700'},
-  {name:'Mulish', cat:'sans-serif', weights:'300;400;600;700;800'},
-  {name:'IBM Plex Sans', cat:'sans-serif', weights:'300;400;500;600;700'},
-  {name:'Noto Sans', cat:'sans-serif', weights:'300;400;600;700'},
-  {name:'Outfit', cat:'sans-serif', weights:'300;400;500;600;700;800'},
-  {name:'Bebas Neue', cat:'display', weights:'400'},
-  {name:'Anton', cat:'display', weights:'400'},
-  {name:'Oswald', cat:'display', weights:'300;400;500;600;700'},
-  {name:'Barlow Condensed', cat:'display', weights:'300;400;500;600;700'},
-  {name:'Abril Fatface', cat:'display', weights:'400'},
-  {name:'Space Grotesk', cat:'display', weights:'300;400;500;600;700'},
-  {name:'Syne', cat:'display', weights:'400;500;600;700;800'},
-  {name:'Exo 2', cat:'display', weights:'300;400;500;600;700;800'},
-  {name:'Rajdhani', cat:'display', weights:'300;400;500;600;700'},
-  {name:'Jost', cat:'display', weights:'300;400;500;600;700;800'},
-  {name:'Archivo Black', cat:'display', weights:'400'},
-  {name:'Fira Sans', cat:'display', weights:'300;400;500;600;700'},
-  {name:'Space Mono', cat:'monospace', weights:'400;700'},
-  {name:'IBM Plex Mono', cat:'monospace', weights:'300;400;500;600;700'},
-  {name:'Roboto Mono', cat:'monospace', weights:'300;400;500;600;700'},
-  {name:'Fira Code', cat:'monospace', weights:'300;400;500;600;700'},
-  {name:'Pacifico', cat:'handwriting', weights:'400'},
-  {name:'Lobster', cat:'handwriting', weights:'400'},
-  {name:'Dancing Script', cat:'handwriting', weights:'400;500;600;700'},
-  {name:'Caveat', cat:'handwriting', weights:'400;500;600;700'},
+  { name:'Playfair Display', cat:'serif', weights:'700' },
+  { name:'Cormorant Garamond', cat:'serif', weights:'300;400;600;700' },
+  { name:'Libre Baskerville', cat:'serif', weights:'400;700' },
+  { name:'Merriweather', cat:'serif', weights:'300;400;700' },
+  { name:'Lora', cat:'serif', weights:'400;600;700' },
+  { name:'EB Garamond', cat:'serif', weights:'400;500;700' },
+  { name:'PT Serif', cat:'serif', weights:'400;700' },
+  { name:'Crimson Text', cat:'serif', weights:'400;600;700' },
+  { name:'Spectral', cat:'serif', weights:'300;400;600;700' },
+  { name:'Zilla Slab', cat:'serif', weights:'300;400;500;700' },
+  { name:'Cinzel', cat:'serif', weights:'400;700;900' },
+  { name:'Cardo', cat:'serif', weights:'400;700' },
+  { name:'Poppins', cat:'sans-serif', weights:'300;400;500;600;700;800' },
+  { name:'Montserrat', cat:'sans-serif', weights:'300;400;500;600;700;800;900' },
+  { name:'DM Sans', cat:'sans-serif', weights:'300;400;500;700' },
+  { name:'Nunito', cat:'sans-serif', weights:'300;400;600;700;800' },
+  { name:'Raleway', cat:'sans-serif', weights:'300;400;500;600;700;800' },
+  { name:'Josefin Sans', cat:'sans-serif', weights:'300;400;600;700' },
+  { name:'Work Sans', cat:'sans-serif', weights:'300;400;500;600;700;800' },
+  { name:'Rubik', cat:'sans-serif', weights:'300;400;500;600;700;800' },
+  { name:'Barlow', cat:'sans-serif', weights:'300;400;500;600;700' },
+  { name:'Source Sans Pro', cat:'sans-serif', weights:'300;400;600;700' },
+  { name:'Lato', cat:'sans-serif', weights:'300;400;700;900' },
+  { name:'Open Sans', cat:'sans-serif', weights:'300;400;600;700;800' },
+  { name:'Hind', cat:'sans-serif', weights:'300;400;500;600;700' },
+  { name:'Mulish', cat:'sans-serif', weights:'300;400;600;700;800' },
+  { name:'IBM Plex Sans', cat:'sans-serif', weights:'300;400;500;600;700' },
+  { name:'Noto Sans', cat:'sans-serif', weights:'300;400;600;700' },
+  { name:'Outfit', cat:'sans-serif', weights:'300;400;500;600;700;800' },
+  { name:'Inter', cat:'sans-serif', weights:'300;400;500;600;700;800;900' },
+  { name:'Bebas Neue', cat:'display', weights:'400' },
+  { name:'Anton', cat:'display', weights:'400' },
+  { name:'Oswald', cat:'display', weights:'300;400;500;600;700' },
+  { name:'Barlow Condensed', cat:'display', weights:'300;400;500;600;700' },
+  { name:'Abril Fatface', cat:'display', weights:'400' },
+  { name:'Space Grotesk', cat:'display', weights:'300;400;500;600;700' },
+  { name:'Syne', cat:'display', weights:'400;500;600;700;800' },
+  { name:'Exo 2', cat:'display', weights:'300;400;500;600;700;800' },
+  { name:'Rajdhani', cat:'display', weights:'300;400;500;600;700' },
+  { name:'Jost', cat:'display', weights:'300;400;500;600;700;800' },
+  { name:'Archivo Black', cat:'display', weights:'400' },
+  { name:'Fira Sans', cat:'display', weights:'300;400;500;600;700' },
+  { name:'Space Mono', cat:'monospace', weights:'400;700' },
+  { name:'IBM Plex Mono', cat:'monospace', weights:'300;400;500;600;700' },
+  { name:'Roboto Mono', cat:'monospace', weights:'300;400;500;600;700' },
+  { name:'Fira Code', cat:'monospace', weights:'300;400;500;600;700' },
+  { name:'Pacifico', cat:'handwriting', weights:'400' },
+  { name:'Lobster', cat:'handwriting', weights:'400' },
+  { name:'Dancing Script', cat:'handwriting', weights:'400;500;600;700' },
+  { name:'Caveat', cat:'handwriting', weights:'400;500;600;700' },
 ];
 
 const FC_AUTO = {
-  'Editorial / Revista': [{h:'Playfair Display',s:'Lato',b:'Source Sans Pro'},{h:'Cormorant Garamond',s:'Josefin Sans',b:'EB Garamond'}],
-  'Tech / Startup':      [{h:'Space Grotesk',s:'IBM Plex Sans',b:'Inter'},{h:'Syne',s:'DM Sans',b:'Outfit'}],
-  'Luxo / Premium':      [{h:'Cormorant Garamond',s:'Josefin Sans',b:'EB Garamond'},{h:'Cinzel',s:'Raleway',b:'Cardo'}],
-  'Jovem / Streetwear':  [{h:'Bebas Neue',s:'Barlow Condensed',b:'Barlow'},{h:'Anton',s:'Oswald',b:'Mulish'}],
-  'Saúde / Bem-estar':   [{h:'Nunito',s:'DM Sans',b:'Lato'},{h:'Poppins',s:'Hind',b:'Mulish'}],
-  'Corporativo / Sério': [{h:'Merriweather',s:'Source Sans Pro',b:'Noto Sans'},{h:'Zilla Slab',s:'IBM Plex Sans',b:'Open Sans'}],
-  'Criativo / Artístico':[{h:'Abril Fatface',s:'Raleway',b:'Hind'},{h:'Syne',s:'Pacifico',b:'DM Sans'}],
-  'Minimalista / Clean': [{h:'Montserrat',s:'Work Sans',b:'Jost'},{h:'Outfit',s:'Rubik',b:'Hind'}],
+  'Editorial / Revista': [{ h:'Playfair Display', s:'Lato', b:'Source Sans Pro' },{ h:'Cormorant Garamond', s:'Josefin Sans', b:'EB Garamond' }],
+  'Tech / Startup':      [{ h:'Space Grotesk', s:'IBM Plex Sans', b:'Outfit' },{ h:'Syne', s:'DM Sans', b:'Barlow' }],
+  'Luxo / Premium':      [{ h:'Cormorant Garamond', s:'Josefin Sans', b:'EB Garamond' },{ h:'Cinzel', s:'Raleway', b:'Cardo' }],
+  'Jovem / Streetwear':  [{ h:'Bebas Neue', s:'Barlow Condensed', b:'Barlow' },{ h:'Anton', s:'Oswald', b:'Mulish' }],
+  'Saúde / Bem-estar':   [{ h:'Nunito', s:'DM Sans', b:'Lato' },{ h:'Poppins', s:'Hind', b:'Mulish' }],
+  'Corporativo / Sério': [{ h:'Merriweather', s:'Source Sans Pro', b:'Noto Sans' },{ h:'Zilla Slab', s:'IBM Plex Sans', b:'Open Sans' }],
+  'Criativo / Artístico':[{ h:'Abril Fatface', s:'Raleway', b:'Hind' },{ h:'Syne', s:'Pacifico', b:'DM Sans' }],
+  'Minimalista / Clean': [{ h:'Montserrat', s:'Work Sans', b:'Jost' },{ h:'Outfit', s:'Rubik', b:'Hind' }],
 };
 
-// Font loading state
-let modalLayer = 'h'; // which layer is open
-let modalSelected = null; // font name being hovered/selected
+let modalLayer = 'h';
+let modalSelected = null;
 let fontCat = 'all';
 let loadedFontNames = new Set();
 const preloadedTiles = new Set();
@@ -1220,10 +1308,9 @@ const preloadedTiles = new Set();
 function loadFont(name) {
   if (loadedFontNames.has(name)) return;
   loadedFontNames.add(name);
-  const encoded = name.replace(/ /g, '+');
   const l = document.createElement('link');
   l.rel = 'stylesheet';
-  l.href = `https://fonts.googleapis.com/css2?family=${encoded}:wght@400;700&display=swap`;
+  l.href = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g,'+')}:wght@400;700&display=swap`;
   document.head.appendChild(l);
 }
 
@@ -1232,16 +1319,15 @@ function loadFontUrl(url) {
   document.head.appendChild(l);
 }
 
-// ── MODAL ──
 function openModal(layer) {
   modalLayer = layer;
   modalSelected = S.fonts[layer] || null;
   document.getElementById('font-modal').style.display = 'flex';
   document.getElementById('font-search').value = '';
   fontCat = 'all';
-  document.querySelectorAll('.cat-btn').forEach(b => { b.classList.remove('on'); });
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('on'));
   document.querySelector('.cat-btn').classList.add('on');
-  const labels = {h:'Título (H1)', s:'Subtítulo (H2)', b:'Corpo (Parágrafo)'};
+  const labels = { h: 'Título (H1)', s: 'Subtítulo (H2)', b: 'Corpo (Parágrafo)' };
   document.getElementById('modal-layer-title').textContent = `Escolher fonte — ${labels[layer]}`;
   renderFontGrid();
   if (modalSelected) updateModalPreview(modalSelected);
@@ -1268,7 +1354,6 @@ function renderFontGrid() {
     const matchQ = !q || f.name.toLowerCase().includes(q);
     return matchCat && matchQ;
   });
-
   const grid = document.getElementById('font-grid');
   grid.innerHTML = filtered.map(f => `
     <div class="font-tile ${modalSelected===f.name?'selected':''}"
@@ -1276,24 +1361,17 @@ function renderFontGrid() {
       ondblclick="confirmFont()"
       data-font="${f.name}">
       <div class="font-tile-cat">${f.cat}</div>
-      <div class="font-tile-preview" style="font-family:'${f.name}',sans-serif;" data-preview="${f.name}">Aa — Design</div>
+      <div class="font-tile-preview" style="font-family:'${f.name}',sans-serif;">Aa — Design</div>
       <div class="font-tile-name">${f.name}</div>
     </div>`).join('');
-
-  // Lazy-load fonts for visible tiles
   filtered.forEach(f => {
-    if (!preloadedTiles.has(f.name)) {
-      preloadedTiles.add(f.name);
-      loadFont(f.name);
-    }
+    if (!preloadedTiles.has(f.name)) { preloadedTiles.add(f.name); loadFont(f.name); }
   });
 }
 
 function selectFontTile(name) {
   modalSelected = name;
-  document.querySelectorAll('.font-tile').forEach(t => {
-    t.classList.toggle('selected', t.dataset.font === name);
-  });
+  document.querySelectorAll('.font-tile').forEach(t => t.classList.toggle('selected', t.dataset.font === name));
   updateModalPreview(name);
   document.getElementById('modal-selected-name').textContent = name;
 }
@@ -1312,18 +1390,17 @@ function confirmFont() {
 function setFontLayer(layer, name) {
   loadFont(name);
   S.fonts[layer] = name;
-  // Update layer UI
-  document.getElementById('fname-' + layer).textContent = name;
+  const fnEl = document.getElementById('fname-' + layer);
+  if (fnEl) fnEl.textContent = name;
   const prev = document.getElementById('lprev-' + layer);
   if (prev) prev.style.fontFamily = `'${name}', sans-serif`;
   renderTypoPrev();
   updateTypoSpec();
 }
 
-// ── LOCK ──
 function toggleFL(k) {
-  if (S.fLocked.has(k)) { S.fLocked.delete(k); }
-  else { S.fLocked.add(k); }
+  if (S.fLocked.has(k)) S.fLocked.delete(k);
+  else S.fLocked.add(k);
   const btn = document.getElementById('lock-' + k);
   if (btn) {
     btn.textContent = S.fLocked.has(k) ? '🔒' : '🔓';
@@ -1331,24 +1408,18 @@ function toggleFL(k) {
   }
 }
 
-// ── AUTO-COMBINAR ──
 async function gerarFontes() {
   const pers = document.getElementById('typo-pers').value;
   const ctx = document.getElementById('typo-ctx').value;
   if (!pers) { alert('Selecione a personalidade para auto-combinar!'); return; }
-
   setLoad('typo-ai', 'Elaborando análise tipográfica');
   document.getElementById('typo-prev').innerHTML = '<div class="loading"><div class="dots"><span></span><span></span><span></span></div>Montando preview...</div>';
-
   const combos = FC_AUTO[pers] || FC_AUTO['Minimalista / Clean'];
   const combo = combos[Math.floor(Math.random() * combos.length)];
-
-  if (!S.fLocked.has('h')) { setFontLayer('h', combo.h); }
-  if (!S.fLocked.has('s')) { setFontLayer('s', combo.s); }
-  if (!S.fLocked.has('b')) { setFontLayer('b', combo.b); }
-
+  if (!S.fLocked.has('h')) setFontLayer('h', combo.h);
+  if (!S.fLocked.has('s')) setFontLayer('s', combo.s);
+  if (!S.fLocked.has('b')) setFontLayer('b', combo.b);
   setTimeout(() => renderTypoPrev(), 600);
-
   const prompt = `Como diretor de arte, explique a combinação tipográfica:\nTítulo: ${S.fonts.h||combo.h} · Subtítulo: ${S.fonts.s||combo.s} · Corpo: ${S.fonts.b||combo.b}\nPersonalidade: ${pers} · Contexto: ${ctx||'redes sociais'}\nEm 3-4 frases: por que funcionam juntas, o que cada uma transmite, dica de uso. Português brasileiro.`;
   const r = await callAI(prompt, 'Diretor de arte especialista em tipografia. Português brasileiro, conciso e prático.');
   document.getElementById('typo-ai').innerHTML = `<div class="ai-label">Análise tipográfica</div><div class="ai-box">${r}</div>`;
@@ -1364,35 +1435,24 @@ async function regenerarFontesSoltas() {
   setTimeout(() => renderTypoPrev(), 500);
 }
 
-// ── PREVIEW ──
 function renderTypoPrev() {
-  const t = S.fonts.h || null;
-  const s = S.fonts.s || null;
-  const b = S.fonts.b || null;
+  const t = S.fonts.h, s = S.fonts.s, b = S.fonts.b;
   if (!t && !s && !b) return;
-
   const p = S.palette;
   const bg = p[3] || '#F5F5F5';
   const pr = p[0] || '#1A1A2E';
-  const ac = p[1] || '#22d4e0';
-
-  const tF = t || 'Georgia';
-  const sF = s || 'Arial';
-  const bF = b || 'Arial';
-
+  const ac = p[1] || '#7C5CF6';
+  const tF = t || 'Georgia', sF = s || 'Arial', bF = b || 'Arial';
+  const bgLum = lum(hRgb(bg));
+  const textColor = bgLum > 0.5 ? pr : (lum(hRgb(pr)) > 0.5 ? '#fff' : pr);
   document.getElementById('typo-prev').innerHTML = `
-    <div style="background:${bg};padding:26px;border-radius:14px;border:1.5px solid var(--border);">
-      <div style="font-family:'${tF}',serif;font-size:2rem;font-weight:800;color:${pr};line-height:1.1;margin-bottom:10px;">Design que Conecta e Converte</div>
-      <div style="font-family:'${sF}',sans-serif;font-size:1rem;color:${ac};margin-bottom:13px;font-weight:500;letter-spacing:.2px;">A estratégia por trás de cada escolha visual</div>
-      <div style="font-family:'${bF}',sans-serif;font-size:.85rem;line-height:1.75;color:${pr}bb;">Cada detalhe tipográfico comunica antes mesmo do conteúdo ser lido. A hierarquia visual guia o olhar do leitor e reforça a mensagem da marca de forma inconsciente e poderosa.</div>
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid ${pr}18;display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-family:'${bF}',sans-serif;font-size:.72rem;font-weight:700;color:${pr}66;text-transform:uppercase;letter-spacing:1px;">Exemplo de CTA</div>
-        <div style="background:${pr};color:#fff;padding:8px 18px;border-radius:8px;font-family:'${bF}',sans-serif;font-size:.8rem;font-weight:700;">Saiba Mais →</div>
-      </div>
-      <div style="margin-top:14px;display:flex;gap:7px;flex-wrap:wrap;">
-        <span class="pill pill-cyan">📐 Hierarquia</span>
-        <span class="pill" style="background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);">✦ Contraste</span>
-        <span class="pill pill-green">📖 Legibilidade OK</span>
+    <div style="background:${bg};padding:24px;border-radius:14px;border:1px solid var(--border);">
+      <div style="font-family:'${tF}',serif;font-size:1.9rem;font-weight:800;color:${textColor};line-height:1.1;margin-bottom:9px;">Design que Conecta e Converte</div>
+      <div style="font-family:'${sF}',sans-serif;font-size:.97rem;color:${ac};margin-bottom:12px;font-weight:500;letter-spacing:.2px;">A estratégia por trás de cada escolha visual</div>
+      <div style="font-family:'${bF}',sans-serif;font-size:.84rem;line-height:1.75;color:${textColor};opacity:.8;">Cada detalhe tipográfico comunica antes mesmo do conteúdo ser lido. A hierarquia visual guia o olhar do leitor e reforça a mensagem da marca de forma inconsciente.</div>
+      <div style="margin-top:16px;padding-top:13px;border-top:1px solid rgba(128,128,128,.2);display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-family:'${bF}',sans-serif;font-size:.7rem;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;">Fonte de fundo: ${bg}</div>
+        <div style="background:${pr};color:${bg};padding:8px 16px;border-radius:8px;font-family:'${bF}',sans-serif;font-size:.79rem;font-weight:700;">Saiba Mais →</div>
       </div>
     </div>`;
 }
@@ -1405,162 +1465,157 @@ function updateTypoSpec() {
   card.style.display = 'block';
   const catOf = name => GFONTS.find(f => f.name === name)?.cat || 'custom';
   document.getElementById('typo-spec').innerHTML = [
-    {label:'H1 Título', val:t, note:catOf(t)},
-    {label:'H2 Subtítulo', val:s, note:catOf(s)},
-    {label:'Corpo', val:b, note:catOf(b)},
-  ].filter(r=>r.val).map(r => `
+    { label: 'H1 Título', val: t, note: catOf(t) },
+    { label: 'H2 Subtítulo', val: s, note: catOf(s) },
+    { label: 'Corpo', val: b, note: catOf(b) },
+  ].filter(r => r.val).map(r => `
     <div class="spec-row">
       <span class="spec-label">${r.label}</span>
-      <span class="spec-val" style="font-family:'${r.val}',sans-serif;">${r.val} <span style="font-size:.65rem;font-weight:400;color:var(--text3);">${r.note}</span></span>
+      <span class="spec-val" style="font-family:'${r.val}',sans-serif;">${r.val} <span style="font-size:.63rem;font-weight:400;color:var(--text3);">${r.note}</span></span>
     </div>`).join('');
 }
 
-// ── UPLOAD FONTE ──
 function loadUploadedFont() {
   const file = document.getElementById('font-upload').files[0];
   if (!file) return;
-  const name = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ');
+  const name = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
   const url = URL.createObjectURL(file);
   const style = document.createElement('style');
   style.textContent = `@font-face { font-family: '${name}'; src: url('${url}'); }`;
   document.head.appendChild(style);
   loadedFontNames.add(name);
   document.getElementById('upload-status').textContent = `✅ ${file.name} carregada`;
-  document.getElementById('upload-font-row').style.display = 'block';
-  document.getElementById('upload-font-row').innerHTML = `
-    <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;">
-      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Preview — ${name}</div>
-      <div style="font-family:'${name}',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:10px;">Aa — Design que Converte</div>
+  const row = document.getElementById('upload-font-row');
+  row.style.display = 'block';
+  row.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Preview — ${name}</div>
+      <div style="font-family:'${name}',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:9px;">Aa — Design que Converte</div>
       <div style="display:flex;gap:7px;flex-wrap:wrap;">
-        <button class="btn btn-black btn-xs" onclick="setFontLayer('h','${name}')">→ H1 Título</button>
-        <button class="btn btn-out btn-xs" onclick="setFontLayer('s','${name}')">→ H2 Subtítulo</button>
+        <button class="btn btn-violet btn-xs" onclick="setFontLayer('h','${name}')">→ H1 Título</button>
+        <button class="btn btn-out btn-xs" onclick="setFontLayer('s','${name}')">→ H2</button>
         <button class="btn btn-ghost btn-xs" onclick="setFontLayer('b','${name}')">→ Corpo</button>
       </div>
     </div>`;
 }
 
-// ── FONTE EXTERNA POR URL ──
 function loadExternalFont() {
   const url = document.getElementById('ext-font-url').value.trim();
   const name = document.getElementById('ext-font-name').value.trim() || 'Fonte Externa';
   if (!url) { alert('Cole um link de fonte!'); return; }
   loadFontUrl(url);
   loadedFontNames.add(name);
-  // Try to extract family name from Google Fonts URL
   const match = url.match(/family=([^:&|]+)/);
-  const detectedName = match ? decodeURIComponent(match[1].replace(/\+/g,' ')) : name;
+  const detectedName = match ? decodeURIComponent(match[1].replace(/\+/g, ' ')) : name;
   const finalName = detectedName || name;
   setTimeout(() => {
-    document.getElementById('ext-font-row').style.display = 'block';
-    document.getElementById('ext-font-row').innerHTML = `
-      <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;">
-        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Preview — ${finalName}</div>
-        <div style="font-family:'${finalName}',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:10px;">Aa — Design que Converte</div>
+    const row = document.getElementById('ext-font-row');
+    row.style.display = 'block';
+    row.innerHTML = `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:6px;">Preview — ${finalName}</div>
+        <div style="font-family:'${finalName}',sans-serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:9px;">Aa — Design que Converte</div>
         <div style="display:flex;gap:7px;flex-wrap:wrap;">
-          <button class="btn btn-black btn-xs" onclick="setFontLayer('h','${finalName}')">→ H1 Título</button>
-          <button class="btn btn-out btn-xs" onclick="setFontLayer('s','${finalName}')">→ H2 Subtítulo</button>
+          <button class="btn btn-violet btn-xs" onclick="setFontLayer('h','${finalName}')">→ H1</button>
+          <button class="btn btn-out btn-xs" onclick="setFontLayer('s','${finalName}')">→ H2</button>
           <button class="btn btn-ghost btn-xs" onclick="setFontLayer('b','${finalName}')">→ Corpo</button>
         </div>
       </div>`;
   }, 800);
 }
 
-function downloadImg(e, fmt) {
-  if (!S.lastImageUrl) return;
-  // Works with base64 data URLs
-  const a = document.createElement('a');
-  a.href = S.lastImageUrl;
-  a.download = 'designmind-ai-' + fmt + '.jpg';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  e && e.preventDefault();
-}
-
-// Close modal on backdrop click
-document.addEventListener('click', e => {
-  const modal = document.getElementById('font-modal');
-  if (modal && e.target === modal) closeModal();
-});
-
 // ══ SOCIAL MEDIA ══
-const CT={feed:{e:'📸',l:'Post Feed',r:'1:1'},stories:{e:'⭕',l:'Stories',r:'9:16'},carrossel:{e:'🎠',l:'Carrossel',r:'1:1'},reels:{e:'🎬',l:'Reels',r:'9:16'},youtube:{e:'▶️',l:'Capa YouTube',r:'16:9'},linkedin:{e:'💼',l:'Banner LinkedIn',r:'4:1'}};
+const CT = {
+  feed:      { e:'📸', l:'Post Feed', r:'1:1' },
+  stories:   { e:'⭕', l:'Stories', r:'9:16' },
+  carrossel: { e:'🎠', l:'Carrossel', r:'1:1' },
+  reels:     { e:'🎬', l:'Reels', r:'9:16' },
+  youtube:   { e:'▶️', l:'Capa YouTube', r:'16:9' },
+  linkedin:  { e:'💼', l:'Banner LinkedIn', r:'4:1' }
+};
 
-function setChannel(el,ch){
-  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');S.channel=ch;
-  document.getElementById('slides-cfg').style.display=ch==='carrossel'?'block':'none';
+function setChannel(el, ch) {
+  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  S.channel = ch;
+  document.getElementById('slides-cfg').style.display = ch === 'carrossel' ? 'block' : 'none';
 }
 
-async function gerarConteudo(){
-  const tema=document.getElementById('sm-tema').value,pub=document.getElementById('sm-pub').value,tom=document.getElementById('sm-tom').value,ch=S.channel,slides=document.getElementById('sm-slides')?.value||4;
-  if(!tema){alert('Preencha o tema!');return;}
-  setLoad('social-out','Criando conteúdo como Social Media + Designer');
-  const chI=CT[ch],isC=ch==='carrossel';
-  const prompt=`Você é Social Media expert e Designer estratégica brasileira. Crie 2 sugestões distintas.\nBRIEFING: Tema: ${tema} | Público: ${pub||'geral'} | Tom: ${tom||'neutro'} | Canal: ${chI.l} (${chI.r})${isC?` | Slides: ${slides}`:''}\nResponda APENAS JSON válido, sem markdown:\n{"sugestoes":[{"titulo":"...","hook":"...","corpo":"...","cta":"...","hashtags":["..."],"emoji_principal":"...","angulo":"...","referencia_visual":"descreva ref visual brasileira","dica_design":"dica específica"${isC?`,"slides":["slide 1","slide 2"]`:''}},{"titulo":"...","hook":"...","corpo":"...","cta":"...","hashtags":["..."],"emoji_principal":"...","angulo":"...","referencia_visual":"...","dica_design":"..."}]}`;
+async function gerarConteudo() {
+  const tema = document.getElementById('sm-tema').value;
+  const pub = document.getElementById('sm-pub').value;
+  const tom = document.getElementById('sm-tom').value;
+  const ch = S.channel;
+  const slides = document.getElementById('sm-slides')?.value || 4;
+  if (!tema) { alert('Preencha o tema!'); return; }
+  setLoad('social-out', 'Criando conteúdo como Social Media + Designer');
+  const chI = CT[ch], isC = ch === 'carrossel';
+  const prompt = `Você é Social Media expert e Designer estratégica brasileira. Crie 2 sugestões distintas.\nBRIEFING: Tema: ${tema} | Público: ${pub||'geral'} | Tom: ${tom||'neutro'} | Canal: ${chI.l} (${chI.r})${isC?` | Slides: ${slides}`:''}\nResponda APENAS JSON válido, sem markdown:\n{"sugestoes":[{"titulo":"...","hook":"...","corpo":"...","cta":"...","hashtags":["..."],"emoji_principal":"...","angulo":"...","referencia_visual":"descreva ref visual brasileira","dica_design":"dica específica"${isC?`,"slides":["slide 1","slide 2"]`:''}},{"titulo":"...","hook":"...","corpo":"...","cta":"...","hashtags":["..."],"emoji_principal":"...","angulo":"...","referencia_visual":"...","dica_design":"..."}]}`;
   try {
-    const r = await callAI(prompt, 'Você é Social Media expert e Designer estratégica brasileira. Responda APENAS JSON válido, sem nenhum texto antes ou depois, sem markdown, sem comentários.');
-
-    if (r.startsWith('\u26a0\ufe0f') || r.startsWith('\u274c')) {
+    const r = await callAI(prompt, 'Você é Social Media expert e Designer estratégica brasileira. Responda APENAS JSON válido, sem nenhum texto antes ou depois, sem markdown.');
+    if (r.startsWith('⚠️') || r.startsWith('❌')) {
       document.getElementById('social-out').innerHTML = `<div class="ai-box" style="color:var(--red);">${r}</div>`;
       return;
     }
-
     const jsonMatch = r.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('A IA não retornou JSON válido. Tente novamente.');
-
     const d = JSON.parse(jsonMatch[0]);
-    if (!d.sugestoes || !Array.isArray(d.sugestoes) || d.sugestoes.length === 0) {
-      throw new Error('Estrutura inesperada no retorno da IA. Tente novamente.');
-    }
-
+    if (!d.sugestoes || !Array.isArray(d.sugestoes) || d.sugestoes.length === 0) throw new Error('Estrutura inesperada. Tente novamente.');
     S.content = d.sugestoes;
     renderContent(d.sugestoes, ch);
     document.getElementById('reform-sec').style.display = 'block';
-
-  } catch(e) {
+  } catch (e) {
     document.getElementById('social-out').innerHTML = `
       <div class="ai-box" style="color:var(--red);white-space:pre-wrap;">
-        <strong>❌ Erro ao gerar sugestões</strong>\n\n${e.message}\n\n<span style="font-size:.75rem;color:var(--text3);">Verifique sua Groq key · tente novamente · simplifique o tema</span>
+        <strong>❌ Erro ao gerar sugestões</strong>\n\n${e.message}\n\n<span style="font-size:.74rem;color:var(--text3);">Verifique sua Groq key · tente novamente · simplifique o tema</span>
       </div>`;
   }
 }
 
-function renderContent(sg,ch){
-  const chI=CT[ch]||CT['feed'];
-  let h='';
-  sg.forEach((s,i)=>{
-    h+=`<div class="c-card ${S.selected===i?'sel':''}" onclick="selContent(${i})">
+function renderContent(sg, ch) {
+  const chI = CT[ch] || CT['feed'];
+  let h = '';
+  sg.forEach((s, i) => {
+    h += `<div class="c-card ${S.selected===i?'sel':''}" onclick="selContent(${i})">
       <div class="c-num">${i+1}</div>
       <div class="c-tag">${chI.e} ${chI.l} · ${s.angulo||'Estratégico'}</div>
       <div class="c-title">${s.emoji_principal||''} ${s.titulo}</div>
       <div class="c-hook">"${s.hook}"</div>
-      <div class="c-body">${s.corpo?.substring(0,200)}${s.corpo?.length>200?'...':''}</div>
+      <div class="c-body">${(s.corpo||'').substring(0,200)}${(s.corpo||'').length>200?'...':''}</div>
       <div class="c-cta">CTA: ${s.cta}</div>
       <div class="tags">${(s.hashtags||[]).map(ht=>`<span class="tag h">#${ht.replace('#','')}</span>`).join('')}</div>
       ${s.referencia_visual?`<div class="ref-box"><strong>📸 Referência visual:</strong> ${s.referencia_visual}</div>`:''}
       ${s.dica_design?`<div class="dtip">✦ Design tip: ${s.dica_design}</div>`:''}
       <div class="btn-row">
-        <button class="btn btn-black btn-xs" onclick="event.stopPropagation();selContent(${i});document.querySelectorAll('nav.tabs button')[3].click()">👁 Preview</button>
+        <button class="btn btn-violet btn-xs" onclick="event.stopPropagation();selContent(${i});document.querySelectorAll('nav.tabs button')[3].click()">👁 Preview</button>
         <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();copyContent(${i})">📋 Copiar</button>
       </div>
     </div>`;
   });
-  document.getElementById('social-out').innerHTML=h;
+  document.getElementById('social-out').innerHTML = h;
 }
 
-function selContent(i){S.selected=i;S.selectedContent=S.content[i];document.querySelectorAll('.c-card').forEach((c,idx)=>c.classList.toggle('sel',idx===i));}
-function copyContent(i){const s=S.content[i];const t=`${s.titulo}\n\n${s.hook}\n\n${s.corpo}\n\n${s.cta}\n\n${(s.hashtags||[]).map(h=>'#'+h.replace('#','')).join(' ')}`;navigator.clipboard.writeText(t).then(()=>alert('Copiado! ✅'));}
+function selContent(i) {
+  S.selected = i;
+  S.selectedContent = S.content[i];
+  document.querySelectorAll('.c-card').forEach((c, idx) => c.classList.toggle('sel', idx === i));
+}
 
-async function reformular(){
-  const dir=document.getElementById('reform-in').value;
-  if(!dir){alert('Descreva como quer reformular!');return;}
-  if(!S.content?.length){alert('Gere conteúdo primeiro!');return;}
-  setLoad('social-out','Reformulando com base na sua direção');
-  const prompt=`Reformule as sugestões com base nesta direção: "${dir}"\nSugestões anteriores: ${JSON.stringify(S.content)}\nResponda APENAS JSON no mesmo formato. 2 novas sugestões.`;
+function copyContent(i) {
+  const s = S.content[i];
+  const t = `${s.titulo}\n\n${s.hook}\n\n${s.corpo}\n\n${s.cta}\n\n${(s.hashtags||[]).map(h => '#'+h.replace('#','')).join(' ')}`;
+  navigator.clipboard.writeText(t).then(() => alert('Copiado! ✅'));
+}
+
+async function reformular() {
+  const dir = document.getElementById('reform-in').value;
+  if (!dir) { alert('Descreva como quer reformular!'); return; }
+  if (!S.content?.length) { alert('Gere conteúdo primeiro!'); return; }
+  setLoad('social-out', 'Reformulando com base na sua direção');
+  const prompt = `Reformule as sugestões com base nesta direção: "${dir}"\nSugestões anteriores: ${JSON.stringify(S.content)}\nResponda APENAS JSON no mesmo formato. 2 novas sugestões.`;
   try {
-    const r = await callAI(prompt, 'Social Media expert brasileira. Responda APENAS JSON válido, sem markdown, sem texto fora do JSON.');
-    if (r.startsWith('\u26a0\ufe0f') || r.startsWith('\u274c')) {
+    const r = await callAI(prompt, 'Social Media expert brasileira. Responda APENAS JSON válido, sem markdown.');
+    if (r.startsWith('⚠️') || r.startsWith('❌')) {
       document.getElementById('social-out').innerHTML = `<div class="ai-box" style="color:var(--red);">${r}</div>`; return;
     }
     const jsonMatch = r.match(/\{[\s\S]*\}/);
@@ -1573,161 +1628,179 @@ async function reformular(){
   }
 }
 
-// ══ PREVIEW ══
-function setFmt(el,f){document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');S.format=f;}
-const FMT={feed:{l:'Feed 1:1'},stories:{l:'Stories 9:16'},banner:{l:'LinkedIn Banner'},youtube:{l:'Capa YouTube 16:9'}};
-
-async function gerarPreview(){
-  const p=S.palette,f=S.fonts,c=S.selectedContent||S.content?.[0],fmt=S.format;
-  if(!p.length&&!f.h&&!c){document.getElementById('prev-canvas').innerHTML=`<div class="empty" style="min-height:320px;"><div class="ico">⚠️</div><p>Configure pelo menos uma das abas antes de gerar o preview</p></div>`;return;}
-  setLoad('prev-ai','O designer IA está montando o layout');
-  const bg=p[3]||'#F5F5F5',pr=p[0]||'#1A1A2E',ac=p[1]||'#22d4e0';
-  const tF=f.h||'Georgia',sF=f.s||'Arial',bF=f.b||'Arial';
-  const title=c?.titulo||'Título Principal da Marca',hook=c?.hook||'Subtítulo que conecta com o público';
-  const body=c?.corpo?.substring(0,120)||'Texto descritivo do conteúdo com a mensagem principal.';
-  const cta=c?.cta||'Saiba Mais →';const hts=(c?.hashtags||['marca','design','estrategia']).slice(0,3);
-  renderPrev(bg,pr,ac,tF,sF,bF,title,hook,body,cta,hts,fmt);
-  const prompt=`Como diretor de arte, explique as decisões de design:\nFormato: ${FMT[fmt]?.l}\nCores: fundo ${bg}, primária ${pr}, destaque ${ac}\nTipografia: título ${tF}, corpo ${bF}\nConteúdo: ${title}\nExplique em 4 pontos curtos: hierarquia visual, cores, tipografia, por que funciona para o formato. Português brasileiro, prático.`;
-  const r=await callAI(prompt,'Diretor de arte. Português brasileiro, prático e específico.');
-  document.getElementById('prev-ai').innerHTML=`<div class="ai-label">Decisões de design</div><div class="ai-box">${r}</div>`;
+// ══ PREVIEW HTML ══
+function setFmt(el, f) {
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  S.format = f;
 }
 
-function renderPrev(bg,pr,ac,tF,sF,bF,title,hook,body,cta,hts,fmt){
-  const iV=fmt==='stories',iB=fmt==='banner',iYT=fmt==='youtube';
-  let inner='';
-  if(iB){
-    inner=`<div style="background:linear-gradient(135deg,${pr},${ac});height:150px;display:flex;align-items:center;padding:0 36px;gap:20px;border-radius:14px;">
-      <div style="width:52px;height:52px;background:#ffffff22;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">✦</div>
-      <div><div style="font-family:'${tF}',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;">${title}</div><div style="font-family:'${sF}',sans-serif;font-size:.82rem;color:#ffffff99;margin-top:3px;">${hook}</div></div>
-      <div style="margin-left:auto;background:#ffffff22;border:1.5px solid #ffffff44;color:#fff;padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;white-space:nowrap;">${cta}</div>
+const FMT = { feed:{l:'Feed 1:1'}, stories:{l:'Stories 9:16'}, banner:{l:'LinkedIn Banner'}, youtube:{l:'Capa YouTube 16:9'} };
+
+async function gerarPreview() {
+  const p = S.palette, f = S.fonts, c = S.selectedContent || S.content?.[0], fmt = S.format;
+  if (!p.length && !f.h && !c) {
+    document.getElementById('prev-canvas').innerHTML = `<div class="empty" style="min-height:300px;"><div class="ico">⚠️</div><p>Configure pelo menos uma das abas antes de gerar o preview</p></div>`;
+    return;
+  }
+  setLoad('prev-ai', 'O designer IA está montando o layout');
+  const bg = p[3] || '#F5F5F5', pr = p[0] || '#1A1A2E', ac = p[1] || '#7C5CF6';
+  const tF = f.h || 'Georgia', sF = f.s || 'Arial', bF = f.b || 'Arial';
+  const title = c?.titulo || 'Título Principal da Marca';
+  const hook = c?.hook || 'Subtítulo que conecta com o público';
+  const body = (c?.corpo || 'Texto descritivo do conteúdo com a mensagem principal.').substring(0, 120);
+  const cta = c?.cta || 'Saiba Mais →';
+  const hts = (c?.hashtags || ['marca','design','estrategia']).slice(0, 3);
+  renderPrev(bg, pr, ac, tF, sF, bF, title, hook, body, cta, hts, fmt);
+  const prompt = `Como diretor de arte, explique as decisões de design:\nFormato: ${FMT[fmt]?.l}\nCores: fundo ${bg}, primária ${pr}, destaque ${ac}\nTipografia: título ${tF}, corpo ${bF}\nConteúdo: ${title}\nExplique em 4 pontos curtos: hierarquia visual, cores, tipografia, por que funciona para o formato. Português brasileiro, prático.`;
+  const r = await callAI(prompt, 'Diretor de arte. Português brasileiro, prático e específico.');
+  document.getElementById('prev-ai').innerHTML = `<div class="ai-label">Decisões de design</div><div class="ai-box">${r}</div>`;
+}
+
+function renderPrev(bg, pr, ac, tF, sF, bF, title, hook, body, cta, hts, fmt) {
+  const iV = fmt === 'stories', iB = fmt === 'banner', iYT = fmt === 'youtube';
+  let inner = '';
+  if (iB) {
+    inner = `<div style="background:linear-gradient(135deg,${pr},${ac});height:150px;display:flex;align-items:center;padding:0 32px;gap:20px;border-radius:14px;">
+      <div style="width:48px;height:48px;background:#ffffff22;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✦</div>
+      <div><div style="font-family:'${tF}',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;">${title}</div><div style="font-family:'${sF}',sans-serif;font-size:.8rem;color:#ffffff99;margin-top:3px;">${hook}</div></div>
+      <div style="margin-left:auto;background:#ffffff22;border:1px solid #ffffff44;color:#fff;padding:8px 16px;border-radius:8px;font-size:.77rem;font-weight:700;white-space:nowrap;">${cta}</div>
     </div>`;
-  }else if(iYT){
-    inner=`<div style="background:linear-gradient(160deg,${pr},${ac});height:320px;position:relative;border-radius:14px;overflow:hidden;display:flex;align-items:center;padding:36px;">
-      <div style="position:absolute;top:0;right:0;width:200px;height:320px;background:#ffffff0a;clip-path:polygon(30% 0,100% 0,100% 100%,0 100%);"></div>
+  } else if (iYT) {
+    inner = `<div style="background:linear-gradient(160deg,${pr},${ac});height:310px;position:relative;border-radius:14px;overflow:hidden;display:flex;align-items:center;padding:32px;">
+      <div style="position:absolute;top:0;right:0;width:200px;height:310px;background:#ffffff08;clip-path:polygon(30% 0,100% 0,100% 100%,0 100%);"></div>
       <div style="position:relative;z-index:2;max-width:62%;">
-        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:#ffffff55;margin-bottom:10px;font-family:'${bF}',sans-serif;">YouTube · Vídeo</div>
-        <div style="font-family:'${tF}',serif;font-size:1.8rem;font-weight:800;color:#fff;line-height:1.1;margin-bottom:10px;">${title}</div>
-        <div style="font-family:'${sF}',sans-serif;font-size:.85rem;color:#ffffff99;margin-bottom:18px;">${hook}</div>
-        <div style="background:#fff;color:${pr};padding:9px 20px;border-radius:8px;display:inline-block;font-weight:800;font-size:.82rem;font-family:'${bF}',sans-serif;">▶ ${cta}</div>
+        <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#ffffff55;margin-bottom:10px;font-family:'${bF}',sans-serif;">YouTube · Vídeo</div>
+        <div style="font-family:'${tF}',serif;font-size:1.75rem;font-weight:800;color:#fff;line-height:1.1;margin-bottom:9px;">${title}</div>
+        <div style="font-family:'${sF}',sans-serif;font-size:.84rem;color:#ffffff99;margin-bottom:16px;">${hook}</div>
+        <div style="background:#fff;color:${pr};padding:8px 18px;border-radius:8px;display:inline-block;font-weight:800;font-size:.8rem;font-family:'${bF}',sans-serif;">▶ ${cta}</div>
       </div>
     </div>`;
-  }else if(iV){
-    inner=`<div style="background:${bg};border-radius:14px;overflow:hidden;max-width:270px;margin:0 auto;border:1.5px solid var(--border);">
-      <div style="background:linear-gradient(160deg,${pr},${ac});height:170px;display:flex;align-items:flex-end;padding:18px;"><div style="font-family:'${tF}',serif;font-size:1.3rem;font-weight:800;color:#fff;line-height:1.1;">${title}</div></div>
-      <div style="padding:18px;">
-        <div style="font-family:'${sF}',sans-serif;font-size:.87rem;font-weight:600;color:${ac};margin-bottom:9px;">${hook}</div>
-        <div style="font-family:'${bF}',sans-serif;font-size:.78rem;line-height:1.65;color:${pr}bb;margin-bottom:14px;">${body}</div>
-        <div style="background:${pr};color:#fff;padding:11px;border-radius:9px;text-align:center;font-family:'${bF}',sans-serif;font-size:.82rem;font-weight:700;">${cta}</div>
-        <div style="margin-top:9px;font-size:.65rem;color:${ac};">${hts.map(h=>'#'+h).join(' ')}</div>
+  } else if (iV) {
+    inner = `<div style="background:${bg};border-radius:14px;overflow:hidden;max-width:260px;margin:0 auto;border:1px solid rgba(128,128,128,.2);">
+      <div style="background:linear-gradient(160deg,${pr},${ac});height:165px;display:flex;align-items:flex-end;padding:16px;"><div style="font-family:'${tF}',serif;font-size:1.25rem;font-weight:800;color:#fff;line-height:1.1;">${title}</div></div>
+      <div style="padding:16px;background:${bg};">
+        <div style="font-family:'${sF}',sans-serif;font-size:.85rem;font-weight:600;color:${ac};margin-bottom:8px;">${hook}</div>
+        <div style="font-family:'${bF}',sans-serif;font-size:.77rem;line-height:1.65;color:${pr};opacity:.85;margin-bottom:13px;">${body}</div>
+        <div style="background:${pr};color:#fff;padding:10px;border-radius:8px;text-align:center;font-family:'${bF}',sans-serif;font-size:.8rem;font-weight:700;">${cta}</div>
+        <div style="margin-top:8px;font-size:.63rem;color:${ac};">${hts.map(h=>'#'+h).join(' ')}</div>
       </div>
     </div>`;
-  }else{
-    inner=`<div style="background:${bg};border-radius:14px;overflow:hidden;border:1.5px solid var(--border);">
-      <div style="background:linear-gradient(135deg,${pr},${ac});padding:32px 28px 26px;">
-        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:#ffffff55;margin-bottom:11px;font-family:'${bF}',sans-serif;">Design · Estratégia · Conteúdo</div>
-        <div style="font-family:'${tF}',serif;font-size:1.7rem;font-weight:800;color:#fff;line-height:1.1;margin-bottom:9px;">${title}</div>
-        <div style="font-family:'${sF}',sans-serif;font-size:.87rem;color:#ffffff99;">${hook}</div>
+  } else {
+    inner = `<div style="background:${bg};border-radius:14px;overflow:hidden;border:1px solid rgba(128,128,128,.2);">
+      <div style="background:linear-gradient(135deg,${pr},${ac});padding:28px 24px 24px;">
+        <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:#ffffff55;margin-bottom:10px;font-family:'${bF}',sans-serif;">Design · Estratégia · Conteúdo</div>
+        <div style="font-family:'${tF}',serif;font-size:1.65rem;font-weight:800;color:#fff;line-height:1.1;margin-bottom:8px;">${title}</div>
+        <div style="font-family:'${sF}',sans-serif;font-size:.85rem;color:#ffffff99;">${hook}</div>
       </div>
-      <div style="padding:22px 28px;">
-        <div style="font-family:'${bF}',sans-serif;font-size:.85rem;line-height:1.75;color:${pr}cc;margin-bottom:16px;">${body}</div>
+      <div style="padding:20px 24px;background:${bg};">
+        <div style="font-family:'${bF}',sans-serif;font-size:.84rem;line-height:1.75;color:${pr};opacity:.85;margin-bottom:15px;">${body}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-size:.67rem;color:${ac};">${hts.map(h=>'#'+h).join(' ')}</div>
-          <div style="background:${pr};color:#fff;padding:8px 16px;border-radius:8px;font-family:'${bF}',sans-serif;font-size:.78rem;font-weight:700;">${cta}</div>
+          <div style="font-size:.65rem;color:${ac};">${hts.map(h=>'#'+h).join(' ')}</div>
+          <div style="background:${pr};color:#fff;padding:7px 14px;border-radius:7px;font-family:'${bF}',sans-serif;font-size:.77rem;font-weight:700;">${cta}</div>
         </div>
       </div>
     </div>`;
   }
-  document.getElementById('prev-canvas').innerHTML=inner;
+  document.getElementById('prev-canvas').innerHTML = inner;
 }
 
 // ══ RATING ══
-function rate(score){
+function rate(score) {
   S.ratings.push(score);
-  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<score));
-  const avg=S.ratings.reduce((a,b)=>a+b,0)/S.ratings.length;
-  document.getElementById('rating-fb').textContent=score>=4?'🔥 Ótimo! Sistema aprendeu preferências positivas.':score>=3?'👍 Ok! Gere novamente para refinar.':'📝 Anotado! O sistema evitará este estilo.';
-  if(S.ctx)S.prefs.ctx[S.ctx]=(S.prefs.ctx[S.ctx]||0)+score;
-  const pers=document.getElementById('typo-pers').value;
-  if(pers)S.prefs.font[pers]=(S.prefs.font[pers]||0)+score;
-  const tC=Object.entries(S.prefs.ctx).sort((a,b)=>b[1]-a[1])[0];
-  const tF=Object.entries(S.prefs.font).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('learned').innerHTML=`
+  document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('lit', i < score));
+  const avg = S.ratings.reduce((a, b) => a + b, 0) / S.ratings.length;
+  document.getElementById('rating-fb').textContent = score >= 4 ? '🔥 Ótimo! Sistema aprendeu preferências positivas.' : score >= 3 ? '👍 Ok! Gere novamente para refinar.' : '📝 Anotado! O sistema evitará este estilo.';
+  if (S.ctx) S.prefs.ctx[S.ctx] = (S.prefs.ctx[S.ctx] || 0) + score;
+  const pers = document.getElementById('typo-pers').value;
+  if (pers) S.prefs.font[pers] = (S.prefs.font[pers] || 0) + score;
+  const tC = Object.entries(S.prefs.ctx).sort((a, b) => b[1] - a[1])[0];
+  const tF = Object.entries(S.prefs.font).sort((a, b) => b[1] - a[1])[0];
+  const rw = document.getElementById('rating-wrap');
+  if (rw) rw.style.display = 'block';
+  document.getElementById('learned').innerHTML = `
     <div class="pref-row"><span class="pref-lbl">Avaliações</span><span class="pref-val">${S.ratings.length} · Média ${avg.toFixed(1)}⭐</span></div>
     ${tC?`<div class="pref-row"><span class="pref-lbl">🎨 Contexto favorito</span><span class="pref-val">${tC[0]}</span></div>`:''}
     ${tF?`<div class="pref-row"><span class="pref-lbl">✍️ Tipografia favorita</span><span class="pref-val">${tF[0]}</span></div>`:''}`;
 }
 
-// Init
-updatePar(0,0);
+// ══ IMAGE GENERATION ══
+let lastPrompt = '';
 
-// ══ STABILITY AI KEY ══
-function checkStabilityKey(){
-  const k=document.getElementById('stability-api-key').value.trim(),s=document.getElementById('stability-status');
-  if(k.startsWith('sk-')&&k.length>20){s.textContent='✓ Stability OK';s.className='status-pill s-ok';}
-  else if(k.length>0){s.textContent='⚠ Key inválida';s.className='status-pill s-err';}
-  else{s.textContent='⚠ Sem key';s.className='status-pill s-err';}
-}
-
-// ══ GERAR IMAGEM COM IA ══
-let lastPrompt='';
-
-function setStep(steps,activeIdx){
-  steps.forEach((s,i)=>{
-    const dot=document.getElementById('sdot-'+i);
-    const lbl=document.getElementById('slbl-'+i);
-    if(!dot||!lbl)return;
-    if(i<activeIdx){dot.className='step-dot done';lbl.className='step-lbl done';}
-    else if(i===activeIdx){dot.className='step-dot active';lbl.className='step-lbl active';}
-    else{dot.className='step-dot wait';lbl.className='step-lbl wait';}
+function setStep(steps, activeIdx) {
+  steps.forEach((s, i) => {
+    const dot = document.getElementById('sdot-' + i);
+    const lbl = document.getElementById('slbl-' + i);
+    if (!dot || !lbl) return;
+    if (i < activeIdx) { dot.className = 'step-dot done'; lbl.className = 'step-lbl done'; }
+    else if (i === activeIdx) { dot.className = 'step-dot active'; lbl.className = 'step-lbl active'; }
+    else { dot.className = 'step-dot wait'; lbl.className = 'step-lbl wait'; }
   });
 }
 
-async function gerarImagemAI(){
-  // Pollinations — sem key necessária
+function renderImageResult(imgSrc, title, hook, cta, bg, ac, pr, tFont, bFont, fmt, source) {
+  S.lastImageUrl = imgSrc;
+  document.getElementById('img-canvas').innerHTML = `
+    <div style="padding:14px;">
+      <div class="img-container" style="background:${bg};">
+        <img src="${imgSrc}" alt="Imagem gerada pela IA" style="width:100%;border-radius:12px;display:block;" crossorigin="anonymous">
+        <div class="img-overlay">
+          <div class="img-overlay-title" style="font-family:'${tFont||'sans-serif'}',sans-serif;">${title}</div>
+          <div class="img-overlay-hook" style="font-family:'${bFont||'sans-serif'}',sans-serif;">${hook}</div>
+          <div class="img-overlay-cta" style="background:${ac};color:${bg};font-family:'${bFont||'sans-serif'}',sans-serif;">${cta}</div>
+        </div>
+      </div>
+      <div class="img-actions">
+        <button class="btn btn-violet btn-sm" onclick="downloadImg(event,'${fmt}')">⬇️ Baixar imagem</button>
+        <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Regenerar</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleOverlay()">👁 Toggle texto</button>
+      </div>
+      <div style="margin-top:8px;font-size:.68rem;color:var(--text3);">✦ Gerado por ${source} · ${new Date().toLocaleTimeString('pt-BR')}</div>
+    </div>`;
+}
 
-  const p=S.palette,f=S.fonts,c=S.selectedContent||S.content?.[0],fmt=S.format;
-  const bg=p[3]||'#F5F5F5',pr=p[0]||'#1A1A2E',ac=p[1]||'#22d4e0';
-  const title=c?.titulo||'Design estratégico criativo';
-  const hook=c?.hook||'Conteúdo visual impactante';
-  const body=c?.corpo?.substring(0,100)||'';
-  const ctx=S.ctx||'geral';
-  const channel=S.channel||'feed';
-  const refVisual=c?.referencia_visual||'';
-  const tom=document.getElementById('sm-tom')?.value||'profissional';
-  const pub=document.getElementById('sm-pub')?.value||'';
-  const tFont=f.h||'', bFont=f.b||'';
+async function gerarImagemAI() {
+  const p = S.palette, f = S.fonts, c = S.selectedContent || S.content?.[0], fmt = S.format;
+  const bg = p[3] || '#F5F5F5', pr = p[0] || '#1A1A2E', ac = p[1] || '#7C5CF6';
+  const title = c?.titulo || 'Design estratégico criativo';
+  const hook = c?.hook || 'Conteúdo visual impactante';
+  const body = (c?.corpo || '').substring(0, 100);
+  const ctx = S.ctx || 'geral';
+  const channel = S.channel || 'feed';
+  const refVisual = c?.referencia_visual || '';
+  const tom = document.getElementById('sm-tom')?.value || 'profissional';
+  const pub = document.getElementById('sm-pub')?.value || '';
+  const tFont = f.h || '', bFont = f.b || '';
+  const FMT_RATIO = { feed:'1:1', stories:'9:16', banner:'16:9', youtube:'16:9' };
+  const ratio = FMT_RATIO[fmt] || '1:1';
 
-  const FMT_RATIO={feed:'1:1',stories:'9:16',banner:'16:9',youtube:'16:9'};
-  const ratio=FMT_RATIO[fmt]||'1:1';
-
-  // Show progress UI
-  const steps=[
+  const steps = [
     'Groq analisando contexto e estratégia',
-    'Montando prompt criativo em inglês',
-    'Enviando para Stability AI',
-    'Renderizando imagem'
+    'Construindo prompt criativo em inglês',
+    'Enviando para Puter.js FLUX.1-schnell',
+    'Renderizando imagem final'
   ];
-  document.getElementById('img-canvas').innerHTML=`
+  document.getElementById('img-canvas').innerHTML = `
     <div class="img-gen-progress">
       <div class="progress-ring"></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text);">Gerando com FLUX.1-schnell...</div>
       <div class="progress-steps">
-        ${steps.map((s,i)=>`<div class="progress-step">
+        ${steps.map((s, i) => `<div class="progress-step">
           <div class="step-dot ${i===0?'active':'wait'}" id="sdot-${i}"></div>
           <span class="step-lbl ${i===0?'active':'wait'}" id="slbl-${i}">${s}</span>
         </div>`).join('')}
       </div>
     </div>`;
-  document.getElementById('img-gen-status').textContent='Gerando...';
-  document.getElementById('btn-gerar-img').disabled=true;
+  document.getElementById('img-gen-status').textContent = 'Gerando...';
+  document.getElementById('btn-gerar-img').disabled = true;
 
-  // STEP 1+2: Groq builds creative prompt
-  setStep(steps,0);
-  await new Promise(r=>setTimeout(r,300));
+  setStep(steps, 0);
+  await new Promise(r => setTimeout(r, 300));
 
-  const groqPrompt=`Você é um diretor criativo especialista em design e social media. Crie um prompt DETALHADO em inglês para gerar uma imagem com Stable Diffusion que seja perfeita para este contexto:
+  const groqPrompt = `Você é um diretor criativo especialista em design e social media. Crie um prompt DETALHADO em inglês para gerar uma imagem com o modelo FLUX que seja perfeita para este contexto:
 
 BRIEFING:
-- Título do conteúdo: ${title}
+- Título: ${title}
 - Mensagem/hook: ${hook}
 - Texto adicional: ${body}
 - Contexto/setor: ${ctx}
@@ -1740,143 +1813,120 @@ BRIEFING:
 
 REGRAS DO PROMPT:
 1. Descreva a CENA visual, não o texto
-2. Mencione as cores EXATAS em inglês (ex: "deep navy blue ${pr}, cyan accent ${ac}")
+2. Mencione as cores EXATAS em inglês (ex: "deep black ${pr}, violet accent ${ac}, background ${bg}")
 3. Inclua estilo: "professional social media design, high-end brand photography, editorial style"
 4. Inclua iluminação, composição e mood
 5. Termine com: "--no text, no typography, no words, no letters"
 6. Máximo 120 palavras
-7. Responda APENAS o prompt em inglês, sem explicações
+7. Responda APENAS o prompt em inglês, sem explicações`;
 
-Seja muito específico e criativo, pensando como um diretor de arte para campanha visual.`;
+  setStep(steps, 1);
+  const promptGerado = await callAI(groqPrompt, 'You are a creative director. Respond only with the image generation prompt in English, no explanations.');
+  lastPrompt = promptGerado;
 
-  setStep(steps,1);
-  const promptGerado=await callAI(groqPrompt,'You are a creative director. Respond only with the Stable Diffusion image prompt in English, no explanations.');
-  lastPrompt=promptGerado;
+  const pc = document.getElementById('prompt-card');
+  if (pc) pc.style.display = 'block';
+  const pd = document.getElementById('prompt-display');
+  if (pd) pd.textContent = promptGerado;
 
-  // Show prompt
-  const pc=document.getElementById('prompt-card');
-  if(pc){pc.style.display='block';}
-  const pd=document.getElementById('prompt-display');
-  if(pd)pd.textContent=promptGerado;
+  setStep(steps, 2);
+  await new Promise(r => setTimeout(r, 400));
 
-  setStep(steps,2);
-  await new Promise(r=>setTimeout(r,400));
+  if (!promptGerado || promptGerado.startsWith('❌') || promptGerado.startsWith('⚠️')) {
+    document.getElementById('img-canvas').innerHTML = `
+      <div class="empty" style="min-height:280px;">
+        <div class="ico">❌</div>
+        <p style="color:var(--red);font-weight:700;">Groq não gerou um prompt válido</p>
+        <p style="font-size:.74rem;max-width:300px;text-align:center;">${promptGerado}</p>
+        <button class="btn btn-out btn-sm" style="margin-top:12px;" onclick="gerarImagemAI()">Tentar novamente</button>
+      </div>`;
+    document.getElementById('img-gen-status').textContent = '❌ Erro no prompt';
+    document.getElementById('btn-gerar-img').disabled = false;
+    return;
+  }
 
-  // STEP 3+4: Puter.js FLUX — totalmente gratuito, sem key, sem CORS, modelo FLUX.1-schnell
-  try{
-    if (!promptGerado || promptGerado.startsWith('❌') || promptGerado.startsWith('⚠️')) {
-      throw new Error('O Groq não gerou um prompt válido. Verifique sua Groq key e tente novamente.');
-    }
+  const cleanPrompt = promptGerado.replace(/--no text.*/i, '').replace(/```[\s\S]*?```/g, '').trim().substring(0, 2000);
 
-    // Limpa o prompt
-    const cleanPrompt = promptGerado
-      .replace(/--no text.*/i, '')
-      .replace(/```[\s\S]*?```/g, '')
-      .trim()
-      .substring(0, 2000);
-
-    setStep(steps, 3);
-
-    // Puter.js gera imagem com FLUX.1-schnell — sem key, sem CORS
+  // Try Puter.js FLUX.1-schnell first
+  try {
     let imgBlob;
     try {
       imgBlob = await puter.ai.txt2img(cleanPrompt, false, 'flux.1-schnell');
-    } catch(puterErr) {
-      // Fallback para Pollinations se Puter falhar
+    } catch (puterErr) {
       console.warn('Puter.js falhou, tentando Pollinations...', puterErr);
-      const DIMS = {'1:1':'1024x1024','9:16':'576x1024','16:9':'1024x576'};
+      setStep(steps, 3);
+      // Fallback to Pollinations
+      const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
       const dims = DIMS[ratio] || '1024x1024';
       const [pw, ph] = dims.split('x');
       const seed = Math.floor(Math.random() * 999999);
-      const encodedPrompt = encodeURIComponent(cleanPrompt);
-      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true`;
+      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true`;
       await new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = resolve;
-        img.onerror = () => reject(new Error('Fallback Pollinations também falhou. Tente novamente.'));
+        img.onerror = () => reject(new Error('Fallback Pollinations falhou. Tente novamente.'));
         img.src = pollinationsUrl;
-        setTimeout(() => reject(new Error('Timeout — tente novamente.')), 35000);
+        setTimeout(() => reject(new Error('Timeout — tente novamente.')), 40000);
       });
-      S.lastImageUrl = pollinationsUrl;
-      // skip blob conversion, jump to render
-      const overlayBg2=pr, overlayAc2=ac;
-      const tFontDisplay2=tFont||'sans-serif', bFontDisplay2=bFont||'sans-serif';
-      document.getElementById('img-canvas').innerHTML=`
-        <div style="padding:16px;">
-          <div class="img-container">
-            <img src="${pollinationsUrl}" alt="Imagem gerada" style="width:100%;border-radius:14px;" crossorigin="anonymous">
-            <div class="img-overlay">
-              <div class="img-overlay-title" style="font-family:'${tFontDisplay2}',sans-serif;">${title}</div>
-              <div class="img-overlay-hook" style="font-family:'${bFontDisplay2}',sans-serif;">${hook}</div>
-              <div class="img-overlay-cta" style="background:${overlayAc2};color:${overlayBg2};font-family:'${bFontDisplay2}',sans-serif;">${c?.cta||'Saiba Mais →'}</div>
-            </div>
-          </div>
-        </div>`;
-      setStep(steps,4);
-      document.getElementById('img-gen-status').textContent='✅ Imagem gerada (Pollinations)!';
-      document.getElementById('btn-gerar-img').disabled=false;
-      const rw=document.getElementById('rating-wrap'); if(rw) rw.style.display='flex';
+      renderImageResult(pollinationsUrl, title, hook, c?.cta || 'Saiba Mais →', bg, ac, pr, tFont, bFont, fmt, 'Pollinations.ai (fallback)');
+      document.getElementById('img-gen-status').textContent = '✅ Imagem gerada (Pollinations fallback)!';
+      document.getElementById('btn-gerar-img').disabled = false;
       return;
     }
 
-    // Converte blob Puter → base64
+    setStep(steps, 3);
+
+    // Convert blob to base64
     const imgUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
       reader.onerror = () => reject(new Error('Erro ao converter imagem'));
       reader.readAsDataURL(imgBlob);
     });
-    S.lastImageUrl = imgUrl;
 
-    // Render image with overlay
-    const overlayBg=pr;
-    const overlayAc=ac;
-    const tFontDisplay=tFont||'sans-serif';
-    const bFontDisplay=bFont||'sans-serif';
+    renderImageResult(imgUrl, title, hook, c?.cta || 'Saiba Mais →', bg, ac, pr, tFont, bFont, fmt, 'Puter.js · FLUX.1-schnell');
+    document.getElementById('img-gen-status').textContent = '✅ Imagem gerada com FLUX.1-schnell!';
 
-    document.getElementById('img-canvas').innerHTML=`
-      <div style="padding:16px;">
-        <div class="img-container">
-          <img src="${imgUrl}" alt="Imagem gerada pela IA" style="width:100%;border-radius:14px;">
-          <div class="img-overlay">
-            <div class="img-overlay-title" style="font-family:'${tFontDisplay}',sans-serif;">${title}</div>
-            <div class="img-overlay-hook" style="font-family:'${bFontDisplay}',sans-serif;">${hook}</div>
-            <div class="img-overlay-cta" style="background:${overlayAc};color:${overlayBg};font-family:'${bFontDisplay}',sans-serif;">${c?.cta||'Saiba Mais →'}</div>
-          </div>
-        </div>
-        <div class="img-actions">
-          <button class="btn btn-black btn-sm" onclick="downloadImg(null,'${fmt}')">⬇️ Baixar imagem</button>
-          <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Regenerar</button>
-          <button class="btn btn-ghost btn-sm" onclick="toggleOverlay()">👁 Toggle texto</button>
-        </div>
-        <div style="margin-top:10px;font-size:.7rem;color:var(--text3);">✦ Gerado por Stability AI · Stable Image Core · ${new Date().toLocaleTimeString('pt-BR')}</div>
-      </div>`;
-
-    document.getElementById('img-gen-status').textContent='✅ Imagem gerada com sucesso!';
-
-  }catch(err){
-    document.getElementById('img-canvas').innerHTML=`
+  } catch (err) {
+    document.getElementById('img-canvas').innerHTML = `
       <div class="empty" style="min-height:280px;">
         <div class="ico">❌</div>
         <p style="color:var(--red);font-weight:700;">Erro ao gerar imagem</p>
-        <p style="font-size:.75rem;max-width:300px;text-align:center;">${err.message}</p>
+        <p style="font-size:.74rem;max-width:300px;text-align:center;">${err.message}</p>
         <button class="btn btn-out btn-sm" style="margin-top:12px;" onclick="gerarImagemAI()">Tentar novamente</button>
       </div>`;
-    document.getElementById('img-gen-status').textContent='❌ Erro na geração';
-    console.error('Stability AI error:', err);
+    document.getElementById('img-gen-status').textContent = '❌ Erro na geração';
+    console.error('Erro geração de imagem:', err);
   }
 
-  document.getElementById('btn-gerar-img').disabled=false;
+  document.getElementById('btn-gerar-img').disabled = false;
 }
 
-function toggleOverlay(){
-  const ov=document.querySelector('.img-overlay');
-  if(ov)ov.style.display=ov.style.display==='none'?'flex':'none';
+function toggleOverlay() {
+  const ov = document.querySelector('.img-overlay');
+  if (ov) ov.style.display = ov.style.display === 'none' ? 'flex' : 'none';
 }
 
-function copyPrompt(){
-  if(lastPrompt)navigator.clipboard.writeText(lastPrompt).then(()=>alert('Prompt copiado! ✅'));
+function copyPrompt() {
+  if (lastPrompt) navigator.clipboard.writeText(lastPrompt).then(() => alert('Prompt copiado! ✅'));
 }
+
+function downloadImg(e, fmt) {
+  if (e) e.preventDefault();
+  if (!S.lastImageUrl) { alert('Nenhuma imagem gerada ainda.'); return; }
+  const a = document.createElement('a');
+  a.href = S.lastImageUrl;
+  a.download = 'designmind-flux-' + fmt + '.jpg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ── Close modal on backdrop click ──
+document.addEventListener('click', e => {
+  const modal = document.getElementById('font-modal');
+  if (modal && e.target === modal) closeModal();
+});
 </script>
 </body>
 </html>
