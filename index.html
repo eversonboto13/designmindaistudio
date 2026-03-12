@@ -1644,22 +1644,22 @@ Seja muito específico e criativo, pensando como um diretor de arte para campanh
   setStep(steps,2);
   await new Promise(r=>setTimeout(r,400));
 
-  // STEP 3+4: Call Stability AI — using JSON body (avoid FormData/postMessage issues)
+  // STEP 3+4: Call Stability AI — multipart/form-data (obrigatório pela API)
   try{
     const aspectRatio = ratio==='9:16'?'9:16':ratio==='1:1'?'1:1':'16:9';
+
+    const fd = new FormData();
+    fd.append('prompt', promptGerado);
+    fd.append('output_format', 'jpeg');
+    fd.append('aspect_ratio', aspectRatio);
 
     const res=await fetch('https://api.stability.ai/v2beta/stable-image/generate/core',{
       method:'POST',
       headers:{
         'Authorization':'Bearer '+stabilityKey,
-        'Content-Type':'application/json',
-        'Accept':'application/json'
+        'Accept':'image/*'
       },
-      body:JSON.stringify({
-        prompt: promptGerado,
-        output_format: 'jpeg',
-        aspect_ratio: aspectRatio
-      })
+      body: fd
     });
 
     setStep(steps,3);
@@ -1674,11 +1674,13 @@ Seja muito específico e criativo, pensando como um diretor de arte para campanh
       throw new Error(`Stability API ${res.status}: ${errText}`);
     }
 
-    const data=await res.json();
-    // API returns base64 image in data[0].base64
-    const b64=data?.image || data?.artifacts?.[0]?.base64 || data?.data?.[0]?.b64_json || data?.[0]?.base64;
-    if(!b64) throw new Error('Resposta sem imagem. Retorno: '+JSON.stringify(data).substring(0,120));
-    const imgUrl=`data:image/jpeg;base64,${b64}`;
+    // Converte blob para base64 (funciona em qualquer contexto)
+    const blob = await res.blob();
+    const imgUrl = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
     S.lastImageUrl=imgUrl;
 
     // Render image with overlay
