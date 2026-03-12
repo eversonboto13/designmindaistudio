@@ -305,6 +305,84 @@ nav.tabs button.active .tdot{background:var(--cyan);}
 </head>
 <body>
 
+<!-- ══ ONBOARDING SCREEN ══ -->
+<div id="onboarding" style="
+  position:fixed;inset:0;background:#0a0a0a;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;
+">
+  <div style="
+    background:#111;border:1.5px solid #222;border-radius:24px;
+    padding:48px 44px;width:min(480px,94vw);box-shadow:0 32px 80px rgba(0,0,0,.6);
+  ">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+      <div style="width:44px;height:44px;background:#22d4e0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#0a0a0a;">DM</div>
+      <div>
+        <div style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.4px;">DesignMind <span style="color:#22d4e0;">AI</span> Studio</div>
+        <div style="font-size:.72rem;color:#555;margin-top:1px;">Paleta · Tipografia · Social Media · Imagens</div>
+      </div>
+    </div>
+
+    <!-- Name -->
+    <div style="margin-bottom:18px;">
+      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">Seu nome</label>
+      <input id="ob-name" type="text" placeholder="Como posso te chamar?" style="
+        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
+        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.9rem;outline:none;
+        transition:border .15s;
+      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
+    </div>
+
+    <!-- Groq Key -->
+    <div style="margin-bottom:18px;">
+      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">
+        Groq API Key <span style="color:#333;font-weight:400;text-transform:none;">(análises e conteúdo)</span>
+      </label>
+      <input id="ob-groq" type="password" placeholder="gsk_..." style="
+        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
+        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.85rem;outline:none;
+        transition:border .15s;
+      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
+      <div style="margin-top:6px;font-size:.7rem;color:#444;">
+        Grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:#22d4e0;text-decoration:none;">console.groq.com/keys</a>
+      </div>
+    </div>
+
+    <!-- Stability Key -->
+    <div style="margin-bottom:28px;">
+      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">
+        Stability AI Key <span style="color:#333;font-weight:400;text-transform:none;">(geração de imagens)</span>
+      </label>
+      <input id="ob-stability" type="password" placeholder="sk-..." style="
+        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
+        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.85rem;outline:none;
+        transition:border .15s;
+      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
+      <div style="margin-top:6px;font-size:.7rem;color:#444;">
+        Em <a href="https://platform.stability.ai/account/keys" target="_blank" style="color:#22d4e0;text-decoration:none;">platform.stability.ai/account/keys</a>
+      </div>
+    </div>
+
+    <!-- Error msg -->
+    <div id="ob-err" style="display:none;background:#2a1010;border:1.5px solid #5a2020;border-radius:8px;padding:10px 14px;color:#fc5a5a;font-size:.78rem;margin-bottom:16px;"></div>
+
+    <!-- Enter button -->
+    <button onclick="obEnter()" style="
+      width:100%;padding:14px;background:#22d4e0;color:#0a0a0a;border:none;
+      border-radius:12px;font-family:Inter,sans-serif;font-size:.9rem;font-weight:800;
+      cursor:pointer;transition:all .15s;letter-spacing:-.2px;
+    " onmouseover="this.style.background='#0ba8b5';this.style.color='#fff'"
+       onmouseout="this.style.background='#22d4e0';this.style.color='#0a0a0a'">
+      Entrar no Studio →
+    </button>
+
+    <div style="text-align:center;margin-top:16px;font-size:.7rem;color:#333;">
+      As chaves ficam salvas localmente no seu navegador · nunca enviadas a terceiros
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header>
   <div class="logo-wrap">
@@ -312,9 +390,10 @@ nav.tabs button.active .tdot{background:var(--cyan);}
     <span class="logo-text">Design<em>Mind</em> AI</span>
   </div>
   <div class="hdr-right">
-    <span class="status-pill s-ok" id="api-status" style="background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);">⚡ Groq ativo</span>
-    <span class="status-pill s-ok" id="stability-status" style="background:var(--green-bg);color:#1a9f52;border-color:#a7f3c8;">🖼 Stability ativo</span>
-    <a class="get-key" href="https://github.com" target="_blank" style="font-size:.72rem;color:var(--text3);">v1.0.0</a>
+    <span id="user-greeting" style="font-size:.78rem;font-weight:700;color:var(--text2);"></span>
+    <span class="status-pill s-ok" style="background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);">⚡ Groq</span>
+    <span class="status-pill s-ok" style="background:var(--green-bg);color:#1a9f52;border-color:#a7f3c8;">🖼 Stability</span>
+    <button onclick="localStorage.clear();location.reload()" style="background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 11px;font-size:.7rem;color:var(--text3);cursor:pointer;font-family:Inter,sans-serif;" title="Trocar chaves">⚙ Reconfigurar</button>
   </div>
 </header>
 
@@ -810,14 +889,60 @@ function lum({r,g,b}){return[r,g,b].map(c=>{c/=255;return c<=.03928?c/12.92:Math
 function cr(h1,h2){const l1=lum(hRgb(h1)),l2=lum(hRgb(h2));return+((Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)).toFixed(2);}
 
 // ══ API KEY ══
-// ══ GROQ API (key embutida) ══
-const GROQ_KEY = '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';
-const STABILITY_KEY = 'sk-gLFRrMoxmTKu1TqeGygSYyukyRNWhhjlnCAM8HtA68w4mwuG';
+// ══ API KEYS (localStorage) ══
+function getGroqKey()      { return localStorage.getItem('dm_groq_key') || ''; }
+function getStabilityKey() { return localStorage.getItem('dm_stab_key') || ''; }
+function getUserName()     { return localStorage.getItem('dm_user_name') || 'Designer'; }
 
-function checkApiKey(){}     // keys já embutidas
+// ══ ONBOARDING ══
+function obEnter() {
+  const name = document.getElementById('ob-name').value.trim();
+  const groq = document.getElementById('ob-groq').value.trim();
+  const stab = document.getElementById('ob-stability').value.trim();
+  const err  = document.getElementById('ob-err');
+
+  if (!groq || !groq.startsWith('gsk_')) {
+    err.style.display='block';
+    err.textContent='⚠️ Cole uma Groq API Key válida (começa com gsk_)';
+    return;
+  }
+
+  err.style.display = 'none';
+  localStorage.setItem('dm_user_name', name || 'Designer');
+  localStorage.setItem('dm_groq_key',  groq);
+  if (stab && stab.startsWith('sk-')) localStorage.setItem('dm_stab_key', stab);
+
+  // Update greeting
+  const greet = document.getElementById('user-greeting');
+  if (greet) greet.textContent = 'Olá, ' + (name || 'Designer') + ' 👋';
+
+  // Hide onboarding, show app
+  document.getElementById('onboarding').style.display = 'none';
+}
+
+// Check on load — skip onboarding if keys already saved
+window.addEventListener('DOMContentLoaded', () => {
+  const groq = getGroqKey();
+  if (groq && groq.startsWith('gsk_')) {
+    document.getElementById('onboarding').style.display = 'none';
+    const greet = document.getElementById('user-greeting');
+    if (greet) greet.textContent = 'Olá, ' + getUserName() + ' 👋';
+  }
+  // Allow Enter key on onboarding inputs
+  ['ob-name','ob-groq','ob-stability'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if(e.key==='Enter') obEnter(); });
+  });
+});
+
+function checkApiKey(){}
 function checkStabilityKey(){}
 
+// ══ GROQ API ══
 async function callAI(prompt, sys = '') {
+  const key = getGroqKey();
+  if (!key) return '❌ Configure sua Groq API Key.';
+
   const systemPrompt = sys || 'Você é designer estratégico e Social Media expert brasileiro. Respostas concisas e práticas.';
   let res, d;
   try {
@@ -825,32 +950,32 @@ async function callAI(prompt, sys = '') {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_KEY
+        'Authorization': 'Bearer ' + key
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        max_tokens: 1200,
-        temperature: 0.7,
+        max_tokens: 1400,
+        temperature: 0.75,
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt }
+          { role: 'user',   content: prompt }
         ]
       })
     });
   } catch (err) {
-    console.error('Groq fetch error:', err);
-    return '❌ Erro de conexão com a IA. Verifique sua internet e tente novamente.';
+    console.error('Groq error:', err);
+    return '❌ Erro de rede. Verifique sua conexão.';
   }
 
   try { d = await res.json(); } catch {
-    return '❌ Resposta inválida da API (status ' + res.status + ')';
+    return '❌ Resposta inválida (status ' + res.status + ')';
   }
 
   if (!res.ok) {
     const msg = d?.error?.message || ('HTTP ' + res.status);
-    if (res.status === 401) return '❌ API key inválida.';
-    if (res.status === 429) return '❌ Limite de requisições atingido. Aguarde e tente novamente.';
-    return '❌ Erro Groq (' + res.status + '): ' + msg;
+    if (res.status === 401) return '❌ Groq Key inválida ou expirada.';
+    if (res.status === 429) return '❌ Rate limit atingido. Aguarde alguns segundos.';
+    return '❌ Groq ' + res.status + ': ' + msg;
   }
 
   return d.choices?.[0]?.message?.content?.trim() || '⚠️ Resposta vazia.';
@@ -1565,7 +1690,11 @@ function setStep(steps,activeIdx){
 }
 
 async function gerarImagemAI(){
-  const stabilityKey = STABILITY_KEY;
+  const stabilityKey = getStabilityKey();
+  if (!stabilityKey || !stabilityKey.startsWith('sk-')) {
+    alert('Configure sua Stability AI Key na tela de entrada.\nAtualize a página para reconfigurar.');
+    return;
+  }
 
   const p=S.palette,f=S.fonts,c=S.selectedContent||S.content?.[0],fmt=S.format;
   const bg=p[3]||'#F5F5F5',pr=p[0]||'#1A1A2E',ac=p[1]||'#22d4e0';
@@ -1644,44 +1773,75 @@ Seja muito específico e criativo, pensando como um diretor de arte para campanh
   setStep(steps,2);
   await new Promise(r=>setTimeout(r,400));
 
-  // STEP 3+4: Call Stability AI — multipart/form-data (obrigatório pela API)
+  // STEP 3+4: Stability AI — stable-image/generate/core (v2beta)
+  // Endpoint oficial: multipart/form-data, Accept: image/*
   try{
+    // Garante que o prompt está limpo (sem erros do Groq)
+    if (!promptGerado || promptGerado.startsWith('❌') || promptGerado.startsWith('⚠️')) {
+      throw new Error('O Groq não gerou um prompt válido. Verifique sua Groq key e tente novamente.');
+    }
+
+    const cleanPrompt = promptGerado
+      .replace(/--no text.*$/i, '')  // remove flags SD
+      .replace(/```[\s\S]*?```/g, '')  // remove code blocks
+      .trim()
+      .substring(0, 10000);  // Stability max
+
     const aspectRatio = ratio==='9:16'?'9:16':ratio==='1:1'?'1:1':'16:9';
 
     const fd = new FormData();
-    fd.append('prompt', promptGerado);
+    fd.append('prompt', cleanPrompt);
     fd.append('output_format', 'jpeg');
     fd.append('aspect_ratio', aspectRatio);
+    fd.append('model', 'sd3.5-large-turbo');  // modelo mais rápido e moderno
 
-    const res=await fetch('https://api.stability.ai/v2beta/stable-image/generate/core',{
-      method:'POST',
-      headers:{
-        'Authorization':'Bearer '+stabilityKey,
-        'Accept':'image/*'
-      },
-      body: fd
-    });
+    let res;
+    try {
+      res = await fetch('https://api.stability.ai/v2beta/stable-image/generate/sd3', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + stabilityKey,
+          'Accept': 'image/*'
+        },
+        body: fd
+      });
+    } catch (fetchErr) {
+      throw new Error('Erro de rede ao contatar Stability AI: ' + fetchErr.message);
+    }
 
     setStep(steps,3);
 
     if(!res.ok){
-      let errText='';
-      try{ const e=await res.json(); errText=e?.errors?.[0]||e?.message||JSON.stringify(e); }
-      catch{ errText=await res.text().catch(()=>'sem detalhes'); }
-      if(res.status===401) throw new Error('Key inválida ou expirada. Gere uma nova em platform.stability.ai/account/keys');
-      if(res.status===402) throw new Error('Créditos Stability AI esgotados. Adicione créditos em platform.stability.ai');
-      if(res.status===422) throw new Error('Prompt rejeitado (conteúdo não permitido). Tente um tema diferente.');
-      throw new Error(`Stability API ${res.status}: ${errText}`);
+      let errText = 'sem detalhes';
+      try {
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const e = await res.json();
+          errText = e?.errors?.[0] || e?.message || e?.name || JSON.stringify(e).substring(0,200);
+        } else {
+          errText = (await res.text()).substring(0, 200);
+        }
+      } catch(_){}
+      if(res.status===401) throw new Error('Stability Key inválida ou expirada.');
+      if(res.status===402) throw new Error('Créditos Stability AI esgotados. Adicione em platform.stability.ai');
+      if(res.status===403) throw new Error('Acesso negado. Verifique permissões da sua Stability Key.');
+      if(res.status===422) throw new Error('Prompt recusado pela Stability AI. Tente um tema diferente.');
+      if(res.status===429) throw new Error('Rate limit Stability AI. Aguarde alguns segundos.');
+      if(res.status===500) throw new Error('Erro interno Stability AI. Tente novamente.');
+      throw new Error('Stability API ' + res.status + ': ' + errText);
     }
 
-    // Converte blob para base64 (funciona em qualquer contexto)
+    // Converte blob → base64 via FileReader (funciona em qualquer browser/contexto)
     const blob = await res.blob();
-    const imgUrl = await new Promise((resolve) => {
+    if (!blob || blob.size < 100) throw new Error('Imagem inválida recebida (blob vazio). Tente novamente.');
+
+    const imgUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Erro ao processar imagem'));
       reader.readAsDataURL(blob);
     });
-    S.lastImageUrl=imgUrl;
+    S.lastImageUrl = imgUrl;
 
     // Render image with overlay
     const overlayBg=pr;
