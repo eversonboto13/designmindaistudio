@@ -1724,48 +1724,121 @@ function rate(score) {
     ${tF?`<div class="pref-row"><span class="pref-lbl">✍️ Tipografia favorita</span><span class="pref-val">${tF[0]}</span></div>`:''}`;
 }
 
-// ══ IMAGE GENERATION ══
+// ══ IMAGE GENERATION — cadeia de 4 provedores com fallback automático ══
 let lastPrompt = '';
 
-function setStep(steps, activeIdx) {
-  steps.forEach((s, i) => {
-    const dot = document.getElementById('sdot-' + i);
-    const lbl = document.getElementById('slbl-' + i);
-    if (!dot || !lbl) return;
-    if (i < activeIdx) { dot.className = 'step-dot done'; lbl.className = 'step-lbl done'; }
-    else if (i === activeIdx) { dot.className = 'step-dot active'; lbl.className = 'step-lbl active'; }
-    else { dot.className = 'step-dot wait'; lbl.className = 'step-lbl wait'; }
-  });
+// ── Helpers de UI ──
+function setProviderStatus(name, status) {
+  // status: 'trying' | 'ok' | 'fail' | 'skip'
+  const icons = { trying:'⏳', ok:'✅', fail:'❌', skip:'⏭' };
+  const el = document.getElementById('prov-' + name);
+  if (el) {
+    el.textContent = icons[status] + ' ' + el.dataset.label;
+    el.style.color = status === 'ok' ? 'var(--green)' : status === 'fail' ? 'var(--red)' : status === 'trying' ? 'var(--yellow)' : 'var(--text3)';
+  }
+}
+
+function showProgress(providerLabel) {
+  document.getElementById('img-canvas').innerHTML = `
+    <div class="img-gen-progress">
+      <div class="progress-ring"></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text);text-align:center;">
+        Gerando imagem com IA...
+      </div>
+      <div style="font-size:.75rem;color:var(--text3);margin-top:-6px;" id="provider-current">${providerLabel}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:100%;max-width:300px;margin-top:4px;">
+        <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:2px;">Tentativas automáticas</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-puter" data-label="Puter.js · FLUX.1-schnell">⏳ Puter.js · FLUX.1-schnell</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-poll1" data-label="Pollinations · FLUX">⏸ Pollinations · FLUX</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.76px;" id="prov-poll2" data-label="Pollinations · Turbo">⏸ Pollinations · Turbo</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;" id="prov-gen" data-label="gen.pollinations.ai">⏸ gen.pollinations.ai</div>
+      </div>
+    </div>`;
+}
+
+function updateCurrentProvider(label) {
+  const el = document.getElementById('provider-current');
+  if (el) el.textContent = label;
 }
 
 function renderImageResult(imgSrc, title, hook, cta, bg, ac, pr, tFont, bFont, fmt, source) {
   S.lastImageUrl = imgSrc;
+  // Check CTA text color contrast
+  const bgLum2 = lum(hRgb(bg));
+  const ctaTextColor = bgLum2 > 0.4 ? bg : '#fff';
   document.getElementById('img-canvas').innerHTML = `
     <div style="padding:14px;">
       <div class="img-container" style="background:${bg};">
-        <img src="${imgSrc}" alt="Imagem gerada pela IA" style="width:100%;border-radius:12px;display:block;" crossorigin="anonymous">
+        <img src="${imgSrc}" alt="Imagem gerada pela IA" style="width:100%;border-radius:12px;display:block;" crossorigin="anonymous"
+          onerror="this.onerror=null;this.src='${imgSrc}';">
         <div class="img-overlay">
           <div class="img-overlay-title" style="font-family:'${tFont||'sans-serif'}',sans-serif;">${title}</div>
           <div class="img-overlay-hook" style="font-family:'${bFont||'sans-serif'}',sans-serif;">${hook}</div>
-          <div class="img-overlay-cta" style="background:${ac};color:${bg};font-family:'${bFont||'sans-serif'}',sans-serif;">${cta}</div>
+          <div class="img-overlay-cta" style="background:${ac};color:${ctaTextColor};font-family:'${bFont||'sans-serif'}',sans-serif;">${cta}</div>
         </div>
       </div>
       <div class="img-actions">
-        <button class="btn btn-violet btn-sm" onclick="downloadImg(event,'${fmt}')">⬇️ Baixar imagem</button>
+        <button class="btn btn-violet btn-sm" onclick="downloadImg(event,'${fmt}')">⬇️ Baixar</button>
         <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Regenerar</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleOverlay()">👁 Toggle texto</button>
       </div>
-      <div style="margin-top:8px;font-size:.68rem;color:var(--text3);">✦ Gerado por ${source} · ${new Date().toLocaleTimeString('pt-BR')}</div>
+      <div style="margin-top:8px;font-size:.67rem;color:var(--text3);">✦ ${source} · ${new Date().toLocaleTimeString('pt-BR')}</div>
     </div>`;
 }
 
+// ── Carrega URL de imagem como <img> e verifica que carregou ──
+function loadImageUrl(url, timeoutMs = 45000) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      img.src = '';
+      reject(new Error('Timeout'));
+    }, timeoutMs);
+    img.onload = () => { clearTimeout(timer); resolve(url); };
+    img.onerror = () => { clearTimeout(timer); reject(new Error('Falha ao carregar imagem')); };
+    img.src = url;
+  });
+}
+
+// ── 4 provedores de geração de imagem ──
+async function tryPuter(prompt) {
+  // puter.ai.txt2img returns an HTMLImageElement, NOT a Blob
+  const imgEl = await puter.ai.txt2img(prompt, false, 'flux.1-schnell');
+  if (!imgEl || !imgEl.src) throw new Error('Puter não retornou imagem válida');
+  return imgEl.src;
+}
+
+async function tryPollinationsFlux(prompt, ratio) {
+  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
+  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
+  const seed = Math.floor(Math.random() * 999999);
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true&enhance=true`;
+  return await loadImageUrl(url, 50000);
+}
+
+async function tryPollinationsTurbo(prompt, ratio) {
+  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
+  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
+  const seed = Math.floor(Math.random() * 999999);
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&seed=${seed}&model=turbo&nologo=true`;
+  return await loadImageUrl(url, 45000);
+}
+
+async function tryGenPollinations(prompt, ratio) {
+  const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
+  const [pw, ph] = (DIMS[ratio] || '1024x1024').split('x');
+  const url = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=${pw}&height=${ph}&model=flux&nologo=1&seed=${Date.now()}`;
+  return await loadImageUrl(url, 45000);
+}
+
+// ── Função principal com fallback automático ──
 async function gerarImagemAI() {
   const p = S.palette, f = S.fonts, c = S.selectedContent || S.content?.[0], fmt = S.format;
   const bg = p[3] || '#F5F5F5', pr = p[0] || '#1A1A2E', ac = p[1] || '#7C5CF6';
-  const title = c?.titulo || 'Design estratégico criativo';
-  const hook = c?.hook || 'Conteúdo visual impactante';
-  const body = (c?.corpo || '').substring(0, 100);
-  const ctx = S.ctx || 'geral';
+  const title  = c?.titulo || 'Design estratégico criativo';
+  const hook   = c?.hook   || 'Conteúdo visual impactante';
+  const body   = (c?.corpo || '').substring(0, 100);
+  const ctx     = S.ctx || 'geral';
   const channel = S.channel || 'feed';
   const refVisual = c?.referencia_visual || '';
   const tom = document.getElementById('sm-tom')?.value || 'profissional';
@@ -1773,64 +1846,44 @@ async function gerarImagemAI() {
   const tFont = f.h || '', bFont = f.b || '';
   const FMT_RATIO = { feed:'1:1', stories:'9:16', banner:'16:9', youtube:'16:9' };
   const ratio = FMT_RATIO[fmt] || '1:1';
+  const ctaText = c?.cta || 'Saiba Mais →';
 
-  const steps = [
-    'Groq analisando contexto e estratégia',
-    'Construindo prompt criativo em inglês',
-    'Enviando para Puter.js FLUX.1-schnell',
-    'Renderizando imagem final'
-  ];
-  document.getElementById('img-canvas').innerHTML = `
-    <div class="img-gen-progress">
-      <div class="progress-ring"></div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text);">Gerando com FLUX.1-schnell...</div>
-      <div class="progress-steps">
-        ${steps.map((s, i) => `<div class="progress-step">
-          <div class="step-dot ${i===0?'active':'wait'}" id="sdot-${i}"></div>
-          <span class="step-lbl ${i===0?'active':'wait'}" id="slbl-${i}">${s}</span>
-        </div>`).join('')}
-      </div>
-    </div>`;
+  showProgress('Iniciando...');
   document.getElementById('img-gen-status').textContent = 'Gerando...';
   document.getElementById('btn-gerar-img').disabled = true;
 
-  setStep(steps, 0);
-  await new Promise(r => setTimeout(r, 300));
+  // ── PASSO 1: Groq cria o prompt criativo ──
+  updateCurrentProvider('⚡ Groq: criando prompt visual...');
+  await new Promise(r => setTimeout(r, 200));
 
-  const groqPrompt = `Você é um diretor criativo especialista em design e social media. Crie um prompt DETALHADO em inglês para gerar uma imagem com o modelo FLUX que seja perfeita para este contexto:
+  const groqPrompt = `Você é um diretor criativo especialista em design e social media. Crie um prompt DETALHADO em inglês para gerar uma imagem que seja perfeita para este contexto:
 
 BRIEFING:
 - Título: ${title}
 - Mensagem/hook: ${hook}
-- Texto adicional: ${body}
 - Contexto/setor: ${ctx}
 - Canal: ${channel} (proporção ${ratio})
-- Tom de voz: ${tom}
-- Público-alvo: ${pub||'geral'}
-- Referência visual: ${refVisual}
-- Cores da paleta: primária ${pr}, destaque ${ac}, fundo ${bg}
+- Tom: ${tom} | Público: ${pub||'geral'}
+- Referência visual: ${refVisual||'não especificada'}
+- Cores: primária ${pr}, destaque ${ac}, fundo ${bg}
 - Tipografia: ${tFont||'moderna'}
 
-REGRAS DO PROMPT:
-1. Descreva a CENA visual, não o texto
-2. Mencione as cores EXATAS em inglês (ex: "deep black ${pr}, violet accent ${ac}, background ${bg}")
-3. Inclua estilo: "professional social media design, high-end brand photography, editorial style"
-4. Inclua iluminação, composição e mood
-5. Termine com: "--no text, no typography, no words, no letters"
-6. Máximo 120 palavras
-7. Responda APENAS o prompt em inglês, sem explicações`;
+REGRAS:
+1. Descreva apenas a CENA visual (sem texto)
+2. Mencione as cores EXATAS: "color ${pr}, accent ${ac}"
+3. Estilo: "professional brand photography, editorial, cinematic lighting"
+4. Inclua composição, iluminação, mood
+5. Máximo 100 palavras
+6. Responda SOMENTE o prompt em inglês`;
 
-  setStep(steps, 1);
-  const promptGerado = await callAI(groqPrompt, 'You are a creative director. Respond only with the image generation prompt in English, no explanations.');
+  const promptGerado = await callAI(groqPrompt, 'You are a creative art director. Reply ONLY with the image prompt in English. No explanation, no markdown.');
   lastPrompt = promptGerado;
 
+  // Mostra prompt gerado
   const pc = document.getElementById('prompt-card');
   if (pc) pc.style.display = 'block';
   const pd = document.getElementById('prompt-display');
   if (pd) pd.textContent = promptGerado;
-
-  setStep(steps, 2);
-  await new Promise(r => setTimeout(r, 400));
 
   if (!promptGerado || promptGerado.startsWith('❌') || promptGerado.startsWith('⚠️')) {
     document.getElementById('img-canvas').innerHTML = `
@@ -1845,58 +1898,73 @@ REGRAS DO PROMPT:
     return;
   }
 
-  const cleanPrompt = promptGerado.replace(/--no text.*/i, '').replace(/```[\s\S]*?```/g, '').trim().substring(0, 2000);
+  const cleanPrompt = promptGerado
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/^(here'?s?|the prompt|prompt:|image prompt:)[:\s]*/i, '')
+    .trim()
+    .substring(0, 1500);
 
-  // Try Puter.js FLUX.1-schnell first
-  try {
-    let imgBlob;
-    try {
-      imgBlob = await puter.ai.txt2img(cleanPrompt, false, 'flux.1-schnell');
-    } catch (puterErr) {
-      console.warn('Puter.js falhou, tentando Pollinations...', puterErr);
-      setStep(steps, 3);
-      // Fallback to Pollinations
-      const DIMS = { '1:1':'1024x1024', '9:16':'576x1024', '16:9':'1024x576' };
-      const dims = DIMS[ratio] || '1024x1024';
-      const [pw, ph] = dims.split('x');
-      const seed = Math.floor(Math.random() * 999999);
-      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true`;
-      await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = () => reject(new Error('Fallback Pollinations falhou. Tente novamente.'));
-        img.src = pollinationsUrl;
-        setTimeout(() => reject(new Error('Timeout — tente novamente.')), 40000);
-      });
-      renderImageResult(pollinationsUrl, title, hook, c?.cta || 'Saiba Mais →', bg, ac, pr, tFont, bFont, fmt, 'Pollinations.ai (fallback)');
-      document.getElementById('img-gen-status').textContent = '✅ Imagem gerada (Pollinations fallback)!';
-      document.getElementById('btn-gerar-img').disabled = false;
-      return;
+  // ── PASSO 2: Tentativas em cadeia ──
+  const providers = [
+    {
+      id: 'puter', label: 'Puter.js · FLUX.1-schnell',
+      fn: () => tryPuter(cleanPrompt)
+    },
+    {
+      id: 'poll1', label: 'Pollinations.ai · FLUX',
+      fn: () => tryPollinationsFlux(cleanPrompt, ratio)
+    },
+    {
+      id: 'poll2', label: 'Pollinations.ai · Turbo',
+      fn: () => tryPollinationsTurbo(cleanPrompt, ratio)
+    },
+    {
+      id: 'gen', label: 'gen.pollinations.ai · FLUX',
+      fn: () => tryGenPollinations(cleanPrompt, ratio)
     }
+  ];
 
-    setStep(steps, 3);
+  let successUrl = null;
+  let successSource = '';
 
-    // Convert blob to base64
-    const imgUrl = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Erro ao converter imagem'));
-      reader.readAsDataURL(imgBlob);
-    });
+  for (const prov of providers) {
+    setProviderStatus(prov.id, 'trying');
+    updateCurrentProvider(`🔄 Tentando: ${prov.label}`);
+    try {
+      const url = await prov.fn();
+      if (url) {
+        successUrl = url;
+        successSource = prov.label;
+        setProviderStatus(prov.id, 'ok');
+        // mark remaining as skip
+        let found = false;
+        for (const p2 of providers) {
+          if (found) setProviderStatus(p2.id, 'skip');
+          if (p2.id === prov.id) found = true;
+        }
+        break;
+      }
+    } catch (err) {
+      console.warn(`[${prov.label}] falhou:`, err.message);
+      setProviderStatus(prov.id, 'fail');
+      await new Promise(r => setTimeout(r, 300)); // pequena pausa entre tentativas
+    }
+  }
 
-    renderImageResult(imgUrl, title, hook, c?.cta || 'Saiba Mais →', bg, ac, pr, tFont, bFont, fmt, 'Puter.js · FLUX.1-schnell');
-    document.getElementById('img-gen-status').textContent = '✅ Imagem gerada com FLUX.1-schnell!';
-
-  } catch (err) {
+  if (successUrl) {
+    renderImageResult(successUrl, title, hook, ctaText, bg, ac, pr, tFont, bFont, fmt, successSource);
+    document.getElementById('img-gen-status').textContent = `✅ Gerado via ${successSource}`;
+  } else {
     document.getElementById('img-canvas').innerHTML = `
       <div class="empty" style="min-height:280px;">
         <div class="ico">❌</div>
-        <p style="color:var(--red);font-weight:700;">Erro ao gerar imagem</p>
-        <p style="font-size:.74rem;max-width:300px;text-align:center;">${err.message}</p>
-        <button class="btn btn-out btn-sm" style="margin-top:12px;" onclick="gerarImagemAI()">Tentar novamente</button>
+        <p style="color:var(--red);font-weight:700;">Todos os provedores falharam</p>
+        <p style="font-size:.74rem;max-width:300px;text-align:center;color:var(--text3);">
+          Pode ser instabilidade temporária nos servidores gratuitos.<br>Aguarde alguns segundos e tente novamente.
+        </p>
+        <button class="btn btn-violet btn-sm" style="margin-top:14px;" onclick="gerarImagemAI()">🔄 Tentar novamente</button>
       </div>`;
-    document.getElementById('img-gen-status').textContent = '❌ Erro na geração';
-    console.error('Erro geração de imagem:', err);
+    document.getElementById('img-gen-status').textContent = '❌ Todos os provedores falharam';
   }
 
   document.getElementById('btn-gerar-img').disabled = false;
