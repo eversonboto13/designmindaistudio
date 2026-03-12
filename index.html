@@ -1081,14 +1081,9 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
             <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--text3);margin-top:3px;">
               <span>Esquerda</span><span>Centro</span><span>Direita</span>
             </div>
-            <!-- Vertical position -->
-            <div style="display:flex;gap:6px;align-items:center;margin-top:8px;">
-              <label style="flex-shrink:0;min-width:80px;">Posição vertical</label>
-              <div style="display:flex;gap:4px;">
-                <button class="canvas-grid-btn on" id="vpos-top" onclick="setLogoVPos('top')">Topo</button>
-                <button class="canvas-grid-btn" id="vpos-mid" onclick="setLogoVPos('mid')">Centro</button>
-                <button class="canvas-grid-btn" id="vpos-bot" onclick="setLogoVPos('bot')">Base</button>
-              </div>
+            <!-- Vertical: fixed at bottom — info only -->
+            <div style="font-size:.68rem;color:var(--text3);margin-top:6px;padding:6px 8px;background:var(--surface);border-radius:6px;">
+              📌 Logo fixada na base da arte
             </div>
             <button onclick="removeLogo()" style="margin-top:8px;font-size:.7rem;color:var(--red);background:none;border:none;cursor:pointer;padding:0;">✕ Remover logo</button>
           </div>
@@ -2093,13 +2088,23 @@ function drawDesignCanvas(imgSrc, opts) {
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // 2. Draw image (cover fill)
+    // 2. Draw image — cover fill + pan/zoom
     const iW = img.naturalWidth  || img.width;
     const iH = img.naturalHeight || img.height;
-    const scale = Math.max(W/iW, H/iH);
-    const dw = iW * scale, dh = iH * scale;
-    const dx = (W - dw) / 2, dy = (H - dh) / 2;
-    ctx.drawImage(img, dx, dy, dw, dh);
+    const zoom = typeof S.panZoom === 'number' ? S.panZoom : 1.0;
+    const coverScale = Math.max(W / iW, H / iH);
+    const finalScale = coverScale * zoom;
+    const dw = iW * finalScale;
+    const dh = iH * finalScale;
+    const centerX = (W - dw) / 2;
+    const centerY = (H - dh) / 2;
+    const ox = typeof S.panOffsetX === 'number' ? S.panOffsetX : 0;
+    const oy = typeof S.panOffsetY === 'number' ? S.panOffsetY : 0;
+    const maxShiftX = Math.max(0, (dw - W) / 2);
+    const maxShiftY = Math.max(0, (dh - H) / 2);
+    const clampedOX = Math.max(-maxShiftX, Math.min(maxShiftX, ox));
+    const clampedOY = Math.max(-maxShiftY, Math.min(maxShiftY, oy));
+    ctx.drawImage(img, centerX + clampedOX, centerY + clampedOY, dw, dh);
 
     if (!S.canvasTextVisible) { finalizeCanvas(canvas, fmtKey); return; }
 
@@ -2266,29 +2271,25 @@ function drawDesignCanvas(imgSrc, opts) {
       ctx.textBaseline = 'alphabetic';
     }
 
-    // 5. LOGO ZONE — uploaded image OR text brand, positioned by user
+    // 5. LOGO ZONE — always at BOTTOM, user moves only left↔right
     if (S.logoImg) {
-      // ── Uploaded logo image ──
+      // ── Uploaded logo image — fixed bottom ──
       const logoMaxW = Math.round(W * (S.logoSizePct || DESIGN_RULES.LOGO_SIZE_DEFAULT));
       const logoAspect = S.logoImg.naturalWidth / (S.logoImg.naturalHeight || 1);
       const logoW = logoMaxW;
-      const logoH = Math.round(logoMaxW / logoAspect);
-      // Vertical: top / mid / bot
-      const vPos = S.logoVPos || 'top';
-      let logoY;
-      if (vPos === 'top')      logoY = Math.round(H * DESIGN_RULES.LOGO_TOP_MARGIN);
-      else if (vPos === 'mid') logoY = Math.round(H / 2 - logoH / 2);
-      else                     logoY = Math.round(H - SAFE - logoH);
-      // Horizontal: map 0..1 to safe zone left..right
-      const minX = Math.round(W * DESIGN_RULES.SAFE_ZONE_PCT);
-      const maxX = W - SAFE - logoW;
-      const logoX = Math.round(minX + (S.logoPosX || 0) * Math.max(0, maxX - minX));
+      const logoH = Math.round(logoMaxW / Math.max(logoAspect, 0.1));
+      // BOTTOM: sempre na base com safe zone
+      const logoY = H - SAFE - logoH;
+      // Horizontal: 0..1 mapeado para [safe_left .. safe_right - logoW]
+      const minX = SAFE;
+      const maxX = Math.max(minX, W - SAFE - logoW);
+      const logoX = Math.round(minX + Math.max(0, Math.min(1, S.logoPosX || 0)) * (maxX - minX));
       ctx.save();
       ctx.globalAlpha = 0.95;
       ctx.drawImage(S.logoImg, logoX, logoY, logoW, logoH);
       ctx.restore();
     } else if (brand && brand.trim()) {
-      // ── Text brand fallback ──
+      // ── Text brand fallback — also at bottom ──
       const logoSize  = Math.round(W * DESIGN_RULES.EYEBROW_SIZE_PCT * 1.15);
       const logoPadX  = Math.round(W * 0.024);
       const logoPadY  = Math.round(W * 0.014);
@@ -2296,8 +2297,8 @@ function drawDesignCanvas(imgSrc, opts) {
       const logoTxtW  = ctx.measureText(brand.substring(0,18)).width;
       const logoBoxW  = logoTxtW + logoPadX * 2;
       const logoBoxH  = logoSize + logoPadY * 2;
-      const logoX     = W - SAFE - logoBoxW;
-      const logoY     = Math.round(H * DESIGN_RULES.LOGO_TOP_MARGIN);
+      const logoX     = SAFE; // default bottom-left
+      const logoY     = H - SAFE - logoBoxH;
       ctx.save();
       ctx.globalAlpha = 0.80;
       ctx.fillStyle   = 'rgba(0,0,0,0.45)';
@@ -2446,6 +2447,12 @@ function showProgressUI(providers) {
       </div>
     </div>`;
   if (empty) empty.style.display = 'flex';
+  // Reset pan/zoom state on new generation
+  S.panOffsetX = 0;
+  S.panOffsetY = 0;
+  S.panZoom    = 1.0;
+  const zoomEl = document.getElementById('pan-zoom');
+  if (zoomEl) zoomEl.value = 100;
   // Hide analysis panel on new generation
   const ap = document.getElementById('analysis-panel');
   if (ap) ap.style.display = 'none';
@@ -2488,11 +2495,11 @@ async function gerarImagemAI() {
   const ratio = (FMT_DIMS[fmt] || FMT_DIMS.feed_square).ratio;
 
   const providers = [
-    { id:'puter',   label:'Puter.js · FLUX.1-schnell',     fn: () => tryPuter(cleanPrompt) },
-    { id:'poll1',   label:'Pollinations · FLUX',            fn: () => tryPollinationsFlux(cleanPrompt, ratio) },
-    { id:'poll2',   label:'Pollinations · Turbo',           fn: () => tryPollinationsTurbo(cleanPrompt, ratio) },
-    { id:'poll3',   label:'Pollinations · Flux-Realism',    fn: () => tryPollinationsRealism(cleanPrompt, ratio) },
-    { id:'poll4',   label:'Pollinations · FLUX (fallback)', fn: () => tryPollinationsFallback(cleanPrompt, ratio) },
+    { id:'poll1',   label:'Pollinations · FLUX',             fn: () => tryPollinationsFlux(cleanPrompt, ratio) },
+    { id:'poll2',   label:'Pollinations · Flux-Realism',     fn: () => tryPollinationsRealism(cleanPrompt, ratio) },
+    { id:'poll3',   label:'Pollinations · Turbo',            fn: () => tryPollinationsTurbo(cleanPrompt, ratio) },
+    { id:'poll4',   label:'Pollinations · FLUX (fallback)',  fn: () => tryPollinationsFallback(cleanPrompt, ratio) },
+    { id:'puter',   label:'Puter.js · FLUX.1-schnell',      fn: () => tryPuter(cleanPrompt) },
   ];
 
   showProgressUI(providers);
@@ -2758,51 +2765,47 @@ function resetPan() {
 }
 
 function applyPanZoom(val) {
-  S.panZoom = parseInt(val) / 100;
+  S.panZoom = parseFloat(val) / 100;
+  // Reset pan offsets when zooming so image re-centers correctly
+  S.panOffsetX = 0;
+  S.panOffsetY = 0;
   if (S.lastRawImageSrc) redrawCanvas();
 }
 
-// ── Canvas mouse pan ──
+// ── Canvas mouse/touch pan — drag to reframe image ──
 (function initCanvasPan() {
   function setup() {
     const canvas = document.getElementById('design-canvas');
     if (!canvas) { setTimeout(setup, 600); return; }
     let dragging = false, lastX = 0, lastY = 0;
-    const getXY = (e) => e.touches
-      ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      : { x: e.clientX, y: e.clientY };
-    canvas.addEventListener('mousedown', (e) => {
-      if (!S.lastRawImageSrc) return;
-      dragging = true; lastX = e.clientX; lastY = e.clientY;
-      canvas.style.cursor = 'grabbing';
-    });
-    canvas.addEventListener('touchstart', (e) => {
+
+    function startDrag(cx, cy) {
       if (!S.lastRawImageSrc) return;
       dragging = true;
-      const t = e.touches[0]; lastX = t.clientX; lastY = t.clientY;
-    }, { passive: true });
-    document.addEventListener('mousemove', (e) => {
-      if (!dragging) return;
-      // Convert screen px to canvas px (scale factor)
-      const scaleX = (canvas.width  || 1080) / canvas.offsetWidth;
-      const scaleY = (canvas.height || 1080) / canvas.offsetHeight;
-      S.panOffsetX += (e.clientX - lastX) * scaleX;
-      S.panOffsetY += (e.clientY - lastY) * scaleY;
-      lastX = e.clientX; lastY = e.clientY;
-      if (S.lastRawImageSrc) redrawCanvas();
-    });
-    document.addEventListener('touchmove', (e) => {
-      if (!dragging) return;
-      const t = e.touches[0];
-      const scaleX = (canvas.width  || 1080) / canvas.offsetWidth;
-      const scaleY = (canvas.height || 1080) / canvas.offsetHeight;
-      S.panOffsetX += (t.clientX - lastX) * scaleX;
-      S.panOffsetY += (t.clientY - lastY) * scaleY;
-      lastX = t.clientX; lastY = t.clientY;
-      if (S.lastRawImageSrc) redrawCanvas();
-    }, { passive: true });
-    document.addEventListener('mouseup', () => { dragging = false; canvas.style.cursor = 'grab'; });
-    document.addEventListener('touchend', () => { dragging = false; });
+      lastX = cx; lastY = cy;
+      canvas.style.cursor = 'grabbing';
+    }
+    function doDrag(cx, cy) {
+      if (!dragging || !S.lastRawImageSrc) return;
+      // Scale screen delta to canvas pixel space
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width  / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const dx = (cx - lastX) * scaleX;
+      const dy = (cy - lastY) * scaleY;
+      S.panOffsetX = (S.panOffsetX || 0) + dx;
+      S.panOffsetY = (S.panOffsetY || 0) + dy;
+      lastX = cx; lastY = cy;
+      redrawCanvas();
+    }
+    function stopDrag() { dragging = false; canvas.style.cursor = 'grab'; }
+
+    canvas.addEventListener('mousedown',  (e) => startDrag(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    document.addEventListener('mousemove',  (e) => doDrag(e.clientX, e.clientY));
+    document.addEventListener('touchmove',  (e) => { if(dragging) { e.preventDefault(); doDrag(e.touches[0].clientX, e.touches[0].clientY); }}, { passive: false });
+    document.addEventListener('mouseup',  stopDrag);
+    document.addEventListener('touchend', stopDrag);
     canvas.style.cursor = 'grab';
   }
   document.addEventListener('DOMContentLoaded', setup);
