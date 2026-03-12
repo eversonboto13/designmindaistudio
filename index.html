@@ -406,6 +406,34 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
   nav.tabs{padding:0 14px}
   .g2,.g3{grid-template-columns:1fr}
 }
+
+/* ── LOGO UPLOAD + DRAG ── */
+.logo-upload-zone{border:1.5px dashed var(--border2);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--surface2);}
+.logo-upload-zone:hover{border-color:var(--violet);background:var(--violet-l);}
+.logo-upload-zone.has-logo{border-style:solid;border-color:var(--green);background:var(--green-l);}
+.logo-pos-track{position:relative;width:100%;height:38px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-top:8px;cursor:ew-resize;user-select:none;overflow:hidden;}
+.logo-pos-thumb{position:absolute;top:4px;width:60px;height:30px;background:var(--violet);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;cursor:ew-resize;transition:width .1s;}
+/* ── IMAGE PAN ── */
+.img-pan-wrap{position:relative;overflow:hidden;cursor:grab;background:#000;border-radius:10px;}
+.img-pan-wrap.panning{cursor:grabbing;}
+.img-pan-inner{position:absolute;top:0;left:0;will-change:transform;}
+.img-pan-inner img{display:block;max-width:none;}
+/* ── AI ANALYSIS PANEL ── */
+#analysis-panel{display:none;background:var(--surface);border:1.5px solid var(--border2);border-radius:16px;padding:20px;margin-top:12px;}
+.analysis-score-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.analysis-score-badge{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
+.analysis-score-badge.great{background:var(--green-l);color:var(--green);border:1px solid var(--green);}
+.analysis-score-badge.ok{background:var(--yellow-l);color:var(--yellow);border:1px solid var(--yellow);}
+.analysis-score-badge.warn{background:var(--red-l);color:var(--red);border:1px solid var(--red);}
+.analysis-item{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:.78rem;}
+.analysis-item:last-child{border-bottom:none;}
+.analysis-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.analysis-item-body{color:var(--text2);line-height:1.55;}
+.analysis-item-body strong{color:var(--text);display:block;margin-bottom:2px;}
+/* ── DESIGN GRID GUIDES (subtle overlay on canvas) ── */
+.canvas-grid-btn{padding:5px 10px;border-radius:6px;font-size:.68rem;background:var(--surface2);border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:all .15s;}
+.canvas-grid-btn.on{background:var(--cyan-l);border-color:var(--cyan);color:var(--cyan);}
+
 </style>
 </head>
 <body>
@@ -939,7 +967,16 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
 
       <!-- Canvas wrapper — escala para caber na tela, exporta em HD -->
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;overflow:hidden;">
-        <div id="canvas-wrap" style="width:100%;display:flex;justify-content:center;align-items:flex-start;">
+        <!-- Image pan controls -->
+        <div id="pan-controls" style="display:none;margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span style="font-size:.68rem;color:var(--text3);">📷 Arraste a imagem para enquadrar:</span>
+          <button class="canvas-grid-btn" onclick="resetPan()" style="font-size:.65rem;">↺ Resetar</button>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <span style="font-size:.65rem;color:var(--text3);">Zoom</span>
+            <input type="range" id="pan-zoom" min="80" max="180" value="100" style="width:70px;" oninput="applyPanZoom(this.value)">
+          </div>
+        </div>
+        <div id="canvas-wrap" style="width:100%;display:flex;justify-content:center;align-items:flex-start;position:relative;">
           <canvas id="design-canvas" style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.5);display:none;"></canvas>
           <div id="canvas-empty" style="width:100%;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text3);">
             <div style="font-size:2rem;opacity:.3;">🖼</div>
@@ -949,13 +986,27 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
         </div>
 
         <!-- Ações do canvas -->
-        <div id="canvas-actions" style="display:none;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-violet btn-sm" onclick="downloadCanvas()">⬇️ Baixar HD</button>
-          <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Nova imagem</button>
+        <div id="canvas-actions" style="display:none;margin-top:12px;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-violet btn-sm" onclick="analisarEBaixar()">🔍 Analisar e Baixar HD</button>
+            <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Nova imagem</button>
           <button class="btn btn-ghost btn-sm" onclick="toggleCanvasText()">👁 Toggle texto</button>
           <button class="btn btn-ghost btn-sm" onclick="redrawCanvas()">🎨 Redesenhar</button>
         </div>
         <div id="canvas-source-label" style="display:none;margin-top:8px;font-size:.64rem;color:var(--text3);"></div>
+
+        <!-- AI QUALITY ANALYSIS PANEL -->
+        <div id="analysis-panel">
+          <div class="analysis-score-row">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;color:var(--text);">🔍 Análise de Qualidade</div>
+            <div id="analysis-badge" class="analysis-score-badge great">—</div>
+          </div>
+          <div id="analysis-content" style="color:var(--text2);font-size:.78rem;">Analisando...</div>
+          <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn btn-violet btn-sm" onclick="downloadCanvas()" id="btn-confirm-download">⬇️ Baixar HD mesmo assim</button>
+            <button class="btn btn-out btn-sm" onclick="gerarImagemAI()">🔄 Gerar nova versão</button>
+          </div>
+        </div>
       </div>
 
       <!-- Loader de geração (visível durante process) -->
@@ -1009,8 +1060,40 @@ nav.tabs button.active .tab-icon{background:var(--violet);}
           <input type="text" id="canvas-cta-input" placeholder="Ex: Saiba Mais →">
         </div>
         <div class="field">
-          <label>Nome da marca (logo text)</label>
-          <input type="text" id="canvas-brand-input" placeholder="Ex: MINHA MARCA">
+          <label>Logo / Marca</label>
+          <!-- Logo upload zone -->
+          <div class="logo-upload-zone" id="logo-drop-zone" onclick="document.getElementById('logo-file-input').click()" title="Clique para enviar logo">
+            <div id="logo-drop-label" style="font-size:.74rem;color:var(--text2);">📎 Clique para enviar logo (PNG/SVG transparente)</div>
+            <input type="file" id="logo-file-input" accept="image/*" style="display:none" onchange="loadLogoFile(this)">
+          </div>
+          <!-- Logo size -->
+          <div id="logo-controls" style="display:none;margin-top:8px;">
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+              <label style="flex-shrink:0;min-width:80px;">Tamanho logo</label>
+              <input type="range" id="logo-size-range" min="4" max="25" value="12" style="flex:1" oninput="updateLogoSize(this.value)">
+              <span id="logo-size-val" style="min-width:32px;text-align:right;font-size:.72rem;color:var(--text3);">12%</span>
+            </div>
+            <!-- Horizontal position track (drag left-right only) -->
+            <label style="font-size:.7rem;color:var(--text3);margin-bottom:4px;display:block;">↔ Posição horizontal — arraste a logo</label>
+            <div class="logo-pos-track" id="logo-pos-track" title="Arraste para mover a logo">
+              <div class="logo-pos-thumb" id="logo-pos-thumb">↔ Logo</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--text3);margin-top:3px;">
+              <span>Esquerda</span><span>Centro</span><span>Direita</span>
+            </div>
+            <!-- Vertical position -->
+            <div style="display:flex;gap:6px;align-items:center;margin-top:8px;">
+              <label style="flex-shrink:0;min-width:80px;">Posição vertical</label>
+              <div style="display:flex;gap:4px;">
+                <button class="canvas-grid-btn on" id="vpos-top" onclick="setLogoVPos('top')">Topo</button>
+                <button class="canvas-grid-btn" id="vpos-mid" onclick="setLogoVPos('mid')">Centro</button>
+                <button class="canvas-grid-btn" id="vpos-bot" onclick="setLogoVPos('bot')">Base</button>
+              </div>
+            </div>
+            <button onclick="removeLogo()" style="margin-top:8px;font-size:.7rem;color:var(--red);background:none;border:none;cursor:pointer;padding:0;">✕ Remover logo</button>
+          </div>
+          <!-- Text brand fallback -->
+          <input type="text" id="canvas-brand-input" placeholder="Ou: nome da marca (texto)" style="margin-top:6px;">
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
@@ -1986,7 +2069,8 @@ function drawDesignCanvas(imgSrc, opts) {
   const dim   = FMT_DIMS[fmtKey] || FMT_DIMS.feed_square;
   const W     = dim.w;
   const H     = dim.h;
-  const SAFE  = Math.round(W * 0.072);  // 7.2% safe zone
+  const SAFE  = Math.round(W * DESIGN_RULES.SAFE_ZONE_PCT); // Safe zone from design directives
+  const DR    = DESIGN_RULES; // shorthand
   const isVert  = H > W;
   const isWide  = W > H * 1.5;
   const isBanner= fmtKey === 'banner';
@@ -2182,32 +2266,50 @@ function drawDesignCanvas(imgSrc, opts) {
       ctx.textBaseline = 'alphabetic';
     }
 
-    // 5. LOGO ZONE — top-right corner (safe zone)
-    if (brand && brand.trim()) {
-      const logoSize  = Math.round(W * 0.030);
-      const logoPadX  = Math.round(W * 0.028);
-      const logoPadY  = Math.round(W * 0.018);
+    // 5. LOGO ZONE — uploaded image OR text brand, positioned by user
+    if (S.logoImg) {
+      // ── Uploaded logo image ──
+      const logoMaxW = Math.round(W * (S.logoSizePct || DESIGN_RULES.LOGO_SIZE_DEFAULT));
+      const logoAspect = S.logoImg.naturalWidth / (S.logoImg.naturalHeight || 1);
+      const logoW = logoMaxW;
+      const logoH = Math.round(logoMaxW / logoAspect);
+      // Vertical: top / mid / bot
+      const vPos = S.logoVPos || 'top';
+      let logoY;
+      if (vPos === 'top')      logoY = Math.round(H * DESIGN_RULES.LOGO_TOP_MARGIN);
+      else if (vPos === 'mid') logoY = Math.round(H / 2 - logoH / 2);
+      else                     logoY = Math.round(H - SAFE - logoH);
+      // Horizontal: map 0..1 to safe zone left..right
+      const minX = Math.round(W * DESIGN_RULES.SAFE_ZONE_PCT);
+      const maxX = W - SAFE - logoW;
+      const logoX = Math.round(minX + (S.logoPosX || 0) * Math.max(0, maxX - minX));
+      ctx.save();
+      ctx.globalAlpha = 0.95;
+      ctx.drawImage(S.logoImg, logoX, logoY, logoW, logoH);
+      ctx.restore();
+    } else if (brand && brand.trim()) {
+      // ── Text brand fallback ──
+      const logoSize  = Math.round(W * DESIGN_RULES.EYEBROW_SIZE_PCT * 1.15);
+      const logoPadX  = Math.round(W * 0.024);
+      const logoPadY  = Math.round(W * 0.014);
       ctx.font = `700 ${logoSize}px '${bFont || 'Outfit'}', sans-serif`;
-      const logoTxtW  = ctx.measureText(brand.substring(0,16)).width;
+      const logoTxtW  = ctx.measureText(brand.substring(0,18)).width;
       const logoBoxW  = logoTxtW + logoPadX * 2;
       const logoBoxH  = logoSize + logoPadY * 2;
       const logoX     = W - SAFE - logoBoxW;
-      const logoY     = SAFE;
-      // Glass pill bg
+      const logoY     = Math.round(H * DESIGN_RULES.LOGO_TOP_MARGIN);
       ctx.save();
-      ctx.globalAlpha = 0.75;
-      ctx.fillStyle   = 'rgba(0,0,0,0.4)';
+      ctx.globalAlpha = 0.80;
+      ctx.fillStyle   = 'rgba(0,0,0,0.45)';
       ctx.beginPath(); ctx.roundRect(logoX, logoY, logoBoxW, logoBoxH, 8); ctx.fill();
-      // Accent border
-      ctx.globalAlpha = 0.5;
-      ctx.strokeStyle = ac;
-      ctx.lineWidth   = 1.5;
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = ac; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.roundRect(logoX, logoY, logoBoxW, logoBoxH, 8); ctx.stroke();
       ctx.restore();
       ctx.font = `700 ${logoSize}px '${bFont || 'Outfit'}', sans-serif`;
       ctx.fillStyle    = '#ffffff';
       ctx.textBaseline = 'middle';
-      ctx.fillText(brand.substring(0,16).toUpperCase(), logoX + logoPadX, logoY + logoBoxH/2);
+      ctx.fillText(brand.substring(0,18).toUpperCase(), logoX + logoPadX, logoY + logoBoxH/2);
       ctx.textBaseline = 'alphabetic';
     }
 
@@ -2232,10 +2334,13 @@ function drawDesignCanvas(imgSrc, opts) {
 
 function finalizeCanvas(canvas, fmtKey) {
   canvas.style.display = 'block';
+  canvas.style.cursor = 'grab';
   const empty = document.getElementById('canvas-empty');
   if (empty) empty.style.display = 'none';
   const actions = document.getElementById('canvas-actions');
   if (actions) { actions.style.display = 'flex'; }
+  const panCtrl = document.getElementById('pan-controls');
+  if (panCtrl) panCtrl.style.display = 'flex';
   const srcLabel = document.getElementById('canvas-source-label');
   if (srcLabel) srcLabel.style.display = 'block';
   // Update S.lastImageUrl with canvas data URL for download
@@ -2341,6 +2446,11 @@ function showProgressUI(providers) {
       </div>
     </div>`;
   if (empty) empty.style.display = 'flex';
+  // Hide analysis panel on new generation
+  const ap = document.getElementById('analysis-panel');
+  if (ap) ap.style.display = 'none';
+  const panCtrl2 = document.getElementById('pan-controls');
+  if (panCtrl2) panCtrl2.style.display = 'none';
 }
 
 function updateProviderUI(id, status, label) {
@@ -2511,6 +2621,274 @@ Reply with ONLY the prompt in English, max 90 words, no explanation, no markdown
   }
 
   document.getElementById('btn-gerar-img').disabled = false;
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// DESIGN DIRECTIVES — baseadas na análise da arte de referência
+// (UNINTA EAD — respiros generosos, zona de segurança 8%, 
+//  hierarquia tipográfica 3 níveis, logo no topo com margem,
+//  background sempre limpo na zona de texto)
+// ════════════════════════════════════════════════════════════════
+const DESIGN_RULES = {
+  SAFE_ZONE_PCT:     0.08,   // 8% de margem em todos os lados
+  LOGO_TOP_MARGIN:   0.045,  // Logo: 4.5% do topo
+  TEXT_BOTTOM_PAD:   0.07,   // Texto inicia 7% acima da borda
+  TITLE_SIZE_PCT:    0.072,  // Título: 7.2% da largura
+  HOOK_SIZE_PCT:     0.038,  // Hook: 3.8% da largura  
+  CTA_SIZE_PCT:      0.034,  // CTA: 3.4% da largura
+  EYEBROW_SIZE_PCT:  0.026,  // Eyebrow: 2.6% da largura
+  LINE_HEIGHT_TITLE: 1.18,   // Entrelinha título
+  LINE_HEIGHT_BODY:  1.65,   // Entrelinha corpo
+  MAX_TITLE_LINES:   3,      // Máx 3 linhas no título
+  MAX_HOOK_LINES:    2,      // Máx 2 linhas no hook
+  GRAD_START:        0.35,   // Gradiente começa em 35% da altura
+  GRAD_OPACITY:      0.82,   // Opacidade máxima do gradiente
+  SCRIM_TOP_OPACITY: 0.28,   // Vignette topo (zona logo)
+  LOGO_SIZE_DEFAULT: 0.12,   // 12% da largura como padrão
+};
+
+// ════════════════════════════════════════════════════════════════
+// LOGO STATE
+// ════════════════════════════════════════════════════════════════
+S.logoImg    = null;   // HTMLImageElement da logo carregada
+S.logoPosX   = 0.08;  // 0..1 (posição normalizada horizontal)
+S.logoVPos   = 'top'; // 'top' | 'mid' | 'bot'
+S.logoSizePct= 0.12;  // fração da largura do canvas
+
+// ── Carrega logo via file input ──
+function loadLogoFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      S.logoImg = img;
+      document.getElementById('logo-drop-zone').classList.add('has-logo');
+      document.getElementById('logo-drop-label').textContent = '✅ ' + file.name;
+      document.getElementById('logo-controls').style.display = 'block';
+      // Sync thumb position
+      syncLogoPosThumb();
+      if (S.lastRawImageSrc) redrawCanvas();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo() {
+  S.logoImg = null;
+  document.getElementById('logo-drop-zone').classList.remove('has-logo');
+  document.getElementById('logo-drop-label').textContent = '📎 Clique para enviar logo (PNG/SVG transparente)';
+  document.getElementById('logo-controls').style.display = 'none';
+  document.getElementById('logo-file-input').value = '';
+  if (S.lastRawImageSrc) redrawCanvas();
+}
+
+function updateLogoSize(val) {
+  S.logoSizePct = parseInt(val) / 100;
+  document.getElementById('logo-size-val').textContent = val + '%';
+  if (S.lastRawImageSrc) redrawCanvas();
+}
+
+function setLogoVPos(pos) {
+  S.logoVPos = pos;
+  ['top','mid','bot'].forEach(p => {
+    const btn = document.getElementById('vpos-' + p);
+    if (btn) btn.classList.toggle('on', p === pos);
+  });
+  if (S.lastRawImageSrc) redrawCanvas();
+}
+
+// ── Horizontal drag on logo-pos-track ──
+(function initLogoDrag() {
+  function setup() {
+    const track = document.getElementById('logo-pos-track');
+    const thumb = document.getElementById('logo-pos-thumb');
+    if (!track || !thumb) { setTimeout(setup, 500); return; }
+    let dragging = false;
+    const getX = (e) => e.touches ? e.touches[0].clientX : e.clientX;
+    const startDrag = (e) => { dragging = true; e.preventDefault(); };
+    const doDrag = (e) => {
+      if (!dragging) return;
+      const rect = track.getBoundingClientRect();
+      const thumbW = thumb.offsetWidth;
+      // clamp: [0, trackW - thumbW]
+      const raw  = getX(e) - rect.left - thumbW / 2;
+      const maxX = rect.width - thumbW;
+      const clamped = Math.max(0, Math.min(raw, maxX));
+      thumb.style.left = clamped + 'px';
+      S.logoPosX = clamped / maxX; // normalize 0..1
+      if (S.lastRawImageSrc) redrawCanvas();
+    };
+    const stopDrag = () => { dragging = false; };
+    thumb.addEventListener('mousedown', startDrag);
+    thumb.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchend', stopDrag);
+  }
+  document.addEventListener('DOMContentLoaded', setup);
+})();
+
+function syncLogoPosThumb() {
+  const track = document.getElementById('logo-pos-track');
+  const thumb = document.getElementById('logo-pos-thumb');
+  if (!track || !thumb) return;
+  const maxX = track.offsetWidth - thumb.offsetWidth;
+  thumb.style.left = (S.logoPosX * maxX) + 'px';
+}
+
+// ════════════════════════════════════════════════════════════════
+// IMAGE PAN — permite enquadrar a imagem no canvas
+// ════════════════════════════════════════════════════════════════
+S.panOffsetX = 0;
+S.panOffsetY = 0;
+S.panZoom    = 1.0;
+
+function resetPan() {
+  S.panOffsetX = 0;
+  S.panOffsetY = 0;
+  S.panZoom    = 1.0;
+  const zr = document.getElementById('pan-zoom');
+  if (zr) { zr.value = 100; }
+  if (S.lastRawImageSrc) redrawCanvas();
+}
+
+function applyPanZoom(val) {
+  S.panZoom = parseInt(val) / 100;
+  if (S.lastRawImageSrc) redrawCanvas();
+}
+
+// ── Canvas mouse pan ──
+(function initCanvasPan() {
+  function setup() {
+    const canvas = document.getElementById('design-canvas');
+    if (!canvas) { setTimeout(setup, 600); return; }
+    let dragging = false, lastX = 0, lastY = 0;
+    const getXY = (e) => e.touches
+      ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      : { x: e.clientX, y: e.clientY };
+    canvas.addEventListener('mousedown', (e) => {
+      if (!S.lastRawImageSrc) return;
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('touchstart', (e) => {
+      if (!S.lastRawImageSrc) return;
+      dragging = true;
+      const t = e.touches[0]; lastX = t.clientX; lastY = t.clientY;
+    }, { passive: true });
+    document.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      // Convert screen px to canvas px (scale factor)
+      const scaleX = (canvas.width  || 1080) / canvas.offsetWidth;
+      const scaleY = (canvas.height || 1080) / canvas.offsetHeight;
+      S.panOffsetX += (e.clientX - lastX) * scaleX;
+      S.panOffsetY += (e.clientY - lastY) * scaleY;
+      lastX = e.clientX; lastY = e.clientY;
+      if (S.lastRawImageSrc) redrawCanvas();
+    });
+    document.addEventListener('touchmove', (e) => {
+      if (!dragging) return;
+      const t = e.touches[0];
+      const scaleX = (canvas.width  || 1080) / canvas.offsetWidth;
+      const scaleY = (canvas.height || 1080) / canvas.offsetHeight;
+      S.panOffsetX += (t.clientX - lastX) * scaleX;
+      S.panOffsetY += (t.clientY - lastY) * scaleY;
+      lastX = t.clientX; lastY = t.clientY;
+      if (S.lastRawImageSrc) redrawCanvas();
+    }, { passive: true });
+    document.addEventListener('mouseup', () => { dragging = false; canvas.style.cursor = 'grab'; });
+    document.addEventListener('touchend', () => { dragging = false; });
+    canvas.style.cursor = 'grab';
+  }
+  document.addEventListener('DOMContentLoaded', setup);
+})();
+
+// ════════════════════════════════════════════════════════════════
+// AI QUALITY ANALYSIS — before download
+// ════════════════════════════════════════════════════════════════
+async function analisarEBaixar() {
+  const canvas = document.getElementById('design-canvas');
+  if (!canvas || canvas.style.display === 'none') { alert('Gere uma imagem primeiro.'); return; }
+
+  const panel = document.getElementById('analysis-panel');
+  const badge = document.getElementById('analysis-badge');
+  const analysisContent = document.getElementById('analysis-content');
+
+  panel.style.display = 'block';
+  badge.className = 'analysis-score-badge ok';
+  badge.textContent = '⏳ Analisando...';
+  analysisContent.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><div class="progress-ring" style="width:20px;height:20px;border-width:2px;"></div> Consultando o diretor de arte IA...</div>';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  const p = S.palette, f = S.fonts;
+  const c = S.selectedContent || S.content?.[0];
+  const fmt = S.format || 'feed_square';
+  const fmtInfo = FMT_DIMS[fmt] || FMT_DIMS.feed_square;
+
+  const analysisPrompt = `Você é um diretor de arte sênior avaliando uma arte final para social media. Avalie com rigor profissional:
+
+DADOS DA ARTE:
+- Formato: ${fmtInfo.label} (${fmtInfo.w}×${fmtInfo.h}px, proporção ${fmtInfo.ratio})
+- Paleta: fundo "${p[3]||'#F5F5F5'}", primária "${p[0]||'#1A1A2E'}", destaque "${p[1]||'#7C5CF6'}"
+- Tipografia: título "${f.h||'Syne'}", corpo "${f.b||'Outfit'}"
+- Título: "${c?.titulo || 'Título Principal'}"
+- Subtítulo: "${c?.hook || ''}"
+- CTA: "${c?.cta || 'Saiba Mais →'}"
+- Contexto: ${S.ctx || 'geral'}
+- Tem logo: ${S.logoImg ? 'Sim' : 'Não'}
+
+Avalie 5 critérios profissionais. Responda APENAS em JSON válido assim (sem markdown, sem explicação fora do JSON):
+{
+  "score": "Ótimo" | "Bom" | "Regular",
+  "criterios": [
+    { "icon": "🫧", "nome": "Respiros e Margens", "status": "✅" | "⚠️" | "❌", "avaliacao": "texto curto" },
+    { "icon": "🎨", "nome": "Combinação de Cores", "status": "✅" | "⚠️" | "❌", "avaliacao": "texto curto" },
+    { "icon": "✍️", "nome": "Tipografia", "status": "✅" | "⚠️" | "❌", "avaliacao": "texto curto" },
+    { "icon": "📐", "nome": "Alinhamento e Organização", "status": "✅" | "⚠️" | "❌", "avaliacao": "texto curto" },
+    { "icon": "🏆", "nome": "Qualidade Profissional Geral", "status": "✅" | "⚠️" | "❌", "avaliacao": "texto curto" }
+  ],
+  "recomendacao": "Uma frase de ação se precisar melhorar, ou elogio se estiver ótimo"
+}`;
+
+  try {
+    const raw = await callAI(analysisPrompt, 'Você é diretor de arte sênior. Responda APENAS JSON válido, sem explicação, sem markdown.');
+    // Extract JSON
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('JSON não encontrado');
+    const data = JSON.parse(match[0]);
+
+    const scoreClass = data.score === 'Ótimo' ? 'great' : data.score === 'Bom' ? 'ok' : 'warn';
+    const scoreEmoji = data.score === 'Ótimo' ? '🏆' : data.score === 'Bom' ? '👍' : '⚠️';
+    badge.className = 'analysis-score-badge ' + scoreClass;
+    badge.textContent = scoreEmoji + ' ' + data.score;
+
+    const itemsHtml = (data.criterios || []).map(cr => `
+      <div class="analysis-item">
+        <div class="analysis-icon">${cr.icon || '•'} ${cr.status || ''}</div>
+        <div class="analysis-item-body"><strong>${cr.nome}</strong>${cr.avaliacao}</div>
+      </div>`).join('');
+
+    analysisContent.innerHTML = `
+      <div style="margin-bottom:12px;">${itemsHtml}</div>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:.76rem;color:var(--text);border-left:3px solid ${data.score==='Ótimo'?'var(--green)':data.score==='Bom'?'var(--yellow)':'var(--red)'};">
+        💬 <strong>Recomendação:</strong> ${data.recomendacao || '—'}
+      </div>`;
+
+    // Se score bom/ótimo, download automático sai logo após
+    if (data.score === 'Ótimo') {
+      setTimeout(() => downloadCanvas(), 800);
+    }
+
+  } catch(err) {
+    badge.className = 'analysis-score-badge ok';
+    badge.textContent = '✅ Pronto';
+    analysisContent.innerHTML = '<p style="color:var(--text2);font-size:.78rem;">Análise indisponível agora. Você pode baixar normalmente.</p>';
+  }
 }
 
 // toggleOverlay replaced by toggleCanvasText()
