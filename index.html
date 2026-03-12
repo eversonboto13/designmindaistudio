@@ -302,6 +302,7 @@ nav.tabs button.active .tdot{background:var(--cyan);}
 .spec-label{color:var(--text3);font-weight:500;}
 .spec-val{color:var(--text);font-weight:700;}
 </style>
+  <script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
 
@@ -349,18 +350,11 @@ nav.tabs button.active .tdot{background:var(--cyan);}
       </div>
     </div>
 
-    <!-- Stability Key -->
-    <div style="margin-bottom:28px;">
-      <label style="display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:7px;">
-        Stability AI Key <span style="color:#333;font-weight:400;text-transform:none;">(geração de imagens)</span>
-      </label>
-      <input id="ob-stability" type="password" placeholder="sk-..." style="
-        width:100%;padding:12px 15px;background:#1a1a1a;border:1.5px solid #2a2a2a;
-        border-radius:10px;color:#fff;font-family:Inter,sans-serif;font-size:.85rem;outline:none;
-        transition:border .15s;
-      " onfocus="this.style.borderColor='#22d4e0'" onblur="this.style.borderColor='#2a2a2a'">
-      <div style="margin-top:6px;font-size:.7rem;color:#444;">
-        Em <a href="https://platform.stability.ai/account/keys" target="_blank" style="color:#22d4e0;text-decoration:none;">platform.stability.ai/account/keys</a>
+    <!-- Image gen info -->
+    <div style="margin-bottom:28px;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#555;margin-bottom:6px;">🖼 Geração de Imagens</div>
+      <div style="font-size:.82rem;color:#aaa;line-height:1.6;">
+        Powered by <strong style="color:#22d4e0;">Puter.js</strong> — 100% gratuito, sem key, sem cadastro. Usa o modelo <strong style="color:#fff;">FLUX.1-schnell</strong> (Black Forest Labs). Fallback automático para <strong style="color:#fff;">Pollinations.ai</strong>.
       </div>
     </div>
 
@@ -391,8 +385,8 @@ nav.tabs button.active .tdot{background:var(--cyan);}
   </div>
   <div class="hdr-right">
     <span id="user-greeting" style="font-size:.78rem;font-weight:700;color:var(--text2);"></span>
-    <span class="status-pill s-ok" style="background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);">⚡ Groq</span>
-    <span class="status-pill s-ok" style="background:var(--green-bg);color:#1a9f52;border-color:#a7f3c8;">🖼 Stability</span>
+    <span class="status-pill s-ok" style="background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);">⚡ Groq AI</span>
+    <span class="status-pill s-ok" style="background:var(--green-bg);color:#1a9f52;border-color:#a7f3c8;">🖼 FLUX via Puter</span>
     <button onclick="localStorage.clear();location.reload()" style="background:none;border:1.5px solid var(--border);border-radius:7px;padding:5px 11px;font-size:.7rem;color:var(--text3);cursor:pointer;font-family:Inter,sans-serif;" title="Trocar chaves">⚙ Reconfigurar</button>
   </div>
 </header>
@@ -898,7 +892,6 @@ function getUserName()     { return localStorage.getItem('dm_user_name') || 'Des
 function obEnter() {
   const name = document.getElementById('ob-name').value.trim();
   const groq = document.getElementById('ob-groq').value.trim();
-  const stab = document.getElementById('ob-stability').value.trim();
   const err  = document.getElementById('ob-err');
 
   if (!groq || !groq.startsWith('gsk_')) {
@@ -910,7 +903,7 @@ function obEnter() {
   err.style.display = 'none';
   localStorage.setItem('dm_user_name', name || 'Designer');
   localStorage.setItem('dm_groq_key',  groq);
-  if (stab && stab.startsWith('sk-')) localStorage.setItem('dm_stab_key', stab);
+  // Pollinations não precisa de key
 
   // Update greeting
   const greet = document.getElementById('user-greeting');
@@ -929,7 +922,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (greet) greet.textContent = 'Olá, ' + getUserName() + ' 👋';
   }
   // Allow Enter key on onboarding inputs
-  ['ob-name','ob-groq','ob-stability'].forEach(id => {
+  ['ob-name','ob-groq'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('keydown', e => { if(e.key==='Enter') obEnter(); });
   });
@@ -1690,11 +1683,7 @@ function setStep(steps,activeIdx){
 }
 
 async function gerarImagemAI(){
-  const stabilityKey = getStabilityKey();
-  if (!stabilityKey || !stabilityKey.startsWith('sk-')) {
-    alert('Configure sua Stability AI Key na tela de entrada.\nAtualize a página para reconfigurar.');
-    return;
-  }
+  // Pollinations — sem key necessária
 
   const p=S.palette,f=S.fonts,c=S.selectedContent||S.content?.[0],fmt=S.format;
   const bg=p[3]||'#F5F5F5',pr=p[0]||'#1A1A2E',ac=p[1]||'#22d4e0';
@@ -1773,73 +1762,69 @@ Seja muito específico e criativo, pensando como um diretor de arte para campanh
   setStep(steps,2);
   await new Promise(r=>setTimeout(r,400));
 
-  // STEP 3+4: Stability AI — stable-image/generate/core (v2beta)
-  // Endpoint oficial: multipart/form-data, Accept: image/*
+  // STEP 3+4: Puter.js FLUX — totalmente gratuito, sem key, sem CORS, modelo FLUX.1-schnell
   try{
-    // Garante que o prompt está limpo (sem erros do Groq)
     if (!promptGerado || promptGerado.startsWith('❌') || promptGerado.startsWith('⚠️')) {
       throw new Error('O Groq não gerou um prompt válido. Verifique sua Groq key e tente novamente.');
     }
 
+    // Limpa o prompt
     const cleanPrompt = promptGerado
-      .replace(/--no text.*$/i, '')  // remove flags SD
-      .replace(/```[\s\S]*?```/g, '')  // remove code blocks
+      .replace(/--no text.*/i, '')
+      .replace(/```[\s\S]*?```/g, '')
       .trim()
-      .substring(0, 10000);  // Stability max
+      .substring(0, 2000);
 
-    const aspectRatio = ratio==='9:16'?'9:16':ratio==='1:1'?'1:1':'16:9';
+    setStep(steps, 3);
 
-    const fd = new FormData();
-    fd.append('prompt', cleanPrompt);
-    fd.append('output_format', 'jpeg');
-    fd.append('aspect_ratio', aspectRatio);
-    fd.append('model', 'sd3.5-large-turbo');  // modelo mais rápido e moderno
-
-    let res;
+    // Puter.js gera imagem com FLUX.1-schnell — sem key, sem CORS
+    let imgBlob;
     try {
-      res = await fetch('https://api.stability.ai/v2beta/stable-image/generate/sd3', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + stabilityKey,
-          'Accept': 'image/*'
-        },
-        body: fd
+      imgBlob = await puter.ai.txt2img(cleanPrompt, false, 'flux.1-schnell');
+    } catch(puterErr) {
+      // Fallback para Pollinations se Puter falhar
+      console.warn('Puter.js falhou, tentando Pollinations...', puterErr);
+      const DIMS = {'1:1':'1024x1024','9:16':'576x1024','16:9':'1024x576'};
+      const dims = DIMS[ratio] || '1024x1024';
+      const [pw, ph] = dims.split('x');
+      const seed = Math.floor(Math.random() * 999999);
+      const encodedPrompt = encodeURIComponent(cleanPrompt);
+      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${pw}&height=${ph}&seed=${seed}&model=flux&nologo=true`;
+      await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = () => reject(new Error('Fallback Pollinations também falhou. Tente novamente.'));
+        img.src = pollinationsUrl;
+        setTimeout(() => reject(new Error('Timeout — tente novamente.')), 35000);
       });
-    } catch (fetchErr) {
-      throw new Error('Erro de rede ao contatar Stability AI: ' + fetchErr.message);
+      S.lastImageUrl = pollinationsUrl;
+      // skip blob conversion, jump to render
+      const overlayBg2=pr, overlayAc2=ac;
+      const tFontDisplay2=tFont||'sans-serif', bFontDisplay2=bFont||'sans-serif';
+      document.getElementById('img-canvas').innerHTML=`
+        <div style="padding:16px;">
+          <div class="img-container">
+            <img src="${pollinationsUrl}" alt="Imagem gerada" style="width:100%;border-radius:14px;" crossorigin="anonymous">
+            <div class="img-overlay">
+              <div class="img-overlay-title" style="font-family:'${tFontDisplay2}',sans-serif;">${title}</div>
+              <div class="img-overlay-hook" style="font-family:'${bFontDisplay2}',sans-serif;">${hook}</div>
+              <div class="img-overlay-cta" style="background:${overlayAc2};color:${overlayBg2};font-family:'${bFontDisplay2}',sans-serif;">${c?.cta||'Saiba Mais →'}</div>
+            </div>
+          </div>
+        </div>`;
+      setStep(steps,4);
+      document.getElementById('img-gen-status').textContent='✅ Imagem gerada (Pollinations)!';
+      document.getElementById('btn-gerar-img').disabled=false;
+      const rw=document.getElementById('rating-wrap'); if(rw) rw.style.display='flex';
+      return;
     }
 
-    setStep(steps,3);
-
-    if(!res.ok){
-      let errText = 'sem detalhes';
-      try {
-        const ct = res.headers.get('content-type') || '';
-        if (ct.includes('json')) {
-          const e = await res.json();
-          errText = e?.errors?.[0] || e?.message || e?.name || JSON.stringify(e).substring(0,200);
-        } else {
-          errText = (await res.text()).substring(0, 200);
-        }
-      } catch(_){}
-      if(res.status===401) throw new Error('Stability Key inválida ou expirada.');
-      if(res.status===402) throw new Error('Créditos Stability AI esgotados. Adicione em platform.stability.ai');
-      if(res.status===403) throw new Error('Acesso negado. Verifique permissões da sua Stability Key.');
-      if(res.status===422) throw new Error('Prompt recusado pela Stability AI. Tente um tema diferente.');
-      if(res.status===429) throw new Error('Rate limit Stability AI. Aguarde alguns segundos.');
-      if(res.status===500) throw new Error('Erro interno Stability AI. Tente novamente.');
-      throw new Error('Stability API ' + res.status + ': ' + errText);
-    }
-
-    // Converte blob → base64 via FileReader (funciona em qualquer browser/contexto)
-    const blob = await res.blob();
-    if (!blob || blob.size < 100) throw new Error('Imagem inválida recebida (blob vazio). Tente novamente.');
-
+    // Converte blob Puter → base64
     const imgUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Erro ao processar imagem'));
-      reader.readAsDataURL(blob);
+      reader.onerror = () => reject(new Error('Erro ao converter imagem'));
+      reader.readAsDataURL(imgBlob);
     });
     S.lastImageUrl = imgUrl;
 
